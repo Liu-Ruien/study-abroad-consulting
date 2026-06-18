@@ -45,23 +45,31 @@ const riskLevelStyles: Record<RiskLevel, string> = {
 };
 
 export default function PlanPage() {
+  // 当前正在填写的表单数据
   const [form, setForm] = useState<PlanFormState>(initialForm);
+
+  // 是否已经点击过“生成路线建议”
   const [submitted, setSubmitted] = useState(false);
 
-  // 推荐路线
+  // 已提交用于生成结果的表单快照
+  // 注意：右侧结果必须使用 submittedForm，而不是 form
+  const [submittedForm, setSubmittedForm] =
+    useState<PlanFormState>(initialForm);
+
+  // 推荐路线只根据“已提交的表单快照”生成
   const recommendedRoutes = useMemo(() => {
-    return getRecommendedRoutes(form);
-  }, [form]);
+    return getRecommendedRoutes(submittedForm);
+  }, [submittedForm]);
 
-  // 用户基础画像
+  // 用户画像只根据“已提交的表单快照”生成
   const profileSummary = useMemo(() => {
-    return createUserProfileSummary(form);
-  }, [form]);
+    return createUserProfileSummary(submittedForm);
+  }, [submittedForm]);
 
-  // 推荐理由总结
+  // 推荐理由总结只根据“已提交的表单快照”生成
   const insightSummary = useMemo(() => {
-    return createPlanInsightSummary(form);
-  }, [form]);
+    return createPlanInsightSummary(submittedForm);
+  }, [submittedForm]);
 
   function updateField<K extends keyof PlanFormState>(
     key: K,
@@ -73,15 +81,19 @@ export default function PlanPage() {
     }));
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubmitted(true);
-  }
+  // 用户点击“生成路线建议”时，把当前表单保存成一份结果快照
+function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+  setSubmittedForm(form);
+  setSubmitted(true);
+}
 
-  function handleReset() {
-    setForm(initialForm);
-    setSubmitted(false);
-  }
+  // 重置时，同时清空当前表单和已提交结果
+function handleReset() {
+  setForm(initialForm);
+  setSubmittedForm(initialForm);
+  setSubmitted(false);
+}
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-12">
