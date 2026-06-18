@@ -4,7 +4,7 @@
 // 作用：收集用户基本情况，并基于本地规则输出路线建议、用户画像和推荐理由
 // 当前阶段不接真实 AI、不接数据库，只做产品原型
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   budgetOptions,
@@ -56,6 +56,17 @@ export default function PlanPage() {
   const [submittedForm, setSubmittedForm] =
     useState<PlanFormState>(initialForm);
 
+  // 表单错误提示
+   const [formError, setFormError] = useState("");
+
+  // 结果区域引用，用于点击生成后自动滚动到结果区
+    const resultRef = useRef<HTMLDivElement | null>(null);
+
+// 判断左侧表单是否在生成结果后又被修改过
+// 如果修改过，就提示用户需要重新点击生成按钮
+const isResultOutdated =
+  submitted && JSON.stringify(form) !== JSON.stringify(submittedForm);
+
   // 推荐路线只根据“已提交的表单快照”生成
   const recommendedRoutes = useMemo(() => {
     return getRecommendedRoutes(submittedForm);
@@ -82,17 +93,39 @@ export default function PlanPage() {
   }
 
   // 用户点击“生成路线建议”时，把当前表单保存成一份结果快照
+// 点击生成按钮时，才把当前表单保存为结果快照
 function handleSubmit(event: FormEvent<HTMLFormElement>) {
   event.preventDefault();
+
+  // 简单校验：至少填写年龄、学历、专业方向中的任意两项
+  const filledBasicFields = [form.age, form.education, form.major].filter(
+    (item) => item.trim() !== ""
+  ).length;
+
+  if (filledBasicFields < 2) {
+    setFormError("请至少填写年龄、学历、专业方向中的任意两项，再生成路线建议。");
+    return;
+  }
+
+  setFormError("");
   setSubmittedForm(form);
   setSubmitted(true);
+
+  // 生成结果后自动滚动到右侧结果区域
+  setTimeout(() => {
+    resultRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, 100);
 }
 
-  // 重置时，同时清空当前表单和已提交结果
+// 重置时，同时清空当前表单、已提交结果和错误提示
 function handleReset() {
   setForm(initialForm);
   setSubmittedForm(initialForm);
   setSubmitted(false);
+  setFormError("");
 }
 
   return (
@@ -287,6 +320,12 @@ function handleReset() {
               </select>
             </div>
 
+	{formError && (
+	  <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 	text-sm leading-6 text-rose-700">
+   	 {formError}
+ 	 </div>
+	)}
+
             <div className="flex gap-3 pt-2">
               <button
                 type="submit"
@@ -307,7 +346,7 @@ function handleReset() {
         </section>
 
         {/* 右侧结果 */}
-        <section className="space-y-6">
+        <section ref={resultRef} className="space-y-6 scroll-mt-28">
           {!submitted ? (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-10">
               <h2 className="mb-3 text-2xl font-bold text-slate-900">
@@ -321,6 +360,20 @@ function handleReset() {
             </div>
           ) : (
             <>
+
+	{isResultOutdated && (
+	  <div className="rounded-3xl border border-amber-200 bg-amber-50 p-5 	text-sm leading-7 text-amber-800">
+  	  你已经修改了左侧表单，但右侧结果仍然是上一次点击“生成路线建议”时生成的。
+ 	   如果想查看最新结果，请再次点击“生成路线建议”。
+ 	 </div>
+	)}
+
+	{!isResultOutdated && (
+ 	 <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5 	text-sm leading-7 text-emerald-800">
+   	 当前路线建议已根据你最近一次提交的信息生成。
+ 	 </div>
+	)}
+
               {/* 用户画像 */}
               <div className="rounded-3xl border border-sky-100 bg-sky-50 p-6">
                 <p className="mb-2 text-sm font-medium text-sky-700">
