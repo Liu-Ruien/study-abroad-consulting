@@ -1,56 +1,57 @@
 // 出国路线规划数据模块
-// 作用：保存出国路线数据，并根据用户填写的信息生成推荐路线
-// 当前阶段不接 AI、不接数据库，只使用本地规则进行模拟推荐
+// 作用：保存路线数据、表单选项、本地推荐规则、用户画像和推荐理由
+// 当前阶段不接 AI、不接数据库，只使用本地规则进行路线推荐原型验证
 
-// 预算等级类型
 export type BudgetLevel = "low" | "medium" | "high" | "unknown";
 
-// 语言能力类型
 export type LanguageLevel = "none" | "basic" | "intermediate" | "advanced";
 
-// 目标偏好类型
-export type CountryPreference =
-  | "asia"
-  | "english"
-  | "europe"
-  | "any";
+export type CountryPreference = "asia" | "english" | "europe" | "any";
 
-// 是否倾向类型
 export type PreferenceAnswer = "yes" | "no" | "unknown";
+
+export type RiskLevel = "low" | "medium" | "high";
 
 // 用户填写的路线规划表单数据
 export type PlanFormState = {
-  age: string; // 年龄
-  education: string; // 学历
-  major: string; // 专业方向
-  budgetLevel: BudgetLevel; // 预算区间
-  languageLevel: LanguageLevel; // 语言能力
-  countryPreference: CountryPreference; // 国家/地区偏好
-  wantsPartTimeJob: PreferenceAnswer; // 是否希望打工
-  wantsLongTermStay: PreferenceAnswer; // 是否希望长期留下
-  acceptsLowBudgetRoute: PreferenceAnswer; // 是否接受低预算路线
+  age: string;
+  education: string;
+  major: string;
+  budgetLevel: BudgetLevel;
+  languageLevel: LanguageLevel;
+  countryPreference: CountryPreference;
+  wantsPartTimeJob: PreferenceAnswer;
+  wantsLongTermStay: PreferenceAnswer;
+  acceptsLowBudgetRoute: PreferenceAnswer;
 };
 
 // 推荐文章类型
 export type RelatedArticle = {
-  title: string; // 文章标题
-  href: string; // 文章链接
+  title: string;
+  href: string;
 };
 
-// 出国路线类型
+// 出国路线基础数据类型
 export type PlanRoute = {
-  id: string; // 路线唯一 ID
-  title: string; // 路线标题
-  country: string; // 目标国家或地区
-  routeType: string; // 路线类型
-  budgetLevel: BudgetLevel; // 预算等级
-  summary: string; // 路线简介
-  suitableFor: string[]; // 适合人群
-  advantages: string[]; // 优势
-  risks: string[]; // 风险提醒
-  nextSteps: string[]; // 下一步建议
-  relatedArticles: RelatedArticle[]; // 推荐阅读
-  tags: string[]; // 标签
+  id: string;
+  title: string;
+  country: string;
+  routeType: string;
+  budgetLevel: BudgetLevel;
+  riskLevel: RiskLevel;
+  summary: string;
+  suitableFor: string[];
+  advantages: string[];
+  risks: string[];
+  nextSteps: string[];
+  relatedArticles: RelatedArticle[];
+  tags: string[];
+};
+
+// 推荐结果类型：在基础路线数据上增加匹配分数和匹配原因
+export type RecommendedPlanRoute = PlanRoute & {
+  matchScore: number;
+  matchReasons: string[];
 };
 
 // 预算选项
@@ -84,6 +85,13 @@ export const preferenceOptions = [
   { value: "no", label: "否" },
 ] satisfies { value: PreferenceAnswer; label: string }[];
 
+// 风险等级显示
+export const riskLevelLabels: Record<RiskLevel, string> = {
+  low: "低风险",
+  medium: "中等风险",
+  high: "较高风险",
+};
+
 // 出国路线静态数据
 export const planRoutes: PlanRoute[] = [
   {
@@ -92,6 +100,7 @@ export const planRoutes: PlanRoute[] = [
     country: "日本",
     routeType: "留学 + 就职",
     budgetLevel: "medium",
+    riskLevel: "medium",
     summary:
       "适合希望先通过语言学校过渡，再在日本继续升学或找工作的用户。路线相对清晰，生活距离中国较近。",
     suitableFor: [
@@ -140,6 +149,7 @@ export const planRoutes: PlanRoute[] = [
     country: "新西兰",
     routeType: "留学 + 长期发展",
     budgetLevel: "high",
+    riskLevel: "medium",
     summary:
       "适合预算较高、希望体验英语国家学习环境，并考虑长期规划的用户。整体生活环境较好，但成本和就业市场需要认真评估。",
     suitableFor: [
@@ -184,6 +194,7 @@ export const planRoutes: PlanRoute[] = [
     country: "马来西亚",
     routeType: "低预算留学",
     budgetLevel: "low",
+    riskLevel: "medium",
     summary:
       "适合预算有限，但希望先获得海外学习经历、英语环境和学历提升机会的用户。适合作为低成本出国过渡方案。",
     suitableFor: [
@@ -224,6 +235,7 @@ export const planRoutes: PlanRoute[] = [
     country: "菲律宾",
     routeType: "语言学习",
     budgetLevel: "low",
+    riskLevel: "low",
     summary:
       "适合想先低成本提升英语能力，再考虑其他国家留学或工作的用户。更适合作为短期语言提升阶段。",
     suitableFor: [
@@ -264,6 +276,7 @@ export const planRoutes: PlanRoute[] = [
     country: "德国",
     routeType: "职业教育",
     budgetLevel: "medium",
+    riskLevel: "high",
     summary:
       "适合愿意学习德语、接受职业教育路径，并希望通过技能型路线长期发展的用户。该路线需要认真核实政策和项目真实性。",
     suitableFor: [
@@ -304,6 +317,7 @@ export const planRoutes: PlanRoute[] = [
     country: "澳大利亚",
     routeType: "留学 / 短期体验",
     budgetLevel: "high",
+    riskLevel: "high",
     summary:
       "适合预算较高、希望去英语国家，并愿意认真了解签证条件的人。澳洲方向机会较多，但费用和政策门槛也需要重点评估。",
     suitableFor: [
@@ -340,99 +354,159 @@ export const planRoutes: PlanRoute[] = [
   },
 ];
 
-// 根据预算等级获取中文显示
-export function getBudgetLabel(level: BudgetLevel): string {
-  const option = budgetOptions.find((item) => item.value === level);
+// 通用选项查询方法
+function getOptionLabel<T extends string>(
+  options: { value: T; label: string }[],
+  value: T
+): string {
+  const option = options.find((item) => item.value === value);
   return option ? option.label : "暂不确定";
 }
 
+export function getBudgetLabel(level: BudgetLevel): string {
+  return getOptionLabel(budgetOptions, level);
+}
+
+export function getLanguageLabel(level: LanguageLevel): string {
+  return getOptionLabel(languageOptions, level);
+}
+
+export function getCountryPreferenceLabel(value: CountryPreference): string {
+  return getOptionLabel(countryPreferenceOptions, value);
+}
+
+export function getPreferenceLabel(value: PreferenceAnswer): string {
+  return getOptionLabel(preferenceOptions, value);
+}
+
+// 根据用户填写的信息生成基础画像
+export function createUserProfileSummary(form: PlanFormState): string[] {
+  const profile: string[] = [];
+
+  if (form.age) {
+    profile.push(`年龄：${form.age} 岁左右`);
+  }
+
+  if (form.education) {
+    profile.push(`学历背景：${form.education}`);
+  }
+
+  if (form.major) {
+    profile.push(`专业 / 工作方向：${form.major}`);
+  }
+
+  profile.push(`预算情况：${getBudgetLabel(form.budgetLevel)}`);
+  profile.push(`语言能力：${getLanguageLabel(form.languageLevel)}`);
+  profile.push(`国家偏好：${getCountryPreferenceLabel(form.countryPreference)}`);
+  profile.push(`打工意愿：${getPreferenceLabel(form.wantsPartTimeJob)}`);
+  profile.push(`长期发展意愿：${getPreferenceLabel(form.wantsLongTermStay)}`);
+
+  return profile;
+}
+
+// 生成推荐结果顶部总结
+export function createPlanInsightSummary(form: PlanFormState): string {
+  const summaries: string[] = [];
+
+  if (form.countryPreference === "asia") {
+    summaries.push("你当前更偏向亚洲方向，适合优先了解日本、马来西亚、菲律宾等路线。");
+  } else if (form.countryPreference === "english") {
+    summaries.push("你当前更偏向英语国家方向，可以重点比较新西兰、澳洲以及英语学习过渡路线。");
+  } else if (form.countryPreference === "europe") {
+    summaries.push("你当前更偏向欧洲方向，可以把德国双元制等职业教育路线作为研究对象。");
+  } else {
+    summaries.push("你当前还没有明确国家偏好，适合先通过预算、语言能力和长期目标筛选路线。");
+  }
+
+  if (form.budgetLevel === "low") {
+    summaries.push("由于预算偏低，建议优先考虑低成本过渡路线，并谨慎核实学校和项目真实性。");
+  } else if (form.budgetLevel === "medium") {
+    summaries.push("你的预算属于中等区间，可以重点比较日本、德国职业教育和部分亚洲留学路线。");
+  } else if (form.budgetLevel === "high") {
+    summaries.push("你的预算空间较大，可以进一步研究新西兰、澳洲等英语国家路线。");
+  }
+
+  if (form.wantsLongTermStay === "yes") {
+    summaries.push("你有长期留在海外的想法，因此需要重点关注语言能力、专业匹配和后续就业路径。");
+  }
+
+  return summaries.join("");
+}
+
 // 根据用户输入计算推荐路线
-// 输入：用户填写的 PlanFormState
-// 输出：按推荐分数排序后的路线数组
-export function getRecommendedRoutes(form: PlanFormState): PlanRoute[] {
+export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[] {
   const scoredRoutes = planRoutes.map((route) => {
     let score = 0;
+    const reasons: string[] = [];
 
-    // 预算匹配加分
+    function addReason(reason: string, points: number) {
+      score += points;
+      reasons.push(reason);
+    }
+
     if (form.budgetLevel !== "unknown" && route.budgetLevel === form.budgetLevel) {
-      score += 4;
+      addReason("预算区间与该路线较匹配", 4);
     }
 
-    // 低预算路线偏好
-    if (
-      form.acceptsLowBudgetRoute === "yes" &&
-      route.budgetLevel === "low"
-    ) {
-      score += 3;
+    if (form.acceptsLowBudgetRoute === "yes" && route.budgetLevel === "low") {
+      addReason("你接受低预算过渡路线", 3);
     }
 
-    // 亚洲国家偏好
     if (
       form.countryPreference === "asia" &&
       ["日本", "马来西亚", "菲律宾"].includes(route.country)
     ) {
-      score += 3;
+      addReason("你的国家偏好更接近亚洲方向", 3);
     }
 
-    // 英语国家偏好
     if (
       form.countryPreference === "english" &&
       ["新西兰", "澳大利亚", "马来西亚", "菲律宾"].includes(route.country)
     ) {
-      score += 3;
+      addReason("你的国家偏好更接近英语环境", 3);
     }
 
-    // 欧洲国家偏好
     if (form.countryPreference === "europe" && route.country === "德国") {
-      score += 3;
+      addReason("你的国家偏好更接近欧洲方向", 3);
     }
 
-    // 希望打工时，日本路线更匹配当前内容库
     if (form.wantsPartTimeJob === "yes" && route.id === "japan-language-school") {
-      score += 2;
+      addReason("你希望边学习边打工，日本路线更适合作为当前内容库的重点参考", 2);
     }
 
-    // 希望长期留下时，新西兰、德国、日本路线更适合做长期规划
     if (
       form.wantsLongTermStay === "yes" &&
-      ["new-zealand-study", "germany-dual-system", "japan-language-school"].includes(
-        route.id
-      )
+      ["new-zealand-study", "germany-dual-system", "japan-language-school"].includes(route.id)
     ) {
-      score += 2;
+      addReason("你有长期发展想法，该路线更适合作为长期规划方向", 2);
     }
 
-    // 语言能力较弱时，优先推荐日本、菲律宾、马来西亚这类过渡路线
     if (
       form.languageLevel === "none" &&
-      ["japan-language-school", "philippines-language", "malaysia-study"].includes(
-        route.id
-      )
+      ["japan-language-school", "philippines-language", "malaysia-study"].includes(route.id)
     ) {
-      score += 2;
+      addReason("你的语言基础较弱，该路线更适合作为过渡选择", 2);
     }
 
-    // 语言能力较强时，英语国家和德国路线加分
     if (
       ["intermediate", "advanced"].includes(form.languageLevel) &&
-      ["new-zealand-study", "australia-study-work", "germany-dual-system"].includes(
-        route.id
-      )
+      ["new-zealand-study", "australia-study-work", "germany-dual-system"].includes(route.id)
     ) {
-      score += 2;
+      addReason("你的语言能力较好，可以考虑要求更高的路线", 2);
     }
 
+    if (reasons.length === 0) {
+      reasons.push("该路线可作为备选方向，用于进一步比较预算、语言和长期发展可能性");
+    }
+
+    const matchScore = Math.min(96, Math.max(62, 56 + score * 6));
+
     return {
-      route,
-      score,
+      ...route,
+      matchScore,
+      matchReasons: reasons.slice(0, 3),
     };
   });
 
-  // 按分数从高到低排序，返回前 3 条
-  const result = scoredRoutes
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3)
-    .map((item) => item.route);
-
-  return result;
+  return scoredRoutes.sort((a, b) => b.matchScore - a.matchScore).slice(0, 3);
 }
