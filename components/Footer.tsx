@@ -26,15 +26,12 @@ export default function Footer() {
             <h3 className="mb-3 text-sm font-semibold text-slate-900">内容分类</h3>
             <ul className="space-y-2">
               {categories.map((category) => (
-                <li key={category.slug}>
-                  <Link
-                    href={`/categories/${category.slug}`}
-                    className="text-sm text-slate-600 transition-colors hover:text-sky-700"
-                  >
-                    {category.name}
-                  </Link>
-                </li>
-              ))}
+	  <li key={category.slug}>
+	    <Link href={`/categories/${category.slug}`}>
+	      {category.name}
+ 	   </Link>
+ 	 </li>
+	))}
             </ul>
           </div>
 

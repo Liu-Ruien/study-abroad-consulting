@@ -1,74 +1,61 @@
-/**
- * 分类文章页
- * 路由：/categories/[category]
- * 按分类 slug 筛选并展示对应文章
- */
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import ArticleCard from "@/components/ArticleCard";
-import {
-  categories,
-  getArticlesByCategory,
-  getCategoryBySlug,
-  isValidCategorySlug,
-  type CategorySlug,
-} from "@/lib/articles";
+// 分类文章页面
+// 作用：根据 URL 中的 category 参数，展示对应分类下的文章列表
 
-interface CategoryPageProps {
-  params: Promise<{ category: string }>;
-}
+import { articles, categories } from "@/lib/articles";
+import Link from "next/link";
 
-/** 构建时预生成四个分类页的静态路径 */
-export async function generateStaticParams() {
-  return categories.map((category) => ({ category: category.slug }));
-}
-
-export async function generateMetadata({
-  params,
-}: CategoryPageProps): Promise<Metadata> {
-  const { category: categorySlug } = await params;
-
-  if (!isValidCategorySlug(categorySlug)) {
-    return { title: "分类未找到" };
-  }
-
-  const category = getCategoryBySlug(categorySlug)!;
-
-  return {
-    title: category.name,
-    description: category.description,
-  };
-}
+type CategoryPageProps = {
+  params: Promise<{
+    category: string;
+  }>;
+};
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { category: categorySlug } = await params;
+  // Next.js 16 中 params 是异步对象，需要 await
+  const { category } = await params;
 
-  if (!isValidCategorySlug(categorySlug)) {
-    notFound();
-  }
+  // 找到当前分类信息
+  const currentCategory = categories.find((item) => item.slug === category);
 
-  const category = getCategoryBySlug(categorySlug)!;
-  const categoryArticles = getArticlesByCategory(categorySlug as CategorySlug);
+  // 根据分类 slug 筛选文章
+  const filteredArticles = articles.filter(
+    (article) => article.category === category
+  );
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">{category.name}</h1>
-        <p className="mt-3 max-w-2xl text-slate-600">{category.description}</p>
-        <p className="mt-2 text-sm text-slate-400">共 {categoryArticles.length} 篇文章</p>
-      </div>
+    <main className="mx-auto max-w-5xl px-6 py-10">
+      {/* 页面标题 */}
+      <h1 className="mb-2 text-3xl font-bold text-slate-900">
+        {currentCategory ? currentCategory.name : "未知分类"}
+      </h1>
 
-      {categoryArticles.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {categoryArticles.map((article) => (
-            <ArticleCard key={article.slug} article={article} />
-          ))}
+      <p className="mb-8 text-slate-600">
+        当前分类下共有 {filteredArticles.length} 篇文章
+      </p>
+
+      {/* 如果没有文章，显示提示 */}
+      {filteredArticles.length === 0 ? (
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-slate-600">
+          当前分类下暂无文章。
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
-          <p className="text-slate-600">该分类下暂无文章，敬请期待。</p>
+        <div className="grid gap-4">
+          {filteredArticles.map((article) => (
+            <Link
+              key={article.slug}
+              href={`/articles/${article.slug}`}
+              className="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-sky-300 hover:shadow-sm"
+            >
+              <h2 className="mb-2 text-lg font-bold text-slate-900">
+                {article.title}
+              </h2>
+              <p className="text-sm leading-6 text-slate-600">
+                {article.excerpt}
+              </p>
+            </Link>
+          ))}
         </div>
       )}
-    </div>
+    </main>
   );
 }

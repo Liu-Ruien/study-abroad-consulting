@@ -1,95 +1,61 @@
-/**
- * 文章详情页
- * 路由：/articles/[slug]
- * 根据 slug 读取本地文章数据并渲染正文
- */
-import type { Metadata } from "next";
-import Link from "next/link";
+// 文章详情页
+// 作用：根据 URL 中的 slug 找到对应文章，并展示文章详情
+
+import { articles, categories } from "@/lib/articles";
 import { notFound } from "next/navigation";
-import {
-  articles,
-  getArticleBySlug,
-  getCategoryName,
-} from "@/lib/articles";
+import Link from "next/link";
 
-interface ArticlePageProps {
-  params: Promise<{ slug: string }>;
-}
-
-/** 构建时预生成所有文章详情页的静态路径 */
-export async function generateStaticParams() {
-  return articles.map((article) => ({ slug: article.slug }));
-}
-
-export async function generateMetadata({
-  params,
-}: ArticlePageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const article = getArticleBySlug(slug);
-
-  if (!article) {
-    return { title: "文章未找到" };
-  }
-
-  return {
-    title: article.title,
-    description: article.excerpt,
-  };
-}
+type ArticlePageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
+  // Next.js 16 中 params 是异步对象，需要 await
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
 
+  // 根据 URL 中的 slug 查找文章
+  const article = articles.find((item) => item.slug === slug);
+
+  // 如果找不到文章，显示 404
   if (!article) {
     notFound();
   }
 
+  // 根据文章分类 slug 找到分类名称
+  const category = categories.find((item) => item.slug === article.category);
+
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <main className="mx-auto max-w-3xl px-6 py-10">
+      {/* 返回文章列表 */}
       <Link
         href="/articles"
-        className="mb-8 inline-flex items-center text-sm font-medium text-sky-600 transition-colors hover:text-sky-800"
+        className="mb-6 inline-block text-sm text-sky-600 hover:text-sky-700"
       >
-        ← 返回文章列表
+        ← 返回全部文章
       </Link>
 
-      <header className="mb-10 border-b border-slate-200 pb-8">
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          <Link
-            href={`/categories/${article.category}`}
-            className="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700 transition-colors hover:bg-sky-100"
-          >
-            {getCategoryName(article.category)}
-          </Link>
-          <span className="text-sm text-slate-400">{article.readingTime} 分钟阅读</span>
-          <span className="text-sm text-slate-400">{article.publishedAt}</span>
-        </div>
-        <h1 className="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
-          {article.title}
-        </h1>
-        <p className="mt-4 text-lg leading-relaxed text-slate-600">{article.excerpt}</p>
-      </header>
+      {/* 文章标题 */}
+      <h1 className="mb-4 text-3xl font-bold text-slate-900">
+        {article.title}
+      </h1>
 
-      <div className="space-y-5">
-        {article.content.map((paragraph, index) => (
-          <p key={index} className="text-base leading-8 text-slate-700">
-            {paragraph}
-          </p>
-        ))}
+      {/* 文章基础信息 */}
+      <div className="mb-8 flex flex-wrap gap-3 text-sm text-slate-500">
+        <span>分类：{category?.name ?? "未知分类"}</span>
+        <span>阅读时间：约 3 分钟</span>
       </div>
 
-      <footer className="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-        <p className="text-sm text-slate-600">
-          以上内容仅供参考，具体政策与要求请以官方及院校最新信息为准。
-        </p>
-        <Link
-          href="/articles"
-          className="mt-4 inline-flex items-center text-sm font-medium text-sky-600 hover:text-sky-800"
-        >
-          ← 返回文章列表
-        </Link>
-      </footer>
-    </article>
+      {/* 文章简介 */}
+      <p className="mb-8 rounded-xl bg-slate-50 p-4 leading-7 text-slate-700">
+        {article.excerpt}
+      </p>
+
+      {/* 文章正文 */}
+      <article className="leading-8 text-slate-800">
+        {article.content}
+      </article>
+    </main>
   );
 }
