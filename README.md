@@ -88,6 +88,16 @@ https://study-abroad-consulting.vercel.app
 
 ------
 
+## 产品蓝图文档
+
+本项目已经新增产品规划文档，用于记录后续开发方向、目标用户、功能规划、盈利模式、社区机制和安全策略。
+
+文档位置：
+
+```text
+docs/product-blueprint-v0.2.md
+```
+
 ## 项目结构
 
 ```
