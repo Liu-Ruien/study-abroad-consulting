@@ -14,11 +14,37 @@ export type Article = {
 // 分类数据
 // 注意：slug 必须和文章里的 category 字段保持一致
 export const categories = [
-  { name: "日本留学", slug: "japan-study" },
-  { name: "新西兰留学", slug: "new-zealand-study" },
-  { name: "签证指南", slug: "visa-guide" },
-  { name: "海外生活", slug: "overseas-life" },
+  {
+    name: "日本留学",
+    slug: "japan-study",
+    description: "整理日本语言学校、留学费用、打工规则、租房生活等实用信息。",
+  },
+  {
+    name: "新西兰留学",
+    slug: "new-zealand-study",
+    description: "介绍新西兰留学适合人群、生活成本、学习环境和基础准备。",
+  },
+  {
+    name: "签证指南",
+    slug: "visa-guide",
+    description: "整理出国前材料准备、签证申请流程和常见注意事项。",
+  },
+  {
+    name: "海外生活",
+    slug: "overseas-life",
+    description: "介绍银行卡、电话卡、租房、生活适应等海外生活基础内容。",
+  },
 ];
+
+// 根据分类 slug 获取分类中文名称
+// 输入：分类 slug，例如 "japan-study"
+// 输出：分类中文名称，例如 "日本留学"
+// 如果找不到分类，则返回 "未知分类"
+export function getCategoryName(categorySlug: string): string {
+  const category = categories.find((item) => item.slug === categorySlug);
+
+  return category ? category.name : "未知分类";
+}
 
 // 文章数据
 // 注意：每篇文章的 category 必须填写上方 categories 中存在的 slug
