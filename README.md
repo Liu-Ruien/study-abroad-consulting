@@ -1,36 +1,323 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 出国咨询信息整理平台
 
-## Getting Started
+这是一个个人开发的出国咨询信息整理网站，主要面向准备出国留学、生活或办理签证的人群。
 
-First, run the development server:
+当前项目为 MVP 版本，主要提供免费的出国相关信息内容，后续计划逐步加入 AI 问答、付费咨询、用户登录和预约功能。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 在线访问
+
+网站已部署到 Vercel：
+
+https://study-abroad-consulting.vercel.app
+
+---
+
+## 项目定位
+
+本项目希望解决的问题是：
+
+- 出国信息分散，不方便系统查看
+- 新手用户不知道从哪里开始准备
+- 留学、签证、生活类内容需要按主题整理
+- 后期可以扩展为 AI 咨询和付费咨询平台
+
+当前版本重点是先完成一个可以运行、可以上线、可以展示的内容网站 MVP。
+
+---
+
+## 当前已实现功能
+
+### 首页
+
+- 网站介绍
+- 内容分类入口
+- 推荐文章展示
+- 跳转到全部文章页
+
+### 文章系统
+
+- 文章列表页
+- 文章详情页
+- 支持根据文章 slug 访问单篇文章
+
+示例：
+
+```text
+/articles/nz-study-suitable
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 分类系统
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+当前支持四个分类：
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 日本留学
+- 新西兰留学
+- 签证指南
+- 海外生活
 
-## Learn More
+分类页示例：
 
-To learn more about Next.js, take a look at the following resources:
+```
+/categories/japan-study
+/categories/new-zealand-study
+/categories/visa-guide
+/categories/overseas-life
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 搜索与筛选
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+文章列表页支持：
 
-## Deploy on Vercel
+- 关键词搜索
+- 分类筛选
+- 搜索结果数量提示
+- 无结果提示
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+------
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 技术栈
+
+- Next.js 16
+- React
+- TypeScript
+- Tailwind CSS
+- Git / GitHub
+- Vercel
+
+------
+
+## 项目结构
+
+```
+app/
+  page.tsx                    首页
+  about/
+    page.tsx                  关于页面
+  articles/
+    page.tsx                  文章列表页
+    [slug]/
+      page.tsx                文章详情页
+  categories/
+    [category]/
+      page.tsx                分类文章页
+
+components/
+  Navbar.tsx                  顶部导航栏
+  Footer.tsx                  底部导航栏
+  ArticleCard.tsx             文章卡片组件
+  ArticleSearch.tsx           文章搜索与筛选组件
+
+lib/
+  articles.ts                 文章数据和分类数据
+```
+
+------
+
+## 核心模块说明
+
+### 文章数据模块
+
+文件：
+
+```
+lib/articles.ts
+```
+
+作用：
+
+- 存放文章数据
+- 存放分类数据
+- 提供分类名称查询方法
+
+输入：
+
+- 文章 slug
+- 分类 slug
+
+输出：
+
+- 文章内容
+- 分类名称
+- 分类文章列表
+
+------
+
+### 文章列表模块
+
+文件：
+
+```
+app/articles/page.tsx
+components/ArticleSearch.tsx
+```
+
+作用：
+
+- 展示全部文章
+- 支持关键词搜索
+- 支持分类筛选
+
+输入：
+
+- 用户输入的搜索关键词
+- 用户选择的分类
+
+输出：
+
+- 过滤后的文章列表
+
+------
+
+### 文章详情模块
+
+文件：
+
+```
+app/articles/[slug]/page.tsx
+```
+
+作用：
+
+- 根据 URL 中的 slug 展示对应文章详情
+
+输入：
+
+```
+/articles/文章slug
+```
+
+输出：
+
+- 文章标题
+- 文章简介
+- 文章分类
+- 文章正文
+
+------
+
+### 分类页面模块
+
+文件：
+
+```
+app/categories/[category]/page.tsx
+```
+
+作用：
+
+- 根据分类 slug 展示对应分类下的文章
+
+输入：
+
+```
+/categories/分类slug
+```
+
+输出：
+
+- 分类名称
+- 当前分类下的文章数量
+- 当前分类下的文章列表
+
+------
+
+## 本地运行方式
+
+安装依赖：
+
+```
+npm install
+```
+
+启动开发环境：
+
+```
+npm run dev
+```
+
+本地访问：
+
+```
+http://localhost:3000
+```
+
+------
+
+## 构建检查
+
+上线前可以运行：
+
+```
+npm run build
+```
+
+当前项目已经通过生产构建检查，可以正常部署到 Vercel。
+
+------
+
+## 已完成阶段
+
+### 第一阶段：MVP 基础版本
+
+- 创建 Next.js 项目
+- 完成首页
+- 完成文章列表页
+- 完成基础分类结构
+
+### 第二阶段：产品化优化
+
+- 修复文章详情页
+- 修复分类页
+- 完成搜索和筛选
+- 优化首页 UI
+- 优化文章卡片 UI
+- 完成 GitHub 上传
+- 完成 Vercel 部署
+
+------
+
+## 后续开发计划
+
+### 第三阶段：AI 问答页面
+
+计划新增 AI 问答入口，让用户可以输入出国相关问题，并获得基础回答。
+
+### 第四阶段：用户系统
+
+计划新增：
+
+- 登录
+- 注册
+- 用户提问记录
+- 收藏文章
+
+### 第五阶段：付费功能
+
+计划新增：
+
+- 免费提问次数
+- 付费解锁更多提问
+- 预约一对一咨询
+
+### 第六阶段：后台管理
+
+计划新增：
+
+- 后台发布文章
+- 后台编辑文章
+- 后台管理分类
+
+------
+
+## 项目状态
+
+当前项目已经完成：
+
+- 本地开发
+- Git 版本管理
+- GitHub 上传
+- Vercel 部署上线
+
+当前版本适合作为个人开发项目、作品展示和后续功能扩展基础。
