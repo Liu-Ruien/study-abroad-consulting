@@ -6,10 +6,11 @@
 import Link from "next/link";
 import { categories } from "@/lib/articles";
 
-// 主导航链接
+// 主导航链接配置
 const navLinks = [
   { href: "/", label: "首页" },
   { href: "/articles", label: "全部文章" },
+  { href: "/plan", label: "路线规划" },
   { href: "/about", label: "关于" },
 ];
 
@@ -38,7 +39,7 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* 移动端简单菜单 */}
+        {/* 移动端菜单 */}
         <details className="relative md:hidden">
           <summary className="cursor-pointer list-none rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700">
             菜单
