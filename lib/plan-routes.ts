@@ -446,6 +446,16 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
     educationText.includes(keyword)
   );
 
+  const isHighSchoolOrBelow = [
+    "无学历",
+    "无",
+    "小学",
+    "初中",
+    "高中",
+    "中专",
+    "职高",
+  ].some((keyword) => educationText.includes(keyword));
+
   const hasUnclearMajor =
     majorText === "" ||
     ["无", "没有", "无专业", "无明确方向", "不知道"].some((keyword) =>
@@ -464,7 +474,7 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
   // 只要同时满足：50岁以上 + 学历弱 + 低预算 + 语言弱，
   // 就不应该继续硬推留学、职业教育或长期发展路线。
   const isSevereRiskProfile =
-    isVeryOlderUser && isLowEducation && isLowBudget && isWeakLanguage;
+    isVeryOlderUser && isHighSchoolOrBelow && isLowBudget && isWeakLanguage;
 
   if (isSevereRiskProfile) {
     return [];
@@ -619,6 +629,23 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
       addPenalty("语言基础较弱，该路线语言门槛较高", 5);
     }
 
+    // 扣分：中高龄用户整体风险
+    if (isOlderUser && isWeakLanguage) {
+      addPenalty("年龄偏高且语言基础较弱，海外学习和生活适应压力较大", 4);
+    }
+
+    if (isOlderUser && isHighSchoolOrBelow) {
+      addPenalty("年龄偏高且学历背景不高，需要先做申请可行性评估", 4);
+    }
+
+    if (isOlderUser && hasUnclearMajor) {
+      addPenalty("年龄偏高且专业或工作方向不清晰，后续衔接风险较高", 3);
+    }
+
+    if (isOlderUser && form.budgetLevel !== "high") {
+      addPenalty("年龄偏高且预算不算充足，试错空间较小", 3);
+    }
+
     // 扣分：不希望打工
     if (
       doesNotWantPartTimeJob &&
@@ -668,16 +695,30 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
       matchScore = Math.min(matchScore, 58);
     }
 
+    if (isOlderUser && form.budgetLevel !== "high") {
+      matchScore = Math.min(matchScore, 60);
+    }
+
+    if (isOlderUser && isWeakLanguage && isHighSchoolOrBelow) {
+      matchScore = Math.min(matchScore, 55);
+    }
+
+    if (isOlderUser && isWeakLanguage && isHighSchoolOrBelow && hasUnclearMajor) {
+      matchScore = Math.min(matchScore, 50);
+    }
+
     if (isLowBudget && prefersEurope) {
       matchScore = Math.min(matchScore, 55);
     }
 
-    if (isVeryOlderUser && isLowEducation && isLowBudget) {
+    if (isVeryOlderUser && isHighSchoolOrBelow && isLowBudget) {
       matchScore = Math.min(matchScore, 42);
     }
 
     const matchReasons =
-      reasons.length > 0 ? reasons.slice(0, 3) : warnings.slice(0, 3);
+  warnings.length > 0
+    ? [...warnings.slice(0, 2), ...reasons.slice(0, 1)]
+    : reasons.slice(0, 3);
 
     return {
       ...route,

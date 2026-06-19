@@ -100,6 +100,8 @@ export default function PlanPage() {
     return getRecommendedRoutes(submittedForm);
   }, [submittedForm]);
 
+  const hasRecommendedRoutes = recommendedRoutes.length > 0;
+
   // 用户画像只根据“已提交的表单快照”生成
   const profileSummary = useMemo(() => {
     return createUserProfileSummary(submittedForm);
@@ -952,14 +954,18 @@ export default function PlanPage() {
               {/* 推荐总结 */}
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <p className="mb-2 text-sm font-medium text-sky-700">
-                  推荐理由总结
+                  {hasRecommendedRoutes ? "推荐理由总结" : "风险评估提示"}
                 </p>
 
-                <h2 className="mb-3 text-2xl font-bold text-slate-900">
-                  初步推荐路线
+                <h2 className="mb-4 text-2xl font-bold text-slate-900">
+                  {hasRecommendedRoutes ? "初步推荐路线" : "当前条件风险较高"}
                 </h2>
 
-                <p className="leading-8 text-slate-600">{insightSummary}</p>
+                <p className="leading-8 text-slate-600">
+                  {hasRecommendedRoutes
+                    ? insightSummary
+                    : "根据你填写的信息，当前条件暂未匹配到可靠路线。建议先重新评估预算、语言能力、学历或技能方向、目标国家和长期计划，再决定是否继续推进出国方案。"}
+                </p>
               </div>
 
               {/* 推荐路线为空时的兜底提示 */}
@@ -970,12 +976,12 @@ export default function PlanPage() {
                   </p>
 
                   <h3 className="mb-3 text-2xl font-bold text-slate-900">
-                    当前条件下没有生成推荐路线
+                    当前不建议直接选择具体路线
                   </h3>
 
                   <p className="leading-8 text-slate-600">
-                    你可以尝试放宽预算、国家偏好或低预算过渡路线选项，再重新生成路线建议。
-                    当前版本仍是本地规则原型，后续会接入更完整的路线库和 AI 分析。
+                    根据你填写的信息，当前条件存在较高不确定性。建议先提升语言能力、明确职业或学习方向，
+                    并重新评估预算和目标国家可行性，再生成具体路线建议。
                   </p>
                 </div>
               )}
