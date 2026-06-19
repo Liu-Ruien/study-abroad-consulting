@@ -51,6 +51,10 @@ export default function PlanPage() {
   // 是否已经点击过“生成路线建议”
   const [submitted, setSubmitted] = useState(false);
 
+const resultRef = useRef<HTMLDivElement | null>(null);
+const [formError, setFormError] = useState("");
+const [isGenerating, setIsGenerating] = useState(false);
+
   // 已提交用于生成结果的表单快照
   // 注意：右侧结果必须使用 submittedForm，而不是 form
   const [submittedForm, setSubmittedForm] =
@@ -63,12 +67,6 @@ export default function PlanPage() {
   // 复制结果后的提示文字
   // 例如：已复制到剪贴板
     const [copyStatus, setCopyStatus] = useState("");
-
-  // 表单错误提示
-   const [formError, setFormError] = useState("");
-
-  // 结果区域引用，用于点击生成后自动滚动到结果区
-    const resultRef = useRef<HTMLDivElement | null>(null);
 
 // 判断左侧表单是否在生成结果后又被修改过
 // 如果修改过，就提示用户需要重新点击生成按钮
@@ -136,29 +134,39 @@ const profileText = profileSummary.join("\n");
 function handleSubmit(event: FormEvent<HTMLFormElement>) {
   event.preventDefault();
 
-  // 简单校验：至少填写年龄、学历、专业方向中的任意两项
-  const filledBasicFields = [form.age, form.education, form.major].filter(
-    (item) => item.trim() !== ""
-  ).length;
+  const ageNumber = Number(form.age);
 
-  if (filledBasicFields < 2) {
-    setFormError("请至少填写年龄、学历、专业方向中的任意两项，再生成路线建议。");
+  if (!form.age || Number.isNaN(ageNumber) || ageNumber < 16 || ageNumber > 65) {
+    setFormError("请填写有效年龄，建议范围为 16 - 65 岁。");
+    setSubmitted(false);
+    return;
+  }
+
+  if (!form.education || !form.major) {
+    setFormError("请先填写当前学历和专业方向 / 工作方向。");
+    setSubmitted(false);
     return;
   }
 
   setFormError("");
-  setSubmittedForm(form);
+  setIsGenerating(true);
+
+  const snapshot = { ...form };
+
+  window.setTimeout(() => {
+  setSubmittedForm(snapshot);
   setSubmittedAt(new Date());
   setSubmitted(true);
+  setIsGenerating(false);
   setCopyStatus("");
 
-  // 生成结果后自动滚动到右侧结果区域
-  setTimeout(() => {
-    resultRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, 100);
+    window.setTimeout(() => {
+      resultRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 80);
+  }, 500);
 }
 
 // 重置时，同时清空当前表单、已提交结果、生成时间和提示信息
@@ -168,6 +176,7 @@ function handleReset() {
   setSubmitted(false);
   setSubmittedAt(null);
   setFormError("");
+  setIsGenerating(false);
   setCopyStatus("");
 }
 
@@ -723,18 +732,12 @@ function splitProfileText(text: string) {
               </select>
             </div>
 
-	{formError && (
-	  <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 	text-sm leading-6 text-rose-700">
-   	 {formError}
- 	 </div>
-	)}
-
             <div className="flex gap-3 pt-2">
               <button
                 type="submit"
                 className="flex-1 rounded-xl bg-sky-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-sky-700"
               >
-                生成路线建议
+                {isGenerating ? "正在生成路线..." : submitted ? "重新生成路线建议" : "生成路线建议"}
               </button>
 
               <button
@@ -745,6 +748,11 @@ function splitProfileText(text: string) {
                 重置
               </button>
             </div>
+            {formError && (
+ 	 <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 	py-3 text-sm leading-6 text-red-700">
+ 	   {formError}
+  	</div>
+	)}
           </form>
         </section>
 
