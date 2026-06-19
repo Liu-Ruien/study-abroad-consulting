@@ -284,7 +284,7 @@ export default function PlanPage() {
   }
 
   return (
-    <main className="plan-page-root mx-auto max-w-6xl px-6 py-12">
+    <main className="plan-page-root mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
       {/* PDF 专用报告区域：网页正常浏览时隐藏，只有打印 / 保存 PDF 时显示 */}
       {submitted && (
         <section className="pdf-report-only">
@@ -543,25 +543,25 @@ export default function PlanPage() {
         </section>
       )}
       {/* 页面头部 */}
-      <section className="mb-10 rounded-3xl bg-gradient-to-br from-sky-50 to-white px-8 py-12">
+      <section className="mb-8 rounded-3xl bg-gradient-to-br from-sky-50 to-white px-6 py-9 sm:mb-10 sm:px-8 sm:py-12">
         <p className="mb-4 inline-block rounded-full bg-sky-100 px-4 py-1 text-sm font-medium text-sky-700">
           第三阶段优化 · 路线规划结果增强
         </p>
 
-        <h1 className="mb-5 text-4xl font-bold leading-tight text-slate-900">
+        <h1 className="mb-4 text-3xl font-bold leading-tight text-slate-900 sm:mb-5 sm:text-4xl">
           找到适合你的出国路线
         </h1>
 
-        <p className="max-w-3xl leading-8 text-slate-600">
+        <p className="max-w-3xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
           根据你的年龄、学历、专业、预算、语言能力和目标偏好，系统会先用本地规则给出几条初步路线建议。
           当前版本是产品原型，不代表最终申请结论，后续会逐步接入 AI 问答、真实案例和人工咨询。
         </p>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-[420px_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[420px_1fr] lg:gap-8">
         {/* 左侧表单 */}
-        <section className="no-print rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-2 text-2xl font-bold text-slate-900">
+        <section className="no-print rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <h2 className="mb-2 text-xl font-bold text-slate-900 sm:text-2xl">
             填写你的基本情况
           </h2>
 
@@ -569,7 +569,7 @@ export default function PlanPage() {
             信息不用特别精确，先填写大概情况即可。后续版本会支持生成更详细的路线报告。
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
                 年龄
@@ -792,12 +792,12 @@ export default function PlanPage() {
             </div>
           )}
           {!submitted ? (
-            <div className="rounded-3xl border border-dashed border-sky-200 bg-gradient-to-br from-sky-50 to-white p-8">
+            <div className="rounded-3xl border border-dashed border-sky-200 bg-gradient-to-br from-sky-50 to-white p-5 sm:p-8">
               <p className="mb-3 text-sm font-medium text-sky-700">
                 开始规划前
               </p>
 
-              <h2 className="mb-4 text-2xl font-bold text-slate-900">
+              <h2 className="mb-4 text-xl font-bold text-slate-900 sm:text-2xl">
                 你的路线建议会显示在这里
               </h2>
 
