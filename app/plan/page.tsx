@@ -56,6 +56,14 @@ export default function PlanPage() {
   const [submittedForm, setSubmittedForm] =
     useState<PlanFormState>(initialForm);
 
+  // 路线结果生成时间
+  // 用于告诉用户当前结果是哪一次生成的
+    const [submittedAt, setSubmittedAt] = useState<Date | null>(null);
+
+  // 复制结果后的提示文字
+  // 例如：已复制到剪贴板
+    const [copyStatus, setCopyStatus] = useState("");
+
   // 表单错误提示
    const [formError, setFormError] = useState("");
 
@@ -81,6 +89,37 @@ const isResultOutdated =
   const insightSummary = useMemo(() => {
     return createPlanInsightSummary(submittedForm);
   }, [submittedForm]);
+
+  // 生成可以复制给用户保存的路线规划摘要文本
+// 注意：这里生成的是纯文本，方便复制到微信、备忘录或文档中
+const planResultText = useMemo(() => {
+  if (!submitted) {
+    return "";
+  }
+
+  // 用户基础画像文本
+// profileSummary 在当前项目中是字符串数组，所以直接拼接即可
+const profileText = profileSummary.join("\n");
+
+  // 推荐路线标题列表
+  const routeTitles = recommendedRoutes
+    .map((route, index) => `${index + 1}. ${route.title}`)
+    .join("\n");
+
+  return [
+    "出国咨询信息整理平台 - 路线规划初步建议",
+    "",
+    `生成时间：${submittedAt ? submittedAt.toLocaleString("zh-CN") : "未记录"}`,
+    "",
+    "【用户基础信息】",
+    profileText || "暂无用户基础信息",
+    "",
+    "【初步推荐路线】",
+    routeTitles || "暂无推荐路线",
+    "",
+    "重要提示：本结果基于本地规则生成，仅适合作为初步参考，不代表最终申请建议。实际申请前仍需结合政策、预算、语言能力、学历背景和个人情况进一步确认。",
+  ].join("\n");
+}, [submitted, submittedAt, profileSummary, recommendedRoutes]);
 
   function updateField<K extends keyof PlanFormState>(
     key: K,
@@ -109,7 +148,9 @@ function handleSubmit(event: FormEvent<HTMLFormElement>) {
 
   setFormError("");
   setSubmittedForm(form);
+  setSubmittedAt(new Date());
   setSubmitted(true);
+  setCopyStatus("");
 
   // 生成结果后自动滚动到右侧结果区域
   setTimeout(() => {
@@ -120,16 +161,378 @@ function handleSubmit(event: FormEvent<HTMLFormElement>) {
   }, 100);
 }
 
-// 重置时，同时清空当前表单、已提交结果和错误提示
+// 重置时，同时清空当前表单、已提交结果、生成时间和提示信息
 function handleReset() {
   setForm(initialForm);
   setSubmittedForm(initialForm);
   setSubmitted(false);
+  setSubmittedAt(null);
   setFormError("");
+  setCopyStatus("");
+}
+
+// 复制路线规划结果摘要
+async function handleCopyResult() {
+  if (!planResultText) {
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(planResultText);
+    setCopyStatus("路线规划摘要已复制，可以粘贴到微信、备忘录或文档中。");
+  } catch {
+    setCopyStatus("复制失败，请手动选择页面内容复制。");
+  }
+
+  setTimeout(() => {
+    setCopyStatus("");
+  }, 3000);
+}
+
+// 打印 / 保存 PDF
+function handlePrintResult() {
+  window.print();
+}
+
+// PDF 报告专用路线类型
+// 说明：这里使用 Record<string, unknown> 是为了避免路线字段变化导致 TypeScript 报错
+type PrintableRoute = Record<string, unknown>;
+
+// PDF 报告使用的路线数据
+const pdfRoutes = recommendedRoutes as unknown as PrintableRoute[];
+
+// 从路线对象中安全读取文本
+// 作用：不同路线字段名可能不同，这里统一做兼容处理
+function readRouteText(
+  route: PrintableRoute,
+  keys: string[],
+  fallback: string
+) {
+  for (const key of keys) {
+    const value = route[key];
+
+    if (typeof value === "string" && value.trim()) {
+      return value;
+    }
+
+    if (typeof value === "number") {
+      return String(value);
+    }
+  }
+
+  return fallback;
+}
+
+// 从路线对象中安全读取列表
+// 作用：兼容 suitableFor、advantages、risks、nextSteps 等数组字段
+function readRouteList(route: PrintableRoute, keys: string[]) {
+  for (const key of keys) {
+    const value = route[key];
+
+    if (Array.isArray(value)) {
+      return value
+        .map((item) => {
+          if (typeof item === "string") {
+            return item;
+          }
+
+          if (item && typeof item === "object") {
+            const objectItem = item as Record<string, unknown>;
+            return String(
+              objectItem.title ||
+                objectItem.label ||
+                objectItem.name ||
+                objectItem.text ||
+                ""
+            );
+          }
+
+          return "";
+        })
+        .filter(Boolean);
+    }
+  }
+
+  return [];
+}
+
+// 把用户基础画像文本拆成“标题 + 内容”
+// 例如：年龄：22 岁左右
+function splitProfileText(text: string) {
+  const parts = text.split(/：|:/);
+
+  if (parts.length >= 2) {
+    return {
+      label: parts[0],
+      value: parts.slice(1).join("："),
+    };
+  }
+
+  return {
+    label: "用户信息",
+    value: text,
+  };
 }
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-12">
+    <main className="plan-page-root mx-auto max-w-6xl px-6 py-12">
+      {/* PDF 专用报告区域：网页正常浏览时隐藏，只有打印 / 保存 PDF 时显示 */}
+{submitted && (
+  <section className="pdf-report-only">
+    {/* PDF 第 1 页：报告首页 */}
+    <section className="pdf-page pdf-cover-page">
+      <p className="pdf-kicker">出国咨询信息整理平台</p>
+
+      <h1 className="pdf-main-title">出国路线规划初步报告</h1>
+
+      <p className="pdf-subtitle">
+        本报告根据用户填写的基础信息和当前本地规则生成，用于帮助用户快速理解可选出国方向。
+      </p>
+
+      <div className="pdf-meta-box">
+        <div>
+          <span>生成时间</span>
+          <strong>
+            {submittedAt ? submittedAt.toLocaleString("zh-CN") : "暂无记录"}
+          </strong>
+        </div>
+
+        <div>
+          <span>报告性质</span>
+          <strong>初步路线建议</strong>
+        </div>
+
+        <div>
+          <span>推荐路线数量</span>
+          <strong>{pdfRoutes.length} 条</strong>
+        </div>
+      </div>
+
+      <h2 className="pdf-section-title">用户基础信息摘要</h2>
+
+      <div className="pdf-profile-grid">
+        {profileSummary.slice(0, 4).map((item, index) => {
+          const profile = splitProfileText(String(item));
+
+          return (
+            <div className="pdf-profile-item" key={`profile-${index}`}>
+              <span>{profile.label}</span>
+              <strong>{profile.value}</strong>
+            </div>
+          );
+        })}
+      </div>
+
+      <h2 className="pdf-section-title">推荐路线总览</h2>
+
+      <table className="pdf-route-table">
+        <thead>
+          <tr>
+            <th>排名</th>
+            <th>路线名称</th>
+            <th>国家 / 地区</th>
+            <th>预算</th>
+            <th>匹配度</th>
+            <th>风险</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {pdfRoutes.slice(0, 3).map((route, index) => {
+            const title = readRouteText(route, ["title", "name"], `推荐路线 ${index + 1}`);
+            const country = readRouteText(route, ["country", "countryName"], "综合路线");
+            const budget = readRouteText(route, ["budget", "budgetRange", "budgetLabel"], "待确认");
+            const risk = readRouteText(route, ["riskLevel", "risk", "riskLabel"], "中等");
+            const score = readRouteText(
+              route,
+              ["matchScore", "score", "suitabilityScore", "fitScore"],
+              "待评估"
+            );
+
+            return (
+              <tr key={`pdf-table-route-${index}`}>
+                <td>{index + 1}</td>
+                <td>{title}</td>
+                <td>{country}</td>
+                <td>{budget}</td>
+                <td>{score.includes("%") ? score : `${score}%`}</td>
+                <td>{risk}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      <div className="pdf-cover-notice">
+        <strong>重要说明：</strong>
+        本报告为系统根据当前信息生成的初步参考，不代表最终申请结论。实际选择路线前，仍需结合官方政策、预算、语言能力、学历背景和个人情况进一步确认。
+      </div>
+    </section>
+
+    {/* PDF 第 2 页开始：每条路线单独一页 */}
+    {pdfRoutes.slice(0, 3).map((route, index) => {
+      const title = readRouteText(route, ["title", "name"], `推荐路线 ${index + 1}`);
+      const country = readRouteText(route, ["country", "countryName"], "综合路线");
+      const budget = readRouteText(route, ["budget", "budgetRange", "budgetLabel"], "预算待确认");
+      const risk = readRouteText(route, ["riskLevel", "risk", "riskLabel"], "中等风险");
+      const description = readRouteText(
+        route,
+        ["description", "summary", "intro"],
+        "该路线适合作为出国方向的初步参考，需要结合个人条件继续确认。"
+      );
+      const score = readRouteText(
+        route,
+        ["matchScore", "score", "suitabilityScore", "fitScore"],
+        "待评估"
+      );
+
+      const matchReasons = readRouteList(route, [
+        "matchReasons",
+        "matchingReasons",
+        "reasons",
+        "reasonList",
+      ]).slice(0, 2);
+
+      const suitableFor = readRouteList(route, [
+        "suitableFor",
+        "targetUsers",
+        "audience",
+      ]).slice(0, 2);
+
+      const advantages = readRouteList(route, [
+        "advantages",
+        "benefits",
+        "strengths",
+      ]).slice(0, 2);
+
+      const risks = readRouteList(route, [
+        "risks",
+        "riskTips",
+        "riskReminders",
+      ]).slice(0, 2);
+
+      const nextSteps = readRouteList(route, [
+        "nextSteps",
+        "steps",
+        "actions",
+      ]).slice(0, 2);
+
+      return (
+        <section className="pdf-page pdf-route-page" key={`pdf-route-${index}`}>
+          <div className="pdf-route-header">
+            <p className="pdf-kicker">推荐路线 {index + 1}</p>
+            <h2 className="pdf-route-title">{title}</h2>
+
+            <div className="pdf-route-tags">
+              <span>{country}</span>
+              <span>{budget}</span>
+              <span>{risk}</span>
+              <span>{score.includes("%") ? score : `${score}%`} 匹配</span>
+            </div>
+          </div>
+
+          <div className="pdf-score-box">
+            <div>
+              <span>路线匹配度</span>
+              <strong>{score.includes("%") ? score : `${score}%`}</strong>
+            </div>
+            <div className="pdf-score-bar">
+              <div
+                style={{
+                  width: score === "待评估" ? "70%" : `${Number(score.replace("%", "")) || 70}%`,
+                }}
+              />
+            </div>
+          </div>
+
+          <section className="pdf-summary-box">
+            <h3>路线概述</h3>
+            <p>{description}</p>
+          </section>
+
+          <div className="pdf-two-column">
+            <section className="pdf-info-block">
+              <h3>推荐理由</h3>
+              <ul>
+                {(matchReasons.length ? matchReasons : ["与当前用户基础条件存在一定匹配度。"]).map(
+                  (item, itemIndex) => (
+                    <li key={`reason-${itemIndex}`}>{item}</li>
+                  )
+                )}
+              </ul>
+            </section>
+
+            <section className="pdf-info-block">
+              <h3>适合人群</h3>
+              <ul>
+                {(suitableFor.length ? suitableFor : ["适合希望获得明确出国方向的人群。"]).map(
+                  (item, itemIndex) => (
+                    <li key={`suitable-${itemIndex}`}>{item}</li>
+                  )
+                )}
+              </ul>
+            </section>
+
+            <section className="pdf-info-block">
+              <h3>路线优势</h3>
+              <ul>
+                {(advantages.length ? advantages : ["路线较清晰，适合继续深入了解。"]).map(
+                  (item, itemIndex) => (
+                    <li key={`advantage-${itemIndex}`}>{item}</li>
+                  )
+                )}
+              </ul>
+            </section>
+
+            <section className="pdf-info-block">
+              <h3>风险提醒</h3>
+              <ul>
+                {(risks.length ? risks : ["政策、预算和个人条件仍需进一步确认。"]).map(
+                  (item, itemIndex) => (
+                    <li key={`risk-${itemIndex}`}>{item}</li>
+                  )
+                )}
+              </ul>
+            </section>
+          </div>
+
+          <section className="pdf-next-box">
+            <h3>下一步建议</h3>
+            <ol>
+              {(nextSteps.length ? nextSteps : ["继续确认目标国家政策、预算和个人申请条件。"]).map(
+                (item, itemIndex) => (
+                  <li key={`step-${itemIndex}`}>{item}</li>
+                )
+              )}
+            </ol>
+          </section>
+
+        </section>
+      );
+    })}
+
+    {/* PDF 最后一页：免责声明 */}
+    <section className="pdf-page pdf-notice-page">
+      <p className="pdf-kicker">风险提示</p>
+      <h2 className="pdf-route-title">重要提醒与免责声明</h2>
+
+      <div className="pdf-disclaimer-list">
+        <p>
+          本报告由系统根据用户填写的信息和当前本地规则生成，仅用于帮助用户建立初步出国方向认知。
+        </p>
+        <p>
+          报告内容不构成正式申请建议、法律建议、移民建议或投资建议。
+        </p>
+        <p>
+          各国家和地区的留学、签证、就业和移民政策可能随时调整，最终应以官方机构、学校、使领馆及专业顾问的最新信息为准。
+        </p>
+        <p>
+          用户在做出真实申请、缴费、签约或出国决定前，应进一步核实政策、预算、语言要求、学历要求、签证条件和个人风险承受能力。
+        </p>
+      </div>
+    </section>
+  </section>
+)}
       {/* 页面头部 */}
       <section className="mb-10 rounded-3xl bg-gradient-to-br from-sky-50 to-white px-8 py-12">
         <p className="mb-4 inline-block rounded-full bg-sky-100 px-4 py-1 text-sm font-medium text-sky-700">
@@ -148,7 +551,7 @@ function handleReset() {
 
       <div className="grid gap-8 lg:grid-cols-[420px_1fr]">
         {/* 左侧表单 */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="no-print rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="mb-2 text-2xl font-bold text-slate-900">
             填写你的基本情况
           </h2>
@@ -346,7 +749,39 @@ function handleReset() {
         </section>
 
         {/* 右侧结果 */}
-        <section ref={resultRef} className="space-y-6 scroll-mt-28">
+        <section ref={resultRef} className="print-report space-y-6 scroll-mt-28">
+          {/* PDF 打印专用标题：网页浏览时隐藏，打印时显示 */}
+{submitted && (
+  <div className="print-only">
+    <p className="text-sm font-semibold text-sky-600">
+      出国咨询信息整理平台
+    </p>
+    <h1 className="mt-2 text-3xl font-bold text-slate-950">
+      出国路线规划初步报告
+    </h1>
+    <p className="mt-3 text-sm text-slate-600">
+      生成时间：
+      {submittedAt ? submittedAt.toLocaleString("zh-CN") : "暂无记录"}
+    </p>
+    <p className="mt-4 text-sm leading-7 text-slate-700">
+      本报告根据用户填写的基础信息和当前本地规则生成，仅作为初步方向参考，不代表最终申请建议。
+    </p>
+  </div>
+)}
+          {/* 打印 PDF 专用报告标题：网页浏览时隐藏，打印时显示 */}
+{submitted && (
+  <div className="print-only">
+    <p className="print-kicker">出国咨询信息整理平台</p>
+    <h1 className="print-title">出国路线规划初步报告</h1>
+    <p className="print-meta">
+      生成时间：
+      {submittedAt ? submittedAt.toLocaleString("zh-CN") : "暂无记录"}
+    </p>
+    <p className="print-desc">
+      本报告根据用户填写的基础信息和当前本地规则生成，仅作为出国路线初步参考，不代表最终申请建议。
+    </p>
+  </div>
+)}
           {!submitted ? (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-10">
               <h2 className="mb-3 text-2xl font-bold text-slate-900">
@@ -374,8 +809,49 @@ function handleReset() {
  	 </div>
 	)}
 
+	{submitted && (
+  <div className="no-print rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p className="text-xs font-medium text-slate-500">结果操作</p>
+        <h3 className="mt-1 text-lg font-semibold text-slate-950">
+          保存你的路线规划结果
+        </h3>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          生成时间：
+          {submittedAt ? submittedAt.toLocaleString("zh-CN") : "暂无记录"}
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <button
+          type="button"
+          onClick={handleCopyResult}
+          className="rounded-full bg-sky-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-700"
+        >
+          复制结果摘要
+        </button>
+
+        <button
+          type="button"
+          onClick={handlePrintResult}
+          className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+        >
+          打印 / 保存 PDF
+        </button>
+      </div>
+    </div>
+
+    {copyStatus && (
+      <p className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+        {copyStatus}
+      </p>
+    )}
+  </div>
+)}
+
               {/* 用户画像 */}
-              <div className="rounded-3xl border border-sky-100 bg-sky-50 p-6">
+              <div className="hidden no-print rounded-3xl border border-sky-100 bg-sky-50 p-6">
                 <p className="mb-2 text-sm font-medium text-sky-700">
                   你的基础画像
                 </p>

@@ -18,3 +18,598 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
+
+/* 网页正常浏览时隐藏 PDF 报告区域和打印专用区域 */
+.pdf-report-only,
+.print-only {
+  display: none;
+}
+
+/* ================================
+   PDF 报告专用打印样式 v0.3.4 修复版
+   目标：打印时只显示 PDF 报告，不显示网页本体
+================================ */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  body {
+    color: #0f172a !important;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      "Microsoft YaHei",
+      "PingFang SC",
+      sans-serif !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+    /* 隐藏普通网页结构 */
+  header,
+  footer,
+  nav,
+  .no-print,
+  .print-only {
+    display: none !important;
+  }
+
+  /* 只隐藏路线规划页面内部的普通内容，不要误伤外层布局 */
+  .plan-page-root > *:not(.pdf-report-only) {
+    display: none !important;
+  }
+
+    .plan-page-root {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 显示 PDF 专用报告 */
+  .pdf-report-only {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  .pdf-report-only > *:not(.pdf-page) {
+    display: none !important;
+  }
+
+  .pdf-report-only > .pdf-page {
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-height: 270mm !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    overflow: hidden !important;
+  }
+
+  .pdf-report-only > .pdf-page:last-of-type {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  .pdf-report-only > .pdf-page:empty {
+    display: none !important;
+  }
+
+  /* 封面页 */
+  .pdf-cover-page {
+    padding-top: 14mm !important;
+  }
+
+  .pdf-kicker {
+    margin: 0 0 10px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    color: #0284c7 !important;
+  }
+
+  .pdf-main-title {
+    margin: 0 !important;
+    font-size: 32px !important;
+    line-height: 1.25 !important;
+    font-weight: 850 !important;
+    color: #020617 !important;
+  }
+
+  .pdf-subtitle {
+    margin: 16px 0 0 !important;
+    max-width: 620px !important;
+    font-size: 13px !important;
+    line-height: 1.9 !important;
+    color: #475569 !important;
+  }
+
+  .pdf-meta-box {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+    margin-top: 28px !important;
+  }
+
+  .pdf-meta-box div {
+    border: 1px solid #dbeafe !important;
+    border-radius: 14px !important;
+    padding: 12px !important;
+    background: #f8fbff !important;
+  }
+
+  .pdf-meta-box span,
+  .pdf-profile-item span,
+  .pdf-score-box span {
+    display: block !important;
+    margin-bottom: 5px !important;
+    font-size: 10px !important;
+    color: #64748b !important;
+  }
+
+  .pdf-meta-box strong,
+  .pdf-profile-item strong {
+    display: block !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+  }
+
+  .pdf-section-title {
+    margin: 30px 0 12px !important;
+    font-size: 18px !important;
+    line-height: 1.4 !important;
+    font-weight: 800 !important;
+    color: #020617 !important;
+  }
+
+  .pdf-profile-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .pdf-profile-item {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 11px 12px !important;
+    background: #ffffff !important;
+  }
+
+  .pdf-profile-item:nth-child(n + 5) {
+    display: none !important;
+  }
+
+  .pdf-route-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 11px !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  .pdf-route-table th {
+    padding: 9px !important;
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+  }
+
+  .pdf-route-table td {
+    padding: 9px !important;
+    color: #334155 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .pdf-cover-notice {
+    margin-top: 26px !important;
+    border: 1px solid #fde68a !important;
+    border-radius: 14px !important;
+    padding: 14px !important;
+    background: #fffbeb !important;
+    color: #92400e !important;
+    font-size: 12px !important;
+    line-height: 1.8 !important;
+  }
+
+  /* 路线页 */
+  .pdf-route-page {
+    padding-top: 8mm !important;
+  }
+
+  .pdf-route-header {
+    padding-bottom: 12px !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+  }
+
+  .pdf-route-title {
+    margin: 0 !important;
+    font-size: 23px !important;
+    line-height: 1.35 !important;
+    font-weight: 850 !important;
+    color: #020617 !important;
+  }
+
+  .pdf-route-tags {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-top: 10px !important;
+  }
+
+  .pdf-route-tags span {
+    display: inline-flex !important;
+    align-items: center !important;
+    border: 1px solid #dbeafe !important;
+    border-radius: 999px !important;
+    padding: 4px 9px !important;
+    background: #f0f9ff !important;
+    color: #0369a1 !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+  }
+
+  .pdf-score-box {
+    margin-top: 14px !important;
+    border: 1px solid #dbeafe !important;
+    border-radius: 14px !important;
+    padding: 12px !important;
+    background: #f8fbff !important;
+  }
+
+  .pdf-score-box > div:first-child {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+
+  .pdf-score-box strong {
+    font-size: 18px !important;
+    color: #0284c7 !important;
+  }
+
+  .pdf-score-bar {
+    margin-top: 8px !important;
+    height: 7px !important;
+    border-radius: 999px !important;
+    background: #e2e8f0 !important;
+    overflow: hidden !important;
+  }
+
+  .pdf-score-bar div {
+    height: 100% !important;
+    border-radius: 999px !important;
+    background: #0284c7 !important;
+  }
+
+  .pdf-summary-box,
+  .pdf-next-box {
+    margin-top: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    padding: 12px !important;
+    background: #ffffff !important;
+  }
+
+  .pdf-summary-box h3,
+  .pdf-info-block h3,
+  .pdf-next-box h3 {
+    margin: 0 0 7px !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    color: #020617 !important;
+  }
+
+  .pdf-summary-box p {
+    margin: 0 !important;
+    font-size: 10.8px !important;
+    line-height: 1.75 !important;
+    color: #334155 !important;
+  }
+
+  .pdf-two-column {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 9px !important;
+    margin-top: 12px !important;
+  }
+
+  .pdf-info-block {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    padding: 11px !important;
+    background: #ffffff !important;
+  }
+
+  .pdf-info-block ul,
+  .pdf-next-box ol {
+    margin: 0 !important;
+    padding-left: 16px !important;
+  }
+
+  .pdf-info-block li,
+  .pdf-next-box li {
+    margin: 0 0 4px !important;
+    font-size: 10px !important;
+    line-height: 1.55 !important;
+    color: #334155 !important;
+  }
+
+  .pdf-info-block li:nth-child(n + 3),
+  .pdf-next-box li:nth-child(n + 3) {
+    display: none !important;
+  }
+
+  .pdf-reading-box {
+    display: none !important;
+  }
+
+  /* 免责声明页 */
+  .pdf-notice-page {
+    padding-top: 18mm !important;
+  }
+
+  .pdf-disclaimer-list {
+    margin-top: 20px !important;
+    border: 1px solid #fde68a !important;
+    border-radius: 16px !important;
+    padding: 18px !important;
+    background: #fffbeb !important;
+  }
+
+  .pdf-disclaimer-list p {
+    margin: 0 0 12px !important;
+    font-size: 12px !important;
+    line-height: 1.9 !important;
+    color: #92400e !important;
+  }
+
+  button {
+    display: none !important;
+  }
+
+  a {
+    color: #0369a1 !important;
+    text-decoration: none !important;
+  }
+}
+
+/* ================================
+   PDF 美化增强 v0.3.5
+   只影响打印 / 保存 PDF，不影响网页正常显示
+================================ */
+
+@media print {
+  .pdf-report-only {
+    counter-reset: pdf-page-counter;
+  }
+
+  .pdf-report-only > .pdf-page {
+    position: relative !important;
+    counter-increment: pdf-page-counter;
+    padding: 16mm 15mm 14mm !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0 !important;
+    background:
+      radial-gradient(circle at top right, rgba(14, 165, 233, 0.12), transparent 34%),
+      linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+  }
+
+  .pdf-report-only > .pdf-page::before {
+    content: "出国咨询 · 路线规划报告";
+    position: absolute;
+    top: 7mm;
+    right: 15mm;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+  }
+
+  .pdf-report-only > .pdf-page::after {
+    content: counter(pdf-page-counter);
+    position: absolute;
+    right: 15mm;
+    bottom: 8mm;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: #0ea5e9;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 22px;
+    text-align: center;
+  }
+
+  .pdf-cover-page {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    padding-top: 22mm !important;
+    background:
+      radial-gradient(circle at 85% 12%, rgba(14, 165, 233, 0.18), transparent 28%),
+      radial-gradient(circle at 12% 85%, rgba(56, 189, 248, 0.13), transparent 30%),
+      linear-gradient(180deg, #ffffff 0%, #f5fbff 100%) !important;
+  }
+
+  .pdf-cover-page .pdf-kicker {
+    display: inline-block !important;
+    width: fit-content !important;
+    border-radius: 999px !important;
+    padding: 6px 12px !important;
+    background: #e0f2fe !important;
+    color: #0369a1 !important;
+    font-size: 10px !important;
+  }
+
+  .pdf-main-title {
+    margin-top: 14px !important;
+    font-size: 34px !important;
+    letter-spacing: -0.04em !important;
+  }
+
+  .pdf-subtitle {
+    margin-top: 14px !important;
+    max-width: 660px !important;
+    font-size: 12px !important;
+    line-height: 1.8 !important;
+  }
+
+  .pdf-meta-box {
+    margin-top: 22px !important;
+  }
+
+  .pdf-meta-box div {
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .pdf-profile-grid {
+    margin-top: 10px !important;
+  }
+
+  .pdf-profile-item {
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.035) !important;
+  }
+
+  .pdf-route-table {
+    overflow: hidden !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .pdf-cover-notice {
+    margin-top: 22px !important;
+    box-shadow: 0 8px 18px rgba(245, 158, 11, 0.08) !important;
+  }
+
+  .pdf-route-page {
+    padding-top: 18mm !important;
+  }
+
+  .pdf-route-page::before {
+    content: "ROUTE " counter(pdf-page-counter);
+    position: absolute;
+    top: 8mm;
+    right: 15mm;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #bae6fd;
+  }
+
+  .pdf-route-page::after {
+    content: "建议核验：官方政策 · 预算明细 · 语言要求 · 学校/雇主资质 · 签证条件";
+    position: absolute;
+    left: 15mm;
+    right: 15mm;
+    bottom: 17mm;
+    height: 22mm;
+    box-sizing: border-box;
+    border: 1px solid #dbeafe;
+    border-radius: 18px;
+    padding: 9px 12px;
+    background: linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%);
+    color: #0369a1;
+    font-size: 10px;
+    line-height: 1.7;
+    text-align: left;
+  }
+
+  .pdf-route-header {
+    border-bottom: 2px solid #e0f2fe !important;
+  }
+
+  .pdf-route-title {
+    font-size: 25px !important;
+    letter-spacing: -0.03em !important;
+  }
+
+  .pdf-route-tags span {
+    background: #eff6ff !important;
+    border-color: #bfdbfe !important;
+    color: #0369a1 !important;
+  }
+
+  .pdf-score-box {
+    margin-top: 16px !important;
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%) !important;
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.08) !important;
+  }
+
+  .pdf-score-bar {
+    height: 8px !important;
+  }
+
+  .pdf-summary-box {
+    margin-top: 14px !important;
+    border-color: #dbeafe !important;
+    background: #ffffff !important;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.035) !important;
+  }
+
+  .pdf-two-column {
+    gap: 10px !important;
+    margin-top: 14px !important;
+  }
+
+  .pdf-info-block {
+    min-height: 38mm !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.03) !important;
+  }
+
+  .pdf-info-block h3,
+  .pdf-next-box h3,
+  .pdf-summary-box h3 {
+    color: #0f172a !important;
+  }
+
+  .pdf-next-box {
+    margin-top: 12px !important;
+    min-height: 24mm !important;
+    border-color: #dbeafe !important;
+    background: #f8fbff !important;
+  }
+
+  .pdf-notice-page {
+    padding-top: 28mm !important;
+    background:
+      radial-gradient(circle at 85% 18%, rgba(251, 191, 36, 0.16), transparent 30%),
+      linear-gradient(180deg, #ffffff 0%, #fffbeb 100%) !important;
+  }
+
+  .pdf-notice-page .pdf-route-title {
+    font-size: 28px !important;
+  }
+
+  .pdf-disclaimer-list {
+    margin-top: 24px !important;
+    padding: 22px !important;
+    box-shadow: 0 10px 24px rgba(245, 158, 11, 0.08) !important;
+  }
+
+  .pdf-disclaimer-list p {
+    font-size: 12px !important;
+    line-height: 2 !important;
+  }
+}
