@@ -435,23 +435,69 @@ export function createPlanInsightSummary(form: PlanFormState): string {
 
 // 根据用户输入计算推荐路线
 export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[] {
+  const ageNumber = Number(form.age);
+  const educationText = form.education.trim();
+  const majorText = form.major.trim();
+
+  const isOlderUser = !Number.isNaN(ageNumber) && ageNumber >= 45;
+  const isVeryOlderUser = !Number.isNaN(ageNumber) && ageNumber >= 50;
+
+  const isLowEducation = ["无学历", "无", "小学", "初中"].some((keyword) =>
+    educationText.includes(keyword)
+  );
+
+  const hasUnclearMajor =
+    majorText === "" ||
+    ["无", "没有", "无专业", "无明确方向", "不知道"].some((keyword) =>
+      majorText.includes(keyword)
+    );
+
+  const isLowBudget = form.budgetLevel === "low";
+  const isWeakLanguage =
+    form.languageLevel === "none" || form.languageLevel === "basic";
+  const prefersEurope = form.countryPreference === "europe";
+  const doesNotWantPartTimeJob = form.wantsPartTimeJob === "no";
+  const doesNotWantLongTermStay = form.wantsLongTermStay === "no";
+  const doesNotAcceptLowBudgetRoute = form.acceptsLowBudgetRoute === "no";
+
+  // 极高风险画像：不要硬推路线
+  // 只要同时满足：50岁以上 + 学历弱 + 低预算 + 语言弱，
+  // 就不应该继续硬推留学、职业教育或长期发展路线。
+  const isSevereRiskProfile =
+    isVeryOlderUser && isLowEducation && isLowBudget && isWeakLanguage;
+
+  if (isSevereRiskProfile) {
+    return [];
+  }
+
   const scoredRoutes = planRoutes.map((route) => {
     let score = 0;
+    let penalty = 0;
+
     const reasons: string[] = [];
+    const warnings: string[] = [];
 
     function addReason(reason: string, points: number) {
       score += points;
       reasons.push(reason);
     }
 
+    function addPenalty(reason: string, points: number) {
+      penalty += points;
+      warnings.push(reason);
+    }
+
+    // 加分：预算匹配
     if (form.budgetLevel !== "unknown" && route.budgetLevel === form.budgetLevel) {
-      addReason("预算区间与该路线较匹配", 4);
+      addReason("预算区间与该路线较匹配", 3);
     }
 
+    // 加分：接受低预算过渡路线
     if (form.acceptsLowBudgetRoute === "yes" && route.budgetLevel === "low") {
-      addReason("你接受低预算过渡路线", 3);
+      addReason("你接受低预算过渡路线", 2);
     }
 
+    // 加分：地区偏好匹配
     if (
       form.countryPreference === "asia" &&
       ["日本", "马来西亚", "菲律宾"].includes(route.country)
@@ -470,43 +516,181 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
       addReason("你的国家偏好更接近欧洲方向", 3);
     }
 
+    // 加分：打工意愿
     if (form.wantsPartTimeJob === "yes" && route.id === "japan-language-school") {
-      addReason("你希望边学习边打工，日本路线更适合作为当前内容库的重点参考", 2);
+      addReason("你希望边学习边打工，日本路线更适合作为重点参考", 2);
     }
 
+    // 加分：长期发展意愿
     if (
       form.wantsLongTermStay === "yes" &&
-      ["new-zealand-study", "germany-dual-system", "japan-language-school"].includes(route.id)
+      ["new-zealand-study", "germany-dual-system", "japan-language-school"].includes(
+        route.id
+      )
     ) {
       addReason("你有长期发展想法，该路线更适合作为长期规划方向", 2);
     }
 
+    // 加分：语言较弱时，低门槛过渡路线略加分
     if (
       form.languageLevel === "none" &&
-      ["japan-language-school", "philippines-language", "malaysia-study"].includes(route.id)
+      ["philippines-language", "malaysia-study"].includes(route.id)
     ) {
-      addReason("你的语言基础较弱，该路线更适合作为过渡选择", 2);
+      addReason("你的语言基础较弱，该路线可作为低门槛过渡参考", 1);
     }
 
+    // 加分：语言较好时，高要求路线略加分
     if (
       ["intermediate", "advanced"].includes(form.languageLevel) &&
-      ["new-zealand-study", "australia-study-work", "germany-dual-system"].includes(route.id)
+      ["new-zealand-study", "australia-study-work", "germany-dual-system"].includes(
+        route.id
+      )
     ) {
       addReason("你的语言能力较好，可以考虑要求更高的路线", 2);
     }
 
-    if (reasons.length === 0) {
-      reasons.push("该路线可作为备选方向，用于进一步比较预算、语言和长期发展可能性");
+    // 扣分：低预算不适合中高预算路线
+    if (isLowBudget && route.budgetLevel === "medium") {
+      addPenalty("当前预算偏低，该路线仍可能存在资金压力", 3);
     }
 
-    const matchScore = Math.min(96, Math.max(62, 56 + score * 6));
+    if (isLowBudget && route.budgetLevel === "high") {
+      addPenalty("当前预算偏低，该路线资金压力较大", 6);
+    }
+
+    // 扣分：欧洲偏好与非欧洲路线不匹配
+    if (prefersEurope && route.country !== "德国") {
+      addPenalty("你的地区偏好为欧洲，该路线地区匹配度较低", 3);
+    }
+
+    // 扣分：欧洲路线语言要求更高
+    if (prefersEurope && route.country === "德国" && isWeakLanguage) {
+      addPenalty("欧洲职业教育通常对语言准备要求更高", 5);
+    }
+
+    // 扣分：年龄偏高
+    if (
+      isVeryOlderUser &&
+      ["japan-language-school", "new-zealand-study", "australia-study-work", "germany-dual-system"].includes(
+        route.id
+      )
+    ) {
+      addPenalty("年龄偏高，该路线申请和后续规划不确定性较高", 6);
+    } else if (
+      isOlderUser &&
+      ["japan-language-school", "new-zealand-study", "australia-study-work", "germany-dual-system"].includes(
+        route.id
+      )
+    ) {
+      addPenalty("年龄因素会提高该路线的申请和后续规划难度", 3);
+    }
+
+    // 扣分：学历较弱
+    if (
+      isLowEducation &&
+      ["new-zealand-study", "australia-study-work", "germany-dual-system"].includes(
+        route.id
+      )
+    ) {
+      addPenalty("学历背景较弱，该路线申请门槛可能偏高", 6);
+    }
+
+    if (isLowEducation && route.id === "japan-language-school") {
+      addPenalty("学历背景较弱，需要先核实学校和签证要求", 4);
+    }
+
+    // 扣分：专业方向不明确
+    if (
+      hasUnclearMajor &&
+      ["new-zealand-study", "australia-study-work", "germany-dual-system"].includes(
+        route.id
+      )
+    ) {
+      addPenalty("专业或工作方向不明确，该路线后续衔接风险较高", 4);
+    }
+
+    // 扣分：语言弱
+    if (
+      isWeakLanguage &&
+      ["new-zealand-study", "australia-study-work", "germany-dual-system"].includes(
+        route.id
+      )
+    ) {
+      addPenalty("语言基础较弱，该路线语言门槛较高", 5);
+    }
+
+    // 扣分：不希望打工
+    if (
+      doesNotWantPartTimeJob &&
+      ["japan-language-school", "australia-study-work"].includes(route.id)
+    ) {
+      addPenalty("你不希望打工，该路线的资金压力需要重新评估", 3);
+    }
+
+    // 扣分：不希望长期留在海外
+    if (
+      doesNotWantLongTermStay &&
+      ["new-zealand-study", "australia-study-work", "germany-dual-system"].includes(
+        route.id
+      )
+    ) {
+      addPenalty("你暂不考虑长期留在海外，该路线长期投入成本较高", 2);
+    }
+
+    // 扣分：不接受低预算过渡路线
+    if (doesNotAcceptLowBudgetRoute && route.budgetLevel === "low") {
+      addPenalty("你不接受低预算过渡路线，该路线匹配度下降", 4);
+    }
+
+    let rawScore = 50 + score * 5 - penalty * 6;
+
+    // 全局风险扣分：用户整体条件较弱
+    if (isOlderUser && isLowEducation) {
+      rawScore -= 15;
+    }
+
+    if (isLowBudget && prefersEurope) {
+      rawScore -= 15;
+    }
+
+    if (isWeakLanguage && prefersEurope) {
+      rawScore -= 10;
+    }
+
+    if (isVeryOlderUser && isLowEducation && isLowBudget) {
+      rawScore -= 20;
+    }
+
+    let matchScore = Math.min(96, Math.max(0, rawScore));
+
+    // 高风险画像不允许出现高匹配度
+    if (isOlderUser && isLowEducation) {
+      matchScore = Math.min(matchScore, 58);
+    }
+
+    if (isLowBudget && prefersEurope) {
+      matchScore = Math.min(matchScore, 55);
+    }
+
+    if (isVeryOlderUser && isLowEducation && isLowBudget) {
+      matchScore = Math.min(matchScore, 42);
+    }
+
+    const matchReasons =
+      reasons.length > 0 ? reasons.slice(0, 3) : warnings.slice(0, 3);
 
     return {
       ...route,
       matchScore,
-      matchReasons: reasons.slice(0, 3),
+      matchReasons:
+        matchReasons.length > 0
+          ? matchReasons
+          : ["该路线仅作为备选方向，需要进一步核实个人条件和政策要求"],
     };
   });
 
-  return scoredRoutes.sort((a, b) => b.matchScore - a.matchScore).slice(0, 3);
+  return scoredRoutes
+    .filter((route) => route.matchScore >= 45)
+    .sort((a, b) => b.matchScore - a.matchScore)
+    .slice(0, 3);
 }

@@ -75,6 +75,28 @@ export default function PlanPage() {
 
   // 推荐路线只根据“已提交的表单快照”生成
   const recommendedRoutes = useMemo(() => {
+    const ageNumber = Number(submittedForm.age);
+    const educationText = submittedForm.education.trim();
+
+    const isVeryOlderUser =
+      !Number.isNaN(ageNumber) && ageNumber >= 50;
+
+    const isLowEducation = ["无学历", "无", "小学", "初中"].some((keyword) =>
+      educationText.includes(keyword)
+    );
+
+    const isLowBudget = submittedForm.budgetLevel === "low";
+
+    const isWeakLanguage =
+      submittedForm.languageLevel === "none" ||
+      submittedForm.languageLevel === "basic";
+
+    // 页面层保险拦截：
+    // 50岁以上 + 学历弱 + 低预算 + 语言弱，不应该继续硬推路线。
+    if (isVeryOlderUser && isLowEducation && isLowBudget && isWeakLanguage) {
+      return [];
+    }
+
     return getRecommendedRoutes(submittedForm);
   }, [submittedForm]);
 
@@ -561,7 +583,7 @@ export default function PlanPage() {
       <div className="grid gap-6 lg:grid-cols-[420px_1fr] lg:gap-8">
         {/* 左侧表单 */}
         <section className="no-print rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-        <h2 className="mb-2 text-xl font-bold text-slate-900 sm:text-2xl">
+          <h2 className="mb-2 text-xl font-bold text-slate-900 sm:text-2xl">
             填写你的基本情况
           </h2>
 
@@ -939,6 +961,24 @@ export default function PlanPage() {
 
                 <p className="leading-8 text-slate-600">{insightSummary}</p>
               </div>
+
+              {/* 推荐路线为空时的兜底提示 */}
+              {recommendedRoutes.length === 0 && (
+                <div className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+                  <p className="mb-2 text-sm font-medium text-amber-700">
+                    暂未匹配到明确路线
+                  </p>
+
+                  <h3 className="mb-3 text-2xl font-bold text-slate-900">
+                    当前条件下没有生成推荐路线
+                  </h3>
+
+                  <p className="leading-8 text-slate-600">
+                    你可以尝试放宽预算、国家偏好或低预算过渡路线选项，再重新生成路线建议。
+                    当前版本仍是本地规则原型，后续会接入更完整的路线库和 AI 分析。
+                  </p>
+                </div>
+              )}
 
               {/* 推荐路线卡片 */}
               {recommendedRoutes.map((route, index) => (
