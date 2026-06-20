@@ -15,13 +15,14 @@ import {
   getRecommendedRoutes,
   languageOptions,
   preferenceOptions,
-  riskLevelLabels,
+  targetCountryOptions,
   type BudgetLevel,
   type CountryPreference,
   type LanguageLevel,
   type PlanFormState,
   type PreferenceAnswer,
   type RiskLevel,
+  type TargetCountry,
 } from "@/lib/plan-routes";
 
 // 表单初始值
@@ -32,6 +33,7 @@ const initialForm: PlanFormState = {
   budgetLevel: "unknown",
   languageLevel: "basic",
   countryPreference: "any",
+  targetCountry: "unknown",
   wantsPartTimeJob: "unknown",
   wantsLongTermStay: "unknown",
   acceptsLowBudgetRoute: "unknown",
@@ -42,6 +44,28 @@ const riskLevelStyles: Record<RiskLevel, string> = {
   low: "bg-emerald-50 text-emerald-700 ring-emerald-200",
   medium: "bg-amber-50 text-amber-700 ring-amber-200",
   high: "bg-rose-50 text-rose-700 ring-rose-200",
+};
+
+const routeRiskDisplayLabels: Record<RiskLevel, string> = {
+  low: "路线难度较低",
+  medium: "路线难度中等",
+  high: "路线难度较高",
+};
+
+const targetCountryOptionsByPreference: Record<CountryPreference, TargetCountry[]> = {
+  any: [
+    "unknown",
+    "japan",
+    "new-zealand",
+    "australia",
+    "germany",
+    "malaysia",
+    "philippines",
+    "other",
+  ],
+  asia: ["unknown", "japan", "malaysia", "philippines", "other"],
+  english: ["unknown", "new-zealand", "australia", "malaysia", "philippines", "other"],
+  europe: ["unknown", "germany", "other"],
 };
 
 export default function PlanPage() {
@@ -67,6 +91,14 @@ export default function PlanPage() {
   // 复制结果后的提示文字
   // 例如：已复制到剪贴板
   const [copyStatus, setCopyStatus] = useState("");
+
+  const availableTargetCountryOptions = useMemo(() => {
+    const allowedValues = targetCountryOptionsByPreference[form.countryPreference];
+
+    return targetCountryOptions.filter((option) =>
+      allowedValues.includes(option.value)
+    );
+  }, [form.countryPreference]);
 
   // 判断左侧表单是否在生成结果后又被修改过
   // 如果修改过，就提示用户需要重新点击生成按钮
@@ -150,6 +182,18 @@ export default function PlanPage() {
     setForm((prev) => ({
       ...prev,
       [key]: value,
+    }));
+  }
+
+  function handleCountryPreferenceChange(value: CountryPreference) {
+    const allowedValues = targetCountryOptionsByPreference[value];
+
+    setForm((prev) => ({
+      ...prev,
+      countryPreference: value,
+      targetCountry: allowedValues.includes(prev.targetCountry)
+        ? prev.targetCountry
+        : "unknown",
     }));
   }
 
@@ -675,10 +719,7 @@ export default function PlanPage() {
               <select
                 value={form.countryPreference}
                 onChange={(event) =>
-                  updateField(
-                    "countryPreference",
-                    event.target.value as CountryPreference
-                  )
+                  handleCountryPreferenceChange(event.target.value as CountryPreference)
                 }
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
               >
@@ -688,6 +729,28 @@ export default function PlanPage() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                目标国家偏好
+              </label>
+              <select
+                value={form.targetCountry}
+                onChange={(event) =>
+                  updateField("targetCountry", event.target.value as TargetCountry)
+                }
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+              >
+                {availableTargetCountryOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-2 text-xs leading-5 text-slate-500">
+                目标国家选项会根据上方的国家 / 地区偏好自动筛选；如果还没确定，就保持默认。
+              </p>
             </div>
 
             <div>
@@ -1008,7 +1071,7 @@ export default function PlanPage() {
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-medium ring-1 ${riskLevelStyles[route.riskLevel]}`}
                     >
-                      {riskLevelLabels[route.riskLevel]}
+                      {routeRiskDisplayLabels[route.riskLevel]}
                     </span>
                   </div>
 
@@ -1037,6 +1100,11 @@ export default function PlanPage() {
                         style={{ width: `${route.matchScore}%` }}
                       />
                     </div>
+
+                    <p className="mt-2 text-xs leading-5 text-slate-500">
+                      适合指数表示该路线与你当前目标、预算和基础条件的匹配程度，不代表录取、签证或就业成功率；
+                      路线难度用于提示该路线本身的申请、语言、预算和执行风险。
+                    </p>
 
                     <div className="mt-4">
                       <p className="mb-2 text-sm font-semibold text-slate-900">

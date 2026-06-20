@@ -8,6 +8,16 @@ export type LanguageLevel = "none" | "basic" | "intermediate" | "advanced";
 
 export type CountryPreference = "asia" | "english" | "europe" | "any";
 
+export type TargetCountry =
+  | "unknown"
+  | "japan"
+  | "new-zealand"
+  | "australia"
+  | "germany"
+  | "malaysia"
+  | "philippines"
+  | "other";
+
 export type PreferenceAnswer = "yes" | "no" | "unknown";
 
 export type RiskLevel = "low" | "medium" | "high";
@@ -20,6 +30,7 @@ export type PlanFormState = {
   budgetLevel: BudgetLevel;
   languageLevel: LanguageLevel;
   countryPreference: CountryPreference;
+  targetCountry: TargetCountry;
   wantsPartTimeJob: PreferenceAnswer;
   wantsLongTermStay: PreferenceAnswer;
   acceptsLowBudgetRoute: PreferenceAnswer;
@@ -77,6 +88,28 @@ export const countryPreferenceOptions = [
   { value: "english", label: "英语国家优先" },
   { value: "europe", label: "欧洲国家优先" },
 ] satisfies { value: CountryPreference; label: string }[];
+
+// 目标国家选项
+export const targetCountryOptions = [
+  { value: "unknown", label: "暂不确定，想让系统推荐" },
+  { value: "japan", label: "日本" },
+  { value: "new-zealand", label: "新西兰" },
+  { value: "australia", label: "澳大利亚" },
+  { value: "germany", label: "德国" },
+  { value: "malaysia", label: "马来西亚" },
+  { value: "philippines", label: "菲律宾" },
+  { value: "other", label: "其他国家" },
+] satisfies { value: TargetCountry; label: string }[];
+
+// 目标国家和路线国家名称的对应关系
+const targetCountryToRouteCountry: Partial<Record<TargetCountry, string>> = {
+  japan: "日本",
+  "new-zealand": "新西兰",
+  australia: "澳大利亚",
+  germany: "德国",
+  malaysia: "马来西亚",
+  philippines: "菲律宾",
+};
 
 // 是否倾向选项
 export const preferenceOptions = [
@@ -375,6 +408,10 @@ export function getCountryPreferenceLabel(value: CountryPreference): string {
   return getOptionLabel(countryPreferenceOptions, value);
 }
 
+export function getTargetCountryLabel(value: TargetCountry): string {
+  return getOptionLabel(targetCountryOptions, value);
+}
+
 export function getPreferenceLabel(value: PreferenceAnswer): string {
   return getOptionLabel(preferenceOptions, value);
 }
@@ -398,6 +435,7 @@ export function createUserProfileSummary(form: PlanFormState): string[] {
   profile.push(`预算情况：${getBudgetLabel(form.budgetLevel)}`);
   profile.push(`语言能力：${getLanguageLabel(form.languageLevel)}`);
   profile.push(`国家偏好：${getCountryPreferenceLabel(form.countryPreference)}`);
+  profile.push(`目标国家：${getTargetCountryLabel(form.targetCountry)}`);
   profile.push(`打工意愿：${getPreferenceLabel(form.wantsPartTimeJob)}`);
   profile.push(`长期发展意愿：${getPreferenceLabel(form.wantsLongTermStay)}`);
 
@@ -407,6 +445,12 @@ export function createUserProfileSummary(form: PlanFormState): string[] {
 // 生成推荐结果顶部总结
 export function createPlanInsightSummary(form: PlanFormState): string {
   const summaries: string[] = [];
+
+  if (form.targetCountry !== "unknown") {
+    summaries.push(
+      `你已经选择了明确目标国家：${getTargetCountryLabel(form.targetCountry)}，后续路线会优先围绕该国家进行判断。`
+    );
+  }
 
   if (form.countryPreference === "asia") {
     summaries.push("你当前更偏向亚洲方向，适合优先了解日本、马来西亚、菲律宾等路线。");
@@ -469,6 +513,19 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
   const doesNotWantPartTimeJob = form.wantsPartTimeJob === "no";
   const doesNotWantLongTermStay = form.wantsLongTermStay === "no";
   const doesNotAcceptLowBudgetRoute = form.acceptsLowBudgetRoute === "no";
+  const targetRouteCountry = targetCountryToRouteCountry[form.targetCountry];
+  const hasSpecificTargetCountry = Boolean(targetRouteCountry);
+  const isTargetCountryPreferenceConflict =
+    Boolean(targetRouteCountry) &&
+    (
+      (form.countryPreference === "asia" &&
+        !["日本", "马来西亚", "菲律宾"].includes(targetRouteCountry ?? "")) ||
+      (form.countryPreference === "english" &&
+        !["新西兰", "澳大利亚", "马来西亚", "菲律宾"].includes(
+          targetRouteCountry ?? ""
+        )) ||
+      (form.countryPreference === "europe" && targetRouteCountry !== "德国")
+    );
 
   // 极高风险画像：不要硬推路线
   // 只要同时满足：50岁以上 + 学历弱 + 低预算 + 语言弱，
@@ -524,6 +581,25 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
 
     if (form.countryPreference === "europe" && route.country === "德国") {
       addReason("你的国家偏好更接近欧洲方向", 3);
+    }
+
+    // 扣分：国家大方向和目标国家冲突
+    if (
+      isTargetCountryPreferenceConflict &&
+      targetRouteCountry &&
+      route.country === targetRouteCountry
+    ) {
+      addPenalty("你的国家大方向偏好和目标国家存在冲突，需要先确认真实目标", 5);
+    }
+
+    // 加分 / 扣分：明确目标国家
+    // 目标国家是重要偏好，但不能完全压倒预算、语言、年龄和风险判断
+    if (targetRouteCountry && route.country === targetRouteCountry) {
+      addReason(`你明确选择了${targetRouteCountry}作为目标国家`, 3);
+    }
+
+    if (targetRouteCountry && route.country !== targetRouteCountry) {
+      addPenalty(`你明确选择了${targetRouteCountry}，该路线国家不完全匹配`, 2);
     }
 
     // 加分：打工意愿
@@ -671,6 +747,12 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
 
     let rawScore = 50 + score * 5 - penalty * 6;
 
+    // 如果用户已经明确目标国家，非目标国家路线只做适度降分
+    // 避免因为目标国家一项选择，就把原本合理的参考路线全部打残
+    if (hasSpecificTargetCountry && route.country !== targetRouteCountry) {
+      rawScore -= 6;
+    }
+
     // 全局风险扣分：用户整体条件较弱
     if (isOlderUser && isLowEducation) {
       rawScore -= 15;
@@ -689,6 +771,26 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
     }
 
     let matchScore = Math.min(96, Math.max(0, rawScore));
+
+    // 明确目标国家后，其他国家路线仍可作为参考，但不应超过目标国家路线太多
+    if (hasSpecificTargetCountry && route.country !== targetRouteCountry) {
+      matchScore = Math.min(matchScore, 72);
+    }
+
+    // 高风险路线即使匹配目标国家，也不应轻易给到接近满分
+    if (route.riskLevel === "high") {
+      matchScore = Math.min(matchScore, 82);
+    }
+
+    // 如果国家大方向和目标国家冲突，目标国家路线不能给过高分
+    // 例如：英语国家优先 + 目标德国，不能把德国双元制打到 90%+
+    if (
+      isTargetCountryPreferenceConflict &&
+      targetRouteCountry &&
+      route.country === targetRouteCountry
+    ) {
+      matchScore = Math.min(matchScore, 68);
+    }
 
     // 高风险画像不允许出现高匹配度
     if (isOlderUser && isLowEducation) {
@@ -716,9 +818,9 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
     }
 
     const matchReasons =
-  warnings.length > 0
-    ? [...warnings.slice(0, 2), ...reasons.slice(0, 1)]
-    : reasons.slice(0, 3);
+      warnings.length > 0
+        ? [...warnings.slice(0, 2), ...reasons.slice(0, 1)]
+        : reasons.slice(0, 3);
 
     return {
       ...route,
