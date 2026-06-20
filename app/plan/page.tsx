@@ -1033,7 +1033,7 @@ export default function PlanPage() {
 
               {/* 推荐路线为空时的兜底提示 */}
               {recommendedRoutes.length === 0 && (
-                <div className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                   <p className="mb-2 text-sm font-medium text-amber-700">
                     暂未匹配到明确路线
                   </p>
@@ -1046,6 +1046,34 @@ export default function PlanPage() {
                     根据你填写的信息，当前条件存在较高不确定性。建议先提升语言能力、明确职业或学习方向，
                     并重新评估预算和目标国家可行性，再生成具体路线建议。
                   </p>
+
+                  <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                    <p className="mb-2 text-sm font-semibold text-amber-900">
+                      建议先做一对一可行性评估
+                    </p>
+
+                    <p className="text-sm leading-7 text-amber-800">
+                      如果你仍然希望继续了解出国可能性，建议先由人工根据年龄、学历、预算、语言能力、
+                      目标国家和家庭情况进行单独判断，避免盲目申请、盲目缴费或选择不适合自己的路线。
+                    </p>
+
+                    <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                      <Link
+                        href="/about"
+                        className="inline-flex items-center justify-center rounded-full bg-amber-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-700"
+                      >
+                        了解一对一评估
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={handleCopyResult}
+                        className="inline-flex items-center justify-center rounded-full border border-amber-200 bg-white px-4 py-2 text-sm font-medium text-amber-800 transition hover:bg-amber-100"
+                      >
+                        先复制当前信息
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
 
