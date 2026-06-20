@@ -4,7 +4,7 @@
 // 作用：收集用户基本情况，并基于本地规则输出路线建议、用户画像和推荐理由
 // 当前阶段不接真实 AI、不接数据库，只做产品原型
 
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   budgetOptions,
@@ -68,6 +68,117 @@ const targetCountryOptionsByPreference: Record<CountryPreference, TargetCountry[
   europe: ["unknown", "germany", "other"],
 };
 
+type SelectFieldOption<T extends string> = {
+  value: T;
+  label: string;
+};
+
+type SelectFieldProps<T extends string> = {
+  label: string;
+  value: T;
+  options: SelectFieldOption<T>[];
+  onChange: (value: T) => void;
+  helperText?: string;
+};
+
+// 自定义下拉选择框
+// 作用：替代浏览器原生 select，统一圆角、阴影和下滑动画效果
+function SelectField<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+  helperText,
+}: SelectFieldProps<T>) {
+  const [isOpen, setIsOpen] = useState(false);
+  const selectRef = useRef<HTMLDivElement | null>(null);
+
+  const selectedOption = options.find((option) => option.value === value);
+
+  useEffect(() => {
+    function handleOutsideClick(event: MouseEvent) {
+      if (!selectRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  return (
+    <div ref={selectRef} className="relative">
+      <label className="mb-2 block text-sm font-medium text-slate-700">
+        {label}
+      </label>
+
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className={`flex w-full items-center justify-between rounded-xl border bg-white px-4 py-3 text-left text-sm outline-none transition ${
+          isOpen
+            ? "border-sky-400 ring-2 ring-sky-100"
+            : "border-slate-200 hover:border-sky-200"
+        }`}
+      >
+        <span className="text-slate-900">
+          {selectedOption?.label ?? "请选择"}
+        </span>
+
+        <span
+          className={`ml-3 flex h-4 w-4 shrink-0 items-center justify-center transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          aria-hidden="true"
+        >
+          <span className="h-2 w-2 rotate-45 border-b-2 border-r-2 border-slate-400" />
+        </span>
+      </button>
+
+      <div
+        className={`absolute left-0 right-0 top-full z-40 mt-2 origin-top overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl ring-1 ring-slate-100 transition duration-200 ${
+          isOpen
+            ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
+            : "pointer-events-none -translate-y-1 scale-[0.98] opacity-0"
+        }`}
+      >
+        <div className="max-h-64 overflow-y-auto p-1 [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.45)_transparent]">
+          {options.map((option) => {
+            const isSelected = option.value === value;
+
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => {
+                  onChange(option.value);
+                  setIsOpen(false);
+                }}
+                className={`w-full rounded-xl px-3 py-2.5 text-left text-sm transition ${
+                  isSelected
+                    ? "bg-sky-50 font-medium text-sky-700"
+                    : "text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {helperText && (
+        <p className="mt-2 text-xs leading-5 text-slate-500">
+          {helperText}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function PlanPage() {
   // 当前正在填写的表单数据
   const [form, setForm] = useState<PlanFormState>(initialForm);
@@ -91,6 +202,13 @@ export default function PlanPage() {
   // 复制结果后的提示文字
   // 例如：已复制到剪贴板
   const [copyStatus, setCopyStatus] = useState("");
+
+  // 当前打开详细弹窗的路线 id
+  // 为 null 时表示没有打开任何路线详情
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
+
+  // 是否打开整体分析弹窗
+  const [showInsightModal, setShowInsightModal] = useState(false);
 
   const availableTargetCountryOptions = useMemo(() => {
     const allowedValues = targetCountryOptionsByPreference[form.countryPreference];
@@ -134,6 +252,11 @@ export default function PlanPage() {
 
   const hasRecommendedRoutes = recommendedRoutes.length > 0;
 
+  // 当前弹窗中展示的路线详情
+  const selectedRoute = useMemo(() => {
+    return recommendedRoutes.find((route) => route.id === selectedRouteId) ?? null;
+  }, [recommendedRoutes, selectedRouteId]);
+
   // 用户画像只根据“已提交的表单快照”生成
   const profileSummary = useMemo(() => {
     return createUserProfileSummary(submittedForm);
@@ -143,6 +266,9 @@ export default function PlanPage() {
   const insightSummary = useMemo(() => {
     return createPlanInsightSummary(submittedForm);
   }, [submittedForm]);
+
+  // 当前排名第一的路线，用于整体分析弹窗中给出更明确的下一步建议
+  const primaryRoute = recommendedRoutes[0] ?? null;
 
   // 生成可以复制给用户保存的路线规划摘要文本
   // 注意：这里生成的是纯文本，方便复制到微信、备忘录或文档中
@@ -227,6 +353,8 @@ export default function PlanPage() {
       setSubmitted(true);
       setIsGenerating(false);
       setCopyStatus("");
+      setSelectedRouteId(null);
+      setShowInsightModal(false);
 
       window.setTimeout(() => {
         resultRef.current?.scrollIntoView({
@@ -246,6 +374,8 @@ export default function PlanPage() {
     setFormError("");
     setIsGenerating(false);
     setCopyStatus("");
+    setSelectedRouteId(null);
+    setShowInsightModal(false);
   }
 
   // 复制路线规划结果摘要
@@ -674,150 +804,63 @@ export default function PlanPage() {
               />
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                预算区间
-              </label>
-              <select
-                value={form.budgetLevel}
-                onChange={(event) =>
-                  updateField("budgetLevel", event.target.value as BudgetLevel)
-                }
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-              >
-                {budgetOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SelectField
+              label="预算区间"
+              value={form.budgetLevel}
+              options={budgetOptions}
+              onChange={(value) => updateField("budgetLevel", value as BudgetLevel)}
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                语言能力
-              </label>
-              <select
-                value={form.languageLevel}
-                onChange={(event) =>
-                  updateField("languageLevel", event.target.value as LanguageLevel)
-                }
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-              >
-                {languageOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SelectField
+              label="语言能力"
+              value={form.languageLevel}
+              options={languageOptions}
+              onChange={(value) => updateField("languageLevel", value as LanguageLevel)}
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                国家 / 地区偏好
-              </label>
-              <select
-                value={form.countryPreference}
-                onChange={(event) =>
-                  handleCountryPreferenceChange(event.target.value as CountryPreference)
-                }
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-              >
-                {countryPreferenceOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SelectField
+              label="国家 / 地区偏好"
+              value={form.countryPreference}
+              options={countryPreferenceOptions}
+              onChange={(value) =>
+                handleCountryPreferenceChange(value as CountryPreference)
+              }
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                目标国家偏好
-              </label>
-              <select
-                value={form.targetCountry}
-                onChange={(event) =>
-                  updateField("targetCountry", event.target.value as TargetCountry)
-                }
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-              >
-                {availableTargetCountryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <p className="mt-2 text-xs leading-5 text-slate-500">
-                目标国家选项会根据上方的国家 / 地区偏好自动筛选；如果还没确定，就保持默认。
-              </p>
-            </div>
+            <SelectField
+              label="目标国家偏好"
+              value={form.targetCountry}
+              options={availableTargetCountryOptions}
+              onChange={(value) => updateField("targetCountry", value as TargetCountry)}
+              helperText="目标国家选项会根据上方的国家 / 地区偏好自动筛选；如果还没确定，就保持默认。"
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                是否希望边学习边打工？
-              </label>
-              <select
-                value={form.wantsPartTimeJob}
-                onChange={(event) =>
-                  updateField(
-                    "wantsPartTimeJob",
-                    event.target.value as PreferenceAnswer
-                  )
-                }
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-              >
-                {preferenceOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SelectField
+              label="是否希望边学习边打工？"
+              value={form.wantsPartTimeJob}
+              options={preferenceOptions}
+              onChange={(value) =>
+                updateField("wantsPartTimeJob", value as PreferenceAnswer)
+              }
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                是否希望未来长期留在海外？
-              </label>
-              <select
-                value={form.wantsLongTermStay}
-                onChange={(event) =>
-                  updateField(
-                    "wantsLongTermStay",
-                    event.target.value as PreferenceAnswer
-                  )
-                }
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-              >
-                {preferenceOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SelectField
+              label="是否希望未来长期留在海外？"
+              value={form.wantsLongTermStay}
+              options={preferenceOptions}
+              onChange={(value) =>
+                updateField("wantsLongTermStay", value as PreferenceAnswer)
+              }
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                是否接受低预算过渡路线？
-              </label>
-              <select
-                value={form.acceptsLowBudgetRoute}
-                onChange={(event) =>
-                  updateField(
-                    "acceptsLowBudgetRoute",
-                    event.target.value as PreferenceAnswer
-                  )
-                }
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-              >
-                {preferenceOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SelectField
+              label="是否接受低预算过渡路线？"
+              value={form.acceptsLowBudgetRoute}
+              options={preferenceOptions}
+              onChange={(value) =>
+                updateField("acceptsLowBudgetRoute", value as PreferenceAnswer)
+              }
+            />
 
             <div className="flex gap-3 pt-2">
               <button
@@ -951,47 +994,6 @@ export default function PlanPage() {
                 </div>
               )}
 
-              {submitted && (
-                <div className="no-print rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="text-xs font-medium text-slate-500">结果操作</p>
-                      <h3 className="mt-1 text-lg font-semibold text-slate-950">
-                        保存你的路线规划结果
-                      </h3>
-                      <p className="mt-2 text-sm leading-6 text-slate-600">
-                        生成时间：
-                        {submittedAt ? submittedAt.toLocaleString("zh-CN") : "暂无记录"}
-                      </p>
-                    </div>
-
-                    <div className="flex flex-col gap-2 sm:flex-row">
-                      <button
-                        type="button"
-                        onClick={handleCopyResult}
-                        className="rounded-full bg-sky-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-700"
-                      >
-                        复制结果摘要
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={handlePrintResult}
-                        className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-                      >
-                        打印 / 保存 PDF
-                      </button>
-                    </div>
-                  </div>
-
-                  {copyStatus && (
-                    <p className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                      {copyStatus}
-                    </p>
-                  )}
-                </div>
-              )}
-
               {/* 用户画像 */}
               <div className="hidden no-print rounded-3xl border border-sky-100 bg-sky-50 p-6">
                 <p className="mb-2 text-sm font-medium text-sky-700">
@@ -1012,23 +1014,6 @@ export default function PlanPage() {
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* 推荐总结 */}
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p className="mb-2 text-sm font-medium text-sky-700">
-                  {hasRecommendedRoutes ? "推荐理由总结" : "风险评估提示"}
-                </p>
-
-                <h2 className="mb-4 text-2xl font-bold text-slate-900">
-                  {hasRecommendedRoutes ? "初步推荐路线" : "当前条件风险较高"}
-                </h2>
-
-                <p className="leading-8 text-slate-600">
-                  {hasRecommendedRoutes
-                    ? insightSummary
-                    : "根据你填写的信息，当前条件暂未匹配到可靠路线。建议先重新评估预算、语言能力、学历或技能方向、目标国家和长期计划，再决定是否继续推进出国方案。"}
-                </p>
               </div>
 
               {/* 推荐路线为空时的兜底提示 */}
@@ -1147,61 +1132,25 @@ export default function PlanPage() {
                     </div>
                   </div>
 
-                  <div className="grid gap-5 md:grid-cols-2">
-                    <div>
-                      <h4 className="mb-2 font-semibold text-slate-900">
-                        适合人群
-                      </h4>
-                      <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                        {route.suitableFor.map((item) => (
-                          <li key={item}>• {item}</li>
-                        ))}
-                      </ul>
+                  <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-wrap gap-2">
+                      {route.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
                     </div>
 
-                    <div>
-                      <h4 className="mb-2 font-semibold text-slate-900">
-                        路线优势
-                      </h4>
-                      <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                        {route.advantages.map((item) => (
-                          <li key={item}>• {item}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h4 className="mb-2 font-semibold text-slate-900">
-                        风险提醒
-                      </h4>
-                      <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                        {route.risks.map((item) => (
-                          <li key={item}>• {item}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h4 className="mb-2 font-semibold text-slate-900">
-                        下一步建议
-                      </h4>
-                      <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                        {route.nextSteps.map((item) => (
-                          <li key={item}>• {item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {route.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedRouteId(route.id)}
+                      className="inline-flex shrink-0 items-center justify-center rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-medium text-sky-700 transition hover:bg-sky-100"
+                    >
+                      查看详细内容
+                    </button>
                   </div>
 
                   <div className="mt-6 rounded-2xl bg-slate-50 p-4">
@@ -1223,6 +1172,414 @@ export default function PlanPage() {
                   </div>
                 </article>
               ))}
+
+              {hasRecommendedRoutes && (
+                <div className="no-print rounded-3xl border border-sky-100 bg-gradient-to-br from-sky-50 to-white p-5 shadow-sm">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-sky-700">
+                        整体分析已生成
+                      </p>
+                      <h3 className="mt-1 text-lg font-semibold text-slate-900">
+                        查看系统为什么这样推荐，以及下一步该怎么判断
+                      </h3>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowInsightModal(true)}
+                      className="inline-flex items-center justify-center rounded-full bg-sky-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-sky-700"
+                    >
+                      查看整体分析
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {showInsightModal && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 px-4 py-6"
+                  onClick={() => setShowInsightModal(false)}
+                >
+                  <div
+                    className="flex max-h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-indigo-50 shadow-2xl"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <div className="flex items-start justify-between gap-4 border-b border-sky-100 bg-white/75 px-6 py-5 backdrop-blur">
+                      <div>
+                        <p className="mb-2 text-sm font-medium text-sky-700">
+                          推荐理由总结
+                        </p>
+                        <h3 className="text-2xl font-bold text-slate-950">
+                          初步推荐路线分析
+                        </h3>
+                        <p className="mt-2 text-sm leading-6 text-slate-600">
+                          下面内容会结合你的目标国家、预算、语言能力和长期规划，解释系统为什么这样排序。
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowInsightModal(false)}
+                        className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-medium text-slate-600 shadow-sm ring-1 ring-slate-100 transition hover:bg-slate-50"
+                      >
+                        关闭
+                      </button>
+                    </div>
+
+                    <div className="overflow-y-auto px-6 py-5 pr-4 [scrollbar-gutter:stable] [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.25)_transparent] hover:[scrollbar-color:rgba(148,163,184,0.55)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-200/25 [&::-webkit-scrollbar-thumb]:transition-colors [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <h4 className="mb-3 font-semibold text-slate-900">
+                            你的基础画像
+                          </h4>
+
+                          <div className="space-y-2">
+                            {profileSummary.slice(0, 6).map((item) => (
+                              <p
+                                key={item}
+                                className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600"
+                              >
+                                {item}
+                              </p>
+                            ))}
+                          </div>
+                        </section>
+
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <h4 className="mb-3 font-semibold text-slate-900">
+                            系统判断结论
+                          </h4>
+
+                          <p className="text-sm leading-7 text-slate-600">
+                            {insightSummary}
+                          </p>
+                        </section>
+                      </div>
+
+                      <section className="mt-4 rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                        <h4 className="mb-4 font-semibold text-slate-900">
+                          推荐路线对比
+                        </h4>
+
+                        <div className="grid gap-3 md:grid-cols-3">
+                          {recommendedRoutes.map((route, index) => (
+                            <div
+                              key={route.id}
+                              className="flex min-h-[220px] flex-col rounded-2xl border border-slate-100 bg-slate-50 p-4"
+                            >
+                              <p className="mb-2 text-xs font-medium text-sky-700">
+                                推荐 {index + 1} · {route.country}
+                              </p>
+
+                              <h5 className="mb-3 min-h-[52px] font-semibold leading-6 text-slate-900">
+                                {route.title}
+                              </h5>
+
+                              <div className="mt-auto">
+                                <div className="mb-2 flex items-center justify-between text-sm">
+                                  <span className="text-slate-500">匹配度</span>
+                                  <strong className="text-sky-700">
+                                    {route.matchScore}%
+                                  </strong>
+                                </div>
+
+                                <div className="mb-3 h-2 overflow-hidden rounded-full bg-slate-200">
+                                  <div
+                                    className="h-full rounded-full bg-sky-600"
+                                    style={{ width: `${route.matchScore}%` }}
+                                  />
+                                </div>
+
+                                <p className="text-xs leading-5 text-slate-500">
+                                  {route.matchReasons.slice(0, 2).join("；")}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+
+                      <div className="mt-4 grid gap-4 md:grid-cols-2">
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <h4 className="mb-3 font-semibold text-slate-900">
+                            需要重点注意
+                          </h4>
+
+                          <ul className="space-y-2 text-sm leading-6 text-slate-600">
+                            <li>• 匹配度不是录取率、签证通过率或就业成功率。</li>
+                            <li>• 如果目标国家路线排第一但分数不高，说明系统尊重你的目标，但仍认为风险需要谨慎评估。</li>
+                            <li>• 高预算、高语言门槛或政策变化快的路线，建议优先做人工复核。</li>
+                          </ul>
+                        </section>
+
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <h4 className="mb-3 font-semibold text-slate-900">
+                            下一步建议
+                          </h4>
+
+                          <ul className="space-y-2 text-sm leading-6 text-slate-600">
+                            {(primaryRoute?.nextSteps.slice(0, 3) ?? [
+                              "先确认目标国家、预算和语言能力是否匹配。",
+                              "再核实签证、学校、项目和费用信息。",
+                              "最后决定是否需要一对一人工评估。",
+                            ]).map((item) => (
+                              <li key={item}>• {item}</li>
+                            ))}
+                          </ul>
+                        </section>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end border-t border-sky-100 bg-white/80 px-6 py-4 backdrop-blur">
+                      <button
+                        type="button"
+                        onClick={() => setShowInsightModal(false)}
+                        className="rounded-full bg-sky-600 px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-sky-700"
+                      >
+                        我知道了
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+{selectedRoute && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 px-4 py-6"
+                  onClick={() => setSelectedRouteId(null)}
+                >
+                  <div
+                    className="flex max-h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-indigo-50 shadow-2xl"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <div className="flex items-start justify-between gap-4 border-b border-sky-100 bg-white/75 px-6 py-5 backdrop-blur">
+                      <div>
+                        <p className="mb-2 text-sm font-medium text-sky-700">
+                          {selectedRoute.country} · 路线详细分析
+                        </p>
+
+                        <h3 className="text-2xl font-bold text-slate-950">
+                          {selectedRoute.title}
+                        </h3>
+
+                        <p className="mt-2 text-sm leading-6 text-slate-600">
+                          这份内容会帮助你判断该路线是否真的适合自己，重点关注预算、语言、风险和下一步行动。
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRouteId(null)}
+                        className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-medium text-slate-600 shadow-sm ring-1 ring-slate-100 transition hover:bg-slate-50"
+                      >
+                        关闭
+                      </button>
+                    </div>
+
+                    <div className="overflow-y-auto px-6 py-5 pr-4 [scrollbar-gutter:stable] [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.25)_transparent] hover:[scrollbar-color:rgba(148,163,184,0.55)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-200/25 [&::-webkit-scrollbar-thumb]:transition-colors [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70">
+                      <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                        <h4 className="mb-3 font-semibold text-slate-900">
+                          路线概述
+                        </h4>
+
+                        <p className="text-sm leading-7 text-slate-600">
+                          {selectedRoute.summary}
+                        </p>
+                      </section>
+
+                      <div className="mt-4 grid gap-4 md:grid-cols-3">
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <p className="text-xs font-medium text-slate-500">
+                            国家 / 地区
+                          </p>
+                          <p className="mt-2 font-semibold text-slate-900">
+                            {selectedRoute.country}
+                          </p>
+                        </section>
+
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <p className="text-xs font-medium text-slate-500">
+                            预算判断
+                          </p>
+                          <p className="mt-2 font-semibold text-slate-900">
+                            {getBudgetLabel(selectedRoute.budgetLevel)}
+                          </p>
+                        </section>
+
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <p className="text-xs font-medium text-slate-500">
+                            路线难度
+                          </p>
+                          <p className="mt-2 font-semibold text-slate-900">
+                            {routeRiskDisplayLabels[selectedRoute.riskLevel]}
+                          </p>
+                        </section>
+                      </div>
+
+                      <section className="mt-4 rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                        <div className="mb-2 flex items-center justify-between">
+                          <h4 className="font-semibold text-slate-900">
+                            路线匹配度
+                          </h4>
+                          <strong className="text-sky-700">
+                            {selectedRoute.matchScore}%
+                          </strong>
+                        </div>
+
+                        <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+                          <div
+                            className="h-full rounded-full bg-sky-600"
+                            style={{ width: `${selectedRoute.matchScore}%` }}
+                          />
+                        </div>
+
+                        <p className="mt-3 text-xs leading-5 text-slate-500">
+                          匹配度表示该路线与你当前目标、预算、语言和基础条件的接近程度，不代表录取、签证或就业成功率。
+                        </p>
+                      </section>
+
+                      <section className="mt-4 rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                        <h4 className="mb-3 font-semibold text-slate-900">
+                          为什么推荐这条路线
+                        </h4>
+
+                        <ul className="space-y-2 text-sm leading-6 text-slate-600">
+                          {selectedRoute.matchReasons.map((reason) => (
+                            <li key={reason}>• {reason}</li>
+                          ))}
+                        </ul>
+                      </section>
+
+                      <div className="mt-4 grid gap-4 md:grid-cols-2">
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <h4 className="mb-3 font-semibold text-slate-900">
+                            适合人群
+                          </h4>
+                          <ul className="space-y-2 text-sm leading-6 text-slate-600">
+                            {selectedRoute.suitableFor.map((item) => (
+                              <li key={item}>• {item}</li>
+                            ))}
+                          </ul>
+                        </section>
+
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <h4 className="mb-3 font-semibold text-slate-900">
+                            路线优势
+                          </h4>
+                          <ul className="space-y-2 text-sm leading-6 text-slate-600">
+                            {selectedRoute.advantages.map((item) => (
+                              <li key={item}>• {item}</li>
+                            ))}
+                          </ul>
+                        </section>
+
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <h4 className="mb-3 font-semibold text-slate-900">
+                            风险提醒
+                          </h4>
+                          <ul className="space-y-2 text-sm leading-6 text-slate-600">
+                            {selectedRoute.risks.map((item) => (
+                              <li key={item}>• {item}</li>
+                            ))}
+                          </ul>
+                        </section>
+
+                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                          <h4 className="mb-3 font-semibold text-slate-900">
+                            下一步建议
+                          </h4>
+                          <ul className="space-y-2 text-sm leading-6 text-slate-600">
+                            {selectedRoute.nextSteps.map((item) => (
+                              <li key={item}>• {item}</li>
+                            ))}
+                          </ul>
+                        </section>
+                      </div>
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {selectedRoute.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full bg-white/80 px-3 py-1 text-xs text-slate-600 shadow-sm ring-1 ring-slate-100"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <section className="mt-4 rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-100">
+                        <h4 className="mb-3 font-semibold text-slate-900">
+                          推荐阅读
+                        </h4>
+
+                        <div className="flex flex-wrap gap-3">
+                          {selectedRoute.relatedArticles.map((article) => (
+                            <Link
+                              key={article.href}
+                              href={article.href}
+                              className="text-sm font-medium text-sky-600 hover:text-sky-700"
+                            >
+                              {article.title} →
+                            </Link>
+                          ))}
+                        </div>
+                      </section>
+                    </div>
+
+                    <div className="flex justify-end border-t border-sky-100 bg-white/80 px-6 py-4 backdrop-blur">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRouteId(null)}
+                        className="rounded-full bg-sky-600 px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-sky-700"
+                      >
+                        我知道了
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {submitted && (
+                <div className="no-print rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-slate-500">结果操作</p>
+                      <h3 className="mt-1 text-lg font-semibold text-slate-950">
+                        保存你的路线规划结果
+                      </h3>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">
+                        生成时间：
+                        {submittedAt ? submittedAt.toLocaleString("zh-CN") : "暂无记录"}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <button
+                        type="button"
+                        onClick={handleCopyResult}
+                        className="rounded-full bg-sky-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-700"
+                      >
+                        复制结果摘要
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handlePrintResult}
+                        className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                      >
+                        打印 / 保存 PDF
+                      </button>
+                    </div>
+                  </div>
+
+                  {copyStatus && (
+                    <p className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                      {copyStatus}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div className="rounded-3xl border border-amber-200 bg-amber-50 p-6 text-sm leading-7 text-amber-800">
                 <strong>重要提示：</strong>
