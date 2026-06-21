@@ -73,8 +73,8 @@ export default function PlanPage() {
   // 是否已经点击过“生成路线建议”
   const [submitted, setSubmitted] = useState(false);
 
-  const resultRef = useRef<HTMLDivElement | null>(null);
-  const activeRouteCardRef = useRef<HTMLDivElement | null>(null);
+  const resultGridRef = useRef<HTMLDivElement | null>(null);
+  const resultWorkbenchRef = useRef<HTMLElement | null>(null);
   const [formError, setFormError] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -150,7 +150,13 @@ export default function PlanPage() {
 
     // 页面层保险拦截：
     // 50岁以上 + 学历弱 + 低预算 + 语言弱，不应该继续硬推路线。
-    if (isVeryOlderUser && isLowEducation && isLowBudget && isWeakLanguage) {
+    if (
+      isVeryOlderUser &&
+      isLowEducation &&
+      isLowBudget &&
+      isWeakLanguage &&
+      submittedForm.targetCountry === "unknown"
+    ) {
       return [];
     }
 
@@ -249,15 +255,26 @@ export default function PlanPage() {
     }));
   }
 
+  function scrollToPlanResultStart() {
+    const isMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 767px)").matches;
+    const target = isMobile
+      ? resultWorkbenchRef.current ?? resultGridRef.current
+      : resultGridRef.current;
+
+    target?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+
   function handleRouteSwitch(index: number) {
     setActiveRouteIndex(index);
 
-    window.setTimeout(() => {
-      activeRouteCardRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 40);
+    requestAnimationFrame(() => {
+      scrollToPlanResultStart();
+    });
   }
 
   function handleCountryPreferenceChange(value: CountryPreference) {
@@ -309,10 +326,7 @@ export default function PlanPage() {
       setEditingSummaryField(null);
 
       window.setTimeout(() => {
-        resultRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+        scrollToPlanResultStart();
       }, 80);
     }, 500);
   }
@@ -437,7 +451,10 @@ export default function PlanPage() {
           </div>
         </section>
 
-        <div className="grid items-start gap-6 lg:grid-cols-[400px_minmax(0,1fr)] lg:gap-8">
+        <div
+          ref={resultGridRef}
+          className="grid scroll-mt-28 items-start gap-6 lg:grid-cols-[400px_minmax(0,1fr)] lg:gap-8"
+        >
           {/* 左侧表单 */}
           <PlanForm
             form={form}
@@ -458,7 +475,9 @@ export default function PlanPage() {
           />
 
           {/* 右侧结果 */}
-          <section ref={resultRef} className="print-report space-y-6 scroll-mt-6">
+          <section
+            className="print-report space-y-6 scroll-mt-6 [overflow-anchor:none]"
+          >
             {/* PDF 打印专用标题：网页浏览时隐藏，打印时显示 */}
             {submitted && (
               <div className="print-only">
@@ -622,7 +641,10 @@ export default function PlanPage() {
                 {/* 推荐路线卡片 */}
                 {/* v0.3.14：路线结果工作台 */}
                 {activeRoute && (
-                  <article className="overflow-hidden rounded-[32px] bg-white/90 shadow-[0_20px_60px_rgba(15,23,42,0.07)] ring-1 ring-black/5 backdrop-blur-xl">
+                  <article
+                    ref={resultWorkbenchRef}
+                    className="scroll-mt-28 overflow-hidden rounded-[32px] bg-white/90 shadow-[0_20px_60px_rgba(15,23,42,0.07)] ring-1 ring-black/5 backdrop-blur-xl [overflow-anchor:none]"
+                  >
                     <div className="flex flex-col gap-4 border-b border-slate-100 bg-white px-6 py-6 sm:flex-row sm:items-start sm:justify-between">
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -648,7 +670,7 @@ export default function PlanPage() {
                       <button
                         type="button"
                         onClick={() => setShowInsightModal(true)}
-                        className="inline-flex items-center justify-center rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800"
+                        className="inline-flex items-center justify-center rounded-full border border-sky-100 bg-sky-50/80 px-4 py-2 text-sm font-medium text-sky-700 ring-1 ring-sky-100/70 transition hover:bg-sky-100/80 hover:text-sky-800"
                       >
                         查看整体分析
                       </button>
@@ -670,10 +692,7 @@ export default function PlanPage() {
                       ))}
                     </div>
 
-                    <div
-                      ref={activeRouteCardRef}
-                      className="scroll-mt-6 mx-4 mb-5 overflow-hidden rounded-[28px] bg-slate-50/80 ring-1 ring-slate-200/70 sm:mx-6 sm:mb-6"
-                    >
+                    <div className="mx-4 mb-5 overflow-hidden rounded-[28px] bg-slate-50/80 ring-1 ring-slate-200/70 sm:mx-6 sm:mb-6">
                       <div className="p-6 sm:p-7">
                         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                           <div>

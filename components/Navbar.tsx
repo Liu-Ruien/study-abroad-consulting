@@ -16,23 +16,25 @@ const navLinks = [
 
 export default function Navbar() {
   return (
-    <header className="border-b border-slate-100 bg-white/95">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <header className="sticky top-0 z-40 border-b border-slate-200/45 bg-white/70 backdrop-blur-2xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-2.5 sm:px-6">
         {/* Logo 区域 */}
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-600 text-sm font-bold text-white">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-600/90 text-xs font-bold text-white shadow-sm ring-1 ring-sky-500/20">
             出
           </span>
-          <span className="text-lg font-bold text-slate-900">出国咨询</span>
+          <span className="text-sm font-semibold tracking-tight text-slate-950 sm:text-base">
+            出国咨询
+          </span>
         </Link>
 
         {/* 桌面端主导航 */}
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-1.5 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-slate-600 transition hover:text-sky-700"
+              className="rounded-full px-3 py-1.5 text-sm font-medium text-slate-500 transition hover:bg-white/70 hover:text-slate-950"
             >
               {link.label}
             </Link>
@@ -41,16 +43,16 @@ export default function Navbar() {
 
         {/* 移动端菜单 */}
         <details className="relative md:hidden">
-          <summary className="cursor-pointer list-none rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700">
+          <summary className="cursor-pointer list-none rounded-full border border-slate-200/80 bg-white/65 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm">
             菜单
           </summary>
 
-          <div className="absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+          <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-white/70 bg-white/90 p-2 shadow-[0_18px_48px_rgba(15,23,42,0.14)] backdrop-blur-xl">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
               >
                 {link.label}
               </Link>
@@ -66,7 +68,7 @@ export default function Navbar() {
               <Link
                 key={category.slug}
                 href={`/categories/${category.slug}`}
-                className="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
               >
                 {category.name}
               </Link>
@@ -76,13 +78,13 @@ export default function Navbar() {
       </div>
 
       {/* 分类快捷入口 */}
-      <div className="border-t border-slate-100">
-        <div className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-6 py-2">
+      <div className="border-t border-slate-200/35 bg-white/35">
+        <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-5 py-1 sm:px-6">
           {categories.map((category) => (
             <Link
               key={category.slug}
               href={`/categories/${category.slug}`}
-              className="whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-sky-50 hover:text-sky-700"
+              className="whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-medium text-slate-400 transition hover:bg-white/65 hover:text-slate-800"
             >
               {category.name}
             </Link>

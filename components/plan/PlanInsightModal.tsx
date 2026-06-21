@@ -23,7 +23,7 @@ export default function PlanInsightModal({
         className="flex max-h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-[32px] border border-white/80 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.22)]"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-slate-100 bg-white px-6 py-5">
+        <div className="flex items-start justify-between gap-4 border-b border-slate-200/70 bg-[radial-gradient(circle_at_18%_10%,rgba(14,165,233,0.08)_0%,rgba(224,242,254,0.28)_34%,transparent_62%),linear-gradient(145deg,rgba(255,255,255,0.92)_0%,rgba(248,250,252,0.90)_100%)] px-6 py-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] backdrop-blur-xl">
           <div>
             <p className="mb-2 text-sm font-medium text-sky-700">
               推荐理由总结

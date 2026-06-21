@@ -137,28 +137,28 @@ export const planRoutes: PlanRoute[] = [
     summary:
       "适合希望先通过语言学校适应日本生活、提升日语能力，再衔接专门学校、大学院或 IT 就职的人群。整体路径成熟，但能否长期留下，关键取决于日语、专业能力、出勤率和后续求职准备。",
     suitableFor: [
-      "年龄较轻，愿意先用 1-2 年时间打好日语基础的人",
-      "目标国家比较明确，希望未来在日本升学或就业的人",
-      "预算中等，能承担语言学校学费和初期生活费的人",
-      "可以接受合法范围内兼职，但不会把打工作为主要目的的人",
+      "目标国家明确为日本，愿意先把日语和出勤率作为核心任务的人",
+      "预算能覆盖语言学校学费、首年生活费和至少 3-6 个月应急资金的人",
+      "希望通过语言学校衔接专门学校、大学院或后续求职的人",
+      "可以接受合法兼职补贴生活，但不会把打工作为主要资金来源的人",
     ],
     advantages: [
-      "路线成熟，语言学校、升学和就职信息相对容易查询",
-      "距离中国较近，生活习惯和文化适应成本相对欧美国家更低",
-      "留学生在符合规定的情况下可以兼职，能缓解一部分生活压力",
-      "适合 Java、IT、护理、动漫、设计、餐饮等方向继续衔接学习或就业",
+      "日本语言学校到升学、专门学校或求职的路径相对成熟，资料和案例更容易核实",
+      "距离中国较近，往返、文化适应和家庭沟通成本通常低于欧美路线",
+      "在符合规定的情况下可以兼职，但更适合作为生活补贴而非主要资金来源",
+      "IT、护理、餐饮、设计、动漫等方向可继续细分评估专业和就业衔接",
     ],
     risks: [
-      "语言学校不是最终目标，后续必须继续升学、就职或转换合法身份",
-      "出勤率、学费缴纳和在留更新会影响后续签证稳定性",
-      "如果日语长期停留在低水平，就职选择会明显受限",
-      "东京、大阪等城市生活成本不同，预算不足时容易产生经济压力",
+      "语言学校不是最终身份方案，后续必须衔接升学、就职或其他合法在留路径",
+      "出勤率、学费缴纳、打工合规和在留更新都会影响后续签证稳定性",
+      "日语长期停留在 N4-N5 或基础会话水平时，升学和就职选择会明显受限",
+      "预算不足时不能依赖兼职覆盖全部成本，东京、大阪等城市房租和初期费用压力更大",
     ],
     nextSteps: [
-      "先确认目标城市、预算上限和预计入学时间",
-      "开始系统学习日语，优先把目标定到 N3-N2 方向",
-      "整理学历证明、经费支付能力和家庭资金情况",
-      "对比语言学校位置、学费、升学支持、就职支持和中国学生比例",
+      "先按城市列出首年预算：学费、住宿、生活费、保险、机票和应急金",
+      "开始系统学习日语，短期目标至少设为 N3，长期目标根据升学或求职提高到 N2 方向",
+      "整理学历证明、成绩材料、经费支付能力和家庭收入/存款证明",
+      "对比语言学校的升学支持、出勤管理、就职支持、退费规则和中国学生比例",
     ],
     relatedArticles: [
       {
@@ -198,16 +198,16 @@ export const planRoutes: PlanRoute[] = [
       "适合把留学、就业、长期生活作为一个连续路线来设计",
     ],
     risks: [
-      "整体费用较高，不能只按第一年学费判断总预算",
-      "就业市场规模相对有限，专业选择会明显影响毕业后的机会",
-      "英语能力不足时，学习压力、社交压力和求职难度都会增加",
-      "不适合只想快速出国、但没有明确学习或职业目标的人",
+      "整体费用较高，需要按完整学制和生活周期评估，而不是只看第一年学费",
+      "新西兰就业市场规模有限，专业、城市和实习机会会明显影响毕业后选择",
+      "英语能力不足时，课堂理解、论文、实习面试和日常社交都会形成持续压力",
+      "如果没有明确专业和职业方向，容易变成高成本试错，不适合只想快速出国的人",
     ],
     nextSteps: [
-      "先确认总预算是否能覆盖学费、住宿、生活费和应急资金",
-      "根据未来就业方向筛选专业，而不是只看学校排名",
-      "提前制定英语学习计划，优先提升雅思或同类考试能力",
-      "对比不同城市、学校、课程长度和毕业后的发展路径",
+      "先按完整课程周期核算学费、住宿、生活费、保险和至少 6 个月应急资金",
+      "根据就业方向筛选专业和课程实践机会，不要只看学校排名或中介推荐",
+      "提前制定雅思或同类考试计划，确认目标课程的语言门槛和开学时间",
+      "对比城市就业市场、毕业后签证规则、实习机会和课程认可度",
     ],
     relatedArticles: [
       {
@@ -235,10 +235,10 @@ export const planRoutes: PlanRoute[] = [
     summary:
       "适合预算有限，但希望先获得海外学习经历、英语授课环境和学历提升机会的人群。马来西亚更适合作为低成本留学过渡路线，但学校质量、专业认可度和后续转学或就业路径需要提前核实。",
     suitableFor: [
-      "预算有限，但仍希望体验海外学习环境的人",
-      "希望通过英语授课课程提升学历背景的人",
-      "暂时不确定长期目标，想先选择成本较低路线的人",
-      "未来可能考虑继续转学、升学或转向其他国家的人",
+      "预算有限，但希望先获得海外学习经历和英语授课环境的人",
+      "希望以相对较低成本提升学历背景，再评估后续国家的人",
+      "暂时不确定长期目标，愿意把马来西亚作为过渡阶段的人",
+      "未来可能继续升学、转学或转向其他国家，需要先积累材料的人",
     ],
     advantages: [
       "整体学费和生活成本通常低于欧美英语国家",
@@ -247,16 +247,16 @@ export const planRoutes: PlanRoute[] = [
       "适合作为后续申请其他国家或提升学历的过渡选择",
     ],
     risks: [
-      "学校和项目质量差异较大，不能只看低价宣传",
-      "学历认可度需要结合具体学校、专业和未来目标判断",
-      "如果没有后续规划，毕业后长期发展路径可能不清晰",
-      "不适合把低预算路线误认为一定能稳定留下或高薪就业",
+      "学校和项目质量差异较大，低价项目尤其需要核实资质、授课语言和毕业证书类型",
+      "学历认可度必须结合具体学校、专业、未来升学国家和用人单位要求判断",
+      "如果没有后续国家或升学计划，毕业后的长期发展路径可能不清晰",
+      "低预算不等于低风险，不应把该路线理解为稳定留下、稳定就业或移民承诺",
     ],
     nextSteps: [
-      "先列出总预算，包括学费、住宿、生活费和材料费用",
-      "核实学校资质、课程语言、学制和毕业证书类型",
-      "确认该学历是否有利于后续升学、转学或就业计划",
-      "避免只按中介宣传选择学校，优先比较真实课程和毕业路径",
+      "先列出完整预算，包括学费、住宿、生活费、签证材料费和往返交通",
+      "逐项核实学校资质、课程语言、学制、毕业证书类型和是否可认证",
+      "确认该学历是否服务于后续升学、转学、回国就业或转向其他国家",
+      "不要只按低价宣传决策，至少比较 3 个项目的课程内容、毕业去向和退费规则",
     ],
     relatedArticles: [
       {
@@ -288,16 +288,16 @@ export const planRoutes: PlanRoute[] = [
       "适合作为新西兰、澳洲、马来西亚等路线前的语言准备阶段",
     ],
     risks: [
-      "不适合作为完整长期路线，后续仍需要明确目标国家",
-      "学校质量和课程管理差异较大，需要认真筛选",
-      "如果只学习语言、不规划下一步，容易变成短期体验",
-      "需要提前确认签证、住宿、安全和课程退款规则",
+      "菲律宾更适合作为语言提升阶段，不适合作为完整留学、就业或移民路线",
+      "学校质量、住宿管理和课程强度差异较大，需要核实真实课时和师资配置",
+      "如果没有后续考试、申请或目标国家计划，容易变成短期体验而不是有效准备",
+      "需要提前确认签证停留、住宿安全、退费规则和当地生活风险",
     ],
     nextSteps: [
-      "先确定学习周期，例如 1-3 个月还是 3-6 个月",
-      "对比学校课程模式、师资、住宿和管理方式",
-      "明确学习结束后的下一步国家或申请方向",
-      "提前设定英语目标，例如口语交流、雅思基础或面试能力",
+      "先确定学习周期和目标，例如 1-3 个月口语提升或 3-6 个月雅思基础",
+      "对比学校课程模式、一对一课时、师资、住宿管理和安全区域",
+      "明确学习结束后的下一步国家、考试或申请方向，避免只做短期体验",
+      "设置可检查的英语目标，例如日常口语、雅思单项、面试表达或课堂听力",
     ],
     relatedArticles: [
       {
@@ -370,16 +370,16 @@ export const planRoutes: PlanRoute[] = [
       "适合预算充足、目标明确的人做深入规划",
     ],
     risks: [
-      "整体费用较高，预算不足时压力会非常明显",
-      "签证、工签和移民政策变化较快，必须以最新政策为准",
-      "不同专业、学校和城市的后续机会差异很大",
-      "不能轻信保证就业、保证留下或低价快速办理的宣传",
+      "整体费用高，学费、住宿、保险和生活费都需要按高预算路线准备",
+      "签证、工签、WHV 名额和移民政策不确定性较高，必须以最新官方要求为准",
+      "打工不能作为主要资金来源，学习签证和短期体验路线都需要先准备充足资金",
+      "WHV 或短期体验不等于稳定长期留下，不应轻信保证就业、保证移民或低价快速办理",
     ],
     nextSteps: [
-      "先确认自己更适合留学路线还是短期体验路线",
-      "核实目标签证类型、申请条件和资金要求",
-      "评估总预算，包括学费、生活费、保险和应急资金",
-      "提前准备英语能力，并根据专业方向筛选学校和城市",
+      "先区分留学、WHV、短期体验三类路径，分别核实签证条件和风险",
+      "按官方要求核实资金证明、语言要求、健康保险和申请时间窗口",
+      "评估完整预算，包括学费、生活费、保险、住宿押金和至少 6 个月应急资金",
+      "提前准备英语能力，并根据专业就业风险筛选学校、城市和备选国家",
     ],
     relatedArticles: [
       {
@@ -452,7 +452,7 @@ export function createPlanInsightSummary(form: PlanFormState): string {
 
   if (form.targetCountry !== "unknown") {
     summaries.push(
-      `你已经选择了明确目标国家：${getTargetCountryLabel(form.targetCountry)}，后续路线会优先围绕该国家进行判断。`
+      `你已经选择了明确目标国家：${getTargetCountryLabel(form.targetCountry)}，系统会优先展示相关路线，但匹配度仍会受预算、语言、年龄和学历影响。`
     );
   }
 
@@ -467,15 +467,15 @@ export function createPlanInsightSummary(form: PlanFormState): string {
   }
 
   if (form.budgetLevel === "low") {
-    summaries.push("由于预算偏低，建议优先考虑低成本过渡路线，并谨慎核实学校和项目真实性。");
+    summaries.push("由于预算偏低，建议优先考虑低成本过渡或语言准备路线；高成本英语国家路线需要先做资金可行性评估。");
   } else if (form.budgetLevel === "medium") {
     summaries.push("你的预算属于中等区间，可以重点比较日本、德国职业教育和部分亚洲留学路线。");
   } else if (form.budgetLevel === "high") {
-    summaries.push("你的预算空间较大，可以进一步研究新西兰、澳洲等英语国家路线。");
+    summaries.push("你的预算空间较大，可以进一步研究新西兰、澳洲等英语国家路线，但仍需要核实语言门槛和政策风险。");
   }
 
   if (form.wantsLongTermStay === "yes") {
-    summaries.push("你有长期留在海外的想法，因此需要重点关注语言能力、专业匹配和后续就业路径。");
+    summaries.push("你有长期留在海外的想法，因此需要重点关注语言能力、专业匹配、后续就业路径和签证稳定性。");
   }
 
   return summaries.join("");
@@ -504,15 +504,41 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
     "职高",
   ].some((keyword) => educationText.includes(keyword));
 
+  const hasBachelorOrAbove = [
+    "本科",
+    "学士",
+    "硕士",
+    "研究生",
+    "博士",
+  ].some((keyword) => educationText.includes(keyword));
+
   const hasUnclearMajor =
     majorText === "" ||
     ["无", "没有", "无专业", "无明确方向", "不知道"].some((keyword) =>
       majorText.includes(keyword)
     );
 
+  const hasTechOrPracticalMajor = [
+    "软件",
+    "计算机",
+    "it",
+    "IT",
+    "信息",
+    "工程",
+    "机械",
+    "护理",
+    "设计",
+    "电气",
+    "电子",
+  ].some((keyword) => majorText.includes(keyword));
+
   const isLowBudget = form.budgetLevel === "low";
+  const isMediumBudget = form.budgetLevel === "medium";
+  const isHighBudget = form.budgetLevel === "high";
   const isWeakLanguage =
     form.languageLevel === "none" || form.languageLevel === "basic";
+  const hasIntermediateOrAdvancedLanguage =
+    form.languageLevel === "intermediate" || form.languageLevel === "advanced";
   const prefersEurope = form.countryPreference === "europe";
   const doesNotWantPartTimeJob = form.wantsPartTimeJob === "no";
   const doesNotWantLongTermStay = form.wantsLongTermStay === "no";
@@ -537,7 +563,7 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
   const isSevereRiskProfile =
     isVeryOlderUser && isHighSchoolOrBelow && isLowBudget && isWeakLanguage;
 
-  if (isSevereRiskProfile) {
+  if (isSevereRiskProfile && !hasSpecificTargetCountry) {
     return [];
   }
 
@@ -556,6 +582,36 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
     function addPenalty(reason: string, points: number) {
       penalty += points;
       warnings.push(reason);
+    }
+
+    // 基线差异化：当预算和国家偏好都不明确时，也要根据背景给出轻微排序差异。
+    if (
+      route.id === "japan-language-school" &&
+      hasBachelorOrAbove &&
+      hasTechOrPracticalMajor &&
+      form.budgetLevel === "unknown" &&
+      form.countryPreference === "any" &&
+      form.targetCountry === "unknown"
+    ) {
+      addReason("你的学历和专业背景适合优先研究日本升学或就业衔接路线", 2);
+    }
+
+    if (
+      route.id === "malaysia-study" &&
+      hasBachelorOrAbove &&
+      form.budgetLevel === "unknown" &&
+      form.countryPreference === "any"
+    ) {
+      addReason("预算暂不确定时，马来西亚可作为低成本学历或英语授课过渡方案", 1);
+    }
+
+    if (
+      route.id === "philippines-language" &&
+      isWeakLanguage &&
+      form.budgetLevel === "unknown" &&
+      form.countryPreference === "any"
+    ) {
+      addReason("当前语言基础偏弱，菲律宾可作为短期语言提升阶段", 1);
     }
 
     // 加分：预算匹配
@@ -599,7 +655,10 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
     // 加分 / 扣分：明确目标国家
     // 目标国家是重要偏好，但不能完全压倒预算、语言、年龄和风险判断
     if (targetRouteCountry && route.country === targetRouteCountry) {
-      addReason(`你明确选择了${targetRouteCountry}作为目标国家`, 3);
+      addReason(
+        `你明确选择了${targetRouteCountry}，系统优先展示该路线，但这不代表当前条件适合直接申请`,
+        2
+      );
     }
 
     if (targetRouteCountry && route.country !== targetRouteCountry) {
@@ -609,6 +668,15 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
     // 加分：打工意愿
     if (form.wantsPartTimeJob === "yes" && route.id === "japan-language-school") {
       addReason("你希望边学习边打工，日本路线更适合作为重点参考", 2);
+    }
+
+    if (
+      route.id === "japan-language-school" &&
+      form.countryPreference === "asia" &&
+      !isLowBudget &&
+      !isWeakLanguage
+    ) {
+      addReason("你的地区偏好、预算和语言基础更接近日本路线的准备条件", 2);
     }
 
     // 加分：长期发展意愿
@@ -645,7 +713,11 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
     }
 
     if (isLowBudget && route.budgetLevel === "high") {
-      addPenalty("当前预算偏低，该路线资金压力较大", 6);
+      addPenalty("当前预算偏低，不适合直接选择高成本国家路线", 8);
+    }
+
+    if (isMediumBudget && route.budgetLevel === "high") {
+      addPenalty("当前预算属于中等区间，选择高成本英语国家前需要重新核算资金", 3);
     }
 
     // 扣分：欧洲偏好与非欧洲路线不匹配
@@ -709,6 +781,29 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
       addPenalty("语言基础较弱，该路线语言门槛较高", 5);
     }
 
+    if (
+      isWeakLanguage &&
+      ["new-zealand-study", "australia-study-work"].includes(route.id)
+    ) {
+      addPenalty("英语国家高成本路线会放大学习、签证材料和求职压力", 4);
+    }
+
+    if (
+      route.id === "japan-language-school" &&
+      isWeakLanguage &&
+      (form.targetCountry === "japan" || form.countryPreference === "asia")
+    ) {
+      addPenalty("日本路线需要尽快补日语基础，不能只依赖到校后再学习", 2);
+    }
+
+    if (route.id === "japan-language-school" && isLowBudget) {
+      addPenalty("日本语言学校仍需要首年资金证明和初期生活费，低预算用户压力较大", 3);
+    }
+
+    if (route.id === "japan-language-school" && hasUnclearMajor) {
+      addPenalty("如果专业或职业方向不清晰，日本路线后续升学或就职衔接会变弱", 2);
+    }
+
     // 扣分：中高龄用户整体风险
     if (isOlderUser && isWeakLanguage) {
       addPenalty("年龄偏高且语言基础较弱，海外学习和生活适应压力较大", 4);
@@ -747,6 +842,49 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
     // 扣分：不接受低预算过渡路线
     if (doesNotAcceptLowBudgetRoute && route.budgetLevel === "low") {
       addPenalty("你不接受低预算过渡路线，该路线匹配度下降", 4);
+    }
+
+    if (
+      route.budgetLevel === "low" &&
+      form.wantsLongTermStay === "yes"
+    ) {
+      addPenalty("低预算路线更适合作为过渡阶段，不能直接等同于长期留下方案", 2);
+    }
+
+    if (route.id === "australia-study-work") {
+      if (!isHighBudget) {
+        addPenalty("澳洲路线整体成本较高，当前预算不足以支撑稳定规划", 5);
+      }
+
+      if (!hasIntermediateOrAdvancedLanguage) {
+        addPenalty("澳洲路线对英语和材料准备要求较高，当前语言基础偏弱", 4);
+      }
+
+      if (form.wantsPartTimeJob === "yes") {
+        addPenalty("澳洲打工不能作为主要资金来源，必须先准备完整预算", 3);
+      }
+
+      if (form.wantsLongTermStay === "yes") {
+        addPenalty("澳洲长期路径受专业、政策和签证变化影响较大，需要多套备选方案", 3);
+      }
+    }
+
+    if (
+      targetRouteCountry &&
+      route.country === targetRouteCountry &&
+      isLowBudget &&
+      route.budgetLevel === "high"
+    ) {
+      addPenalty("虽然你选择了该目标国家，但当前预算与该高成本路线明显不匹配", 1);
+    }
+
+    if (
+      targetRouteCountry &&
+      route.country === targetRouteCountry &&
+      isWeakLanguage &&
+      ["新西兰", "澳大利亚", "德国"].includes(route.country)
+    ) {
+      addPenalty("虽然系统保留该目标国家路线，但当前语言条件会显著增加申请和适应风险", 1);
     }
 
     let rawScore = 50 + score * 5 - penalty * 6;
@@ -799,6 +937,46 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
       }
     }
 
+    if (
+      ["new-zealand-study", "australia-study-work"].includes(route.id) &&
+      isLowBudget
+    ) {
+      matchScore = Math.min(matchScore, 52);
+    }
+
+    if (
+      ["new-zealand-study", "australia-study-work"].includes(route.id) &&
+      isWeakLanguage
+    ) {
+      matchScore = Math.min(matchScore, 58);
+    }
+
+    if (
+      ["new-zealand-study", "australia-study-work"].includes(route.id) &&
+      isMediumBudget &&
+      isWeakLanguage
+    ) {
+      matchScore = Math.min(matchScore, 55);
+    }
+
+    if (route.id === "japan-language-school") {
+      if (isLowBudget) {
+        matchScore = Math.min(matchScore, 68);
+      }
+
+      if (isLowBudget && isWeakLanguage) {
+        matchScore = Math.min(matchScore, 62);
+      }
+
+      if (isLowBudget && isWeakLanguage && hasUnclearMajor) {
+        matchScore = Math.min(matchScore, 58);
+      }
+    }
+
+    if (route.budgetLevel === "low" && form.wantsLongTermStay === "yes") {
+      matchScore = Math.min(matchScore, 72);
+    }
+
     // 如果国家大方向和目标国家冲突，目标国家路线不能给过高分
     // 例如：英语国家优先 + 目标德国，不能把德国双元制打到 90%+
     if (
@@ -834,6 +1012,38 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
       matchScore = Math.min(matchScore, 42);
     }
 
+    // 澳洲路线属于高预算、高不确定性路线，只有预算高、语言较好且风险条件较匹配时才允许接近 75。
+    if (route.id === "australia-study-work") {
+      if (isHighBudget && hasIntermediateOrAdvancedLanguage) {
+        matchScore = Math.min(matchScore, 75);
+      } else {
+        matchScore = Math.min(matchScore, 65);
+      }
+
+      if (isLowBudget || isWeakLanguage) {
+        matchScore = Math.min(matchScore, 55);
+      }
+    }
+
+    // 明确目标国家时，该国家路线必须展示；但展示优先权不等于高匹配度。
+    if (targetRouteCountry && route.country === targetRouteCountry) {
+      let targetDisplayFloor = 38;
+
+      if (
+        (isLowBudget && route.budgetLevel === "high") ||
+        (isWeakLanguage && ["新西兰", "澳大利亚", "德国"].includes(route.country))
+      ) {
+        targetDisplayFloor = 28;
+      }
+
+      if (isSevereRiskProfile) {
+        targetDisplayFloor = 22;
+      }
+
+      matchScore = Math.max(matchScore, targetDisplayFloor);
+      matchScore = Math.min(matchScore, route.riskLevel === "high" ? 68 : 78);
+    }
+
     const matchReasons =
       warnings.length > 0
         ? [...warnings.slice(0, 2), ...reasons.slice(0, 1)]
@@ -849,16 +1059,16 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
     };
   });
 
+  const targetRoute = targetRouteCountry
+    ? scoredRoutes.find((route) => route.country === targetRouteCountry)
+    : undefined;
+
   const visibleRoutes = scoredRoutes
     .filter((route) => route.matchScore >= 45)
     .sort((a, b) => b.matchScore - a.matchScore);
 
   // 如果用户明确选择了目标国家，该国家路线优先展示在第一位。
   // 即使匹配度较低，也要让用户第一眼看到自己关心的路线和对应风险。
-  const targetRoute = targetRouteCountry
-    ? visibleRoutes.find((route) => route.country === targetRouteCountry)
-    : undefined;
-
   if (targetRoute) {
     const otherRoutes = visibleRoutes
       .filter((route) => route.id !== targetRoute.id)
