@@ -75,6 +75,7 @@ export default function PlanPage() {
 
   const resultGridRef = useRef<HTMLDivElement | null>(null);
   const resultWorkbenchRef = useRef<HTMLElement | null>(null);
+  const mobileRouteCardStartRef = useRef<HTMLDivElement | null>(null);
   const [formError, setFormError] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -260,7 +261,7 @@ export default function PlanPage() {
       typeof window !== "undefined" &&
       window.matchMedia("(max-width: 767px)").matches;
     const target = isMobile
-      ? resultWorkbenchRef.current ?? resultGridRef.current
+      ? mobileRouteCardStartRef.current ?? resultWorkbenchRef.current ?? resultGridRef.current
       : resultGridRef.current;
 
     target?.scrollIntoView({
@@ -691,6 +692,11 @@ export default function PlanPage() {
                         </button>
                       ))}
                     </div>
+
+                    <div
+                      ref={mobileRouteCardStartRef}
+                      className="h-0 scroll-mt-24 md:hidden"
+                    />
 
                     <div className="mx-4 mb-5 overflow-hidden rounded-[28px] bg-slate-50/80 ring-1 ring-slate-200/70 sm:mx-6 sm:mb-6">
                       <div className="p-6 sm:p-7">
