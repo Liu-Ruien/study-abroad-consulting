@@ -116,7 +116,7 @@ function SelectField<T extends string>({
   }, []);
 
   return (
-    <div ref={selectRef} className="relative">
+    <div ref={selectRef} className={`relative ${isOpen ? "z-50" : "z-0"}`}>
       <label className="mb-2 block text-sm font-medium text-slate-700">
         {label}
       </label>
@@ -143,12 +143,12 @@ function SelectField<T extends string>({
       </button>
 
       <div
-        className={`absolute left-0 right-0 top-full z-40 mt-2 origin-top overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl ring-1 ring-slate-200/60 transition duration-200 ${isOpen
+        className={`absolute left-0 right-0 top-full z-50 mt-2 origin-top overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl ring-1 ring-slate-200/60 transition duration-200 ${isOpen
           ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
           : "pointer-events-none -translate-y-1 scale-[0.98] opacity-0"
           }`}
       >
-        <div className="max-h-64 overflow-y-auto p-1 [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.45)_transparent]">
+        <div className="max-h-[min(16rem,50vh)] overflow-y-auto overscroll-contain p-1 [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.45)_transparent]">
           {options.map((option) => {
             const isSelected = option.value === value;
 
@@ -195,22 +195,91 @@ function SummaryTextItem({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-gradient-to-b from-slate-50 to-white text-sm leading-6 text-slate-700 ring-1 ring-slate-200/60 transition hover:bg-sky-50/60 hover:ring-sky-100">
+    <div
+      className={`rounded-2xl text-sm leading-6 text-slate-700 ring-1 transition-all duration-200 ${isEditing
+        ? "bg-sky-50/80 ring-sky-200 shadow-sm"
+        : "bg-white/75 ring-slate-200/70 hover:-translate-y-[1px] hover:bg-white hover:shadow-sm hover:ring-sky-100"
+        }`}
+    >
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left"
+        className="group flex w-full items-center justify-between gap-4 px-4 py-3 text-left"
       >
-        <span className="shrink-0 text-slate-400">{label}</span>
-        <span className="text-right font-semibold text-slate-900 tracking-tight">{value}</span>
+        <span className={isEditing ? "shrink-0 text-sky-600" : "shrink-0 text-slate-400"}>
+          {label}
+        </span>
+
+        <span className="flex items-center gap-2 text-right">
+          <span className="font-semibold tracking-tight text-slate-900">
+            {value}
+          </span>
+          <span
+            className={`rounded-full px-2 py-0.5 text-[11px] font-medium transition ${isEditing
+              ? "bg-sky-100 text-sky-700"
+              : "bg-slate-100 text-slate-400 opacity-0 group-hover:opacity-100"
+              }`}
+          >
+            {isEditing ? "编辑中" : "修改"}
+          </span>
+        </span>
       </button>
 
-      {isEditing && <div className="px-4 pb-4">{children}</div>}
+      {isEditing && (
+        <div className="relative z-50 overflow-visible px-4 pb-4 pt-1">{children}</div>
+      )}
     </div>
   );
 }
 
 const SummarySelectItem = SummaryTextItem;
+
+type FormSectionKey = "basic" | "preference" | "goal";
+
+function FormSection({
+  title,
+  description,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  title: string;
+  description: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <section
+      className={`relative rounded-2xl bg-white/75 ring-1 ring-slate-200/70 transition-all duration-200 ${isOpen ? "z-10 overflow-visible" : "z-0 overflow-hidden"
+        }`}
+    >
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition hover:bg-slate-50/70"
+      >
+        <div>
+          <h3 className="font-semibold text-slate-950">{title}</h3>
+          <p className="mt-1 text-xs leading-5 text-slate-500">{description}</p>
+        </div>
+
+        <span
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm text-slate-500 transition-transform ${isOpen ? "rotate-180" : ""
+            }`}
+        >
+          ˅
+        </span>
+      </button>
+
+      {isOpen && (
+        <div className="relative overflow-visible space-y-3 border-t border-slate-100 px-4 py-4 pb-5">
+          {children}
+        </div>
+      )}
+    </section>
+  );
+}
 
 export default function PlanPage() {
   // 当前正在填写的表单数据
@@ -235,6 +304,8 @@ export default function PlanPage() {
   // 复制结果后的提示文字
   // 例如：已复制到剪贴板
   const [copyStatus, setCopyStatus] = useState("");
+  const [isCopyToastVisible, setIsCopyToastVisible] = useState(false);
+  const copyToastTimerRef = useRef<number | null>(null);
 
   // 当前打开详细弹窗的路线 id
   // 为 null 时表示没有打开任何路线详情
@@ -249,6 +320,12 @@ export default function PlanPage() {
 
   // 生成结果后，左侧表单默认收起为信息摘要
   const [isFormCollapsed, setIsFormCollapsed] = useState(false);
+
+  const [openFormSections, setOpenFormSections] = useState<Record<FormSectionKey, boolean>>({
+    basic: true,
+    preference: false,
+    goal: false,
+  });
 
   // 摘要模式下，当前正在单独编辑的字段
   const [editingSummaryField, setEditingSummaryField] = useState<
@@ -330,21 +407,21 @@ export default function PlanPage() {
 
   useEffect(() => {
     const hasOpenModal = showInsightModal || selectedRouteId !== null;
-  
+
     if (!hasOpenModal) {
       return;
     }
-  
+
     const originalOverflow = document.body.style.overflow;
     const originalPaddingRight = document.body.style.paddingRight;
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-  
+
     document.body.style.overflow = "hidden";
-  
+
     if (scrollbarWidth > 0) {
       document.body.style.paddingRight = `${scrollbarWidth}px`;
     }
-  
+
     return () => {
       document.body.style.overflow = originalOverflow;
       document.body.style.paddingRight = originalPaddingRight;
@@ -381,6 +458,13 @@ export default function PlanPage() {
       "重要提示：本结果基于本地规则生成，仅适合作为初步参考，不代表最终申请建议。实际申请前仍需结合政策、预算、语言能力、学历背景和个人情况进一步确认。",
     ].join("\n");
   }, [submitted, submittedAt, profileSummary, recommendedRoutes]);
+
+  function toggleFormSection(section: FormSectionKey) {
+    setOpenFormSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  }
 
   function updateField<K extends keyof PlanFormState>(
     key: K,
@@ -463,6 +547,28 @@ export default function PlanPage() {
     setActiveRouteIndex(0);
     setIsFormCollapsed(false);
     setEditingSummaryField(null);
+    setOpenFormSections({
+      basic: true,
+      preference: false,
+      goal: false,
+    });
+  }
+
+  function showCopyToast(message: string) {
+    if (copyToastTimerRef.current) {
+      window.clearTimeout(copyToastTimerRef.current);
+    }
+
+    setCopyStatus(message);
+    setIsCopyToastVisible(true);
+
+    copyToastTimerRef.current = window.setTimeout(() => {
+      setIsCopyToastVisible(false);
+
+      window.setTimeout(() => {
+        setCopyStatus("");
+      }, 260);
+    }, 1600);
   }
 
   // 复制路线规划结果摘要
@@ -473,14 +579,20 @@ export default function PlanPage() {
 
     try {
       await navigator.clipboard.writeText(planResultText);
-      setCopyStatus("路线规划摘要已复制，可以粘贴到微信、备忘录或文档中。");
+      showCopyToast("路线规划摘要已复制");
     } catch {
-      setCopyStatus("复制失败，请手动选择页面内容复制。");
+      showCopyToast("复制失败，请手动复制页面内容");
     }
+
+    setIsCopyToastVisible(true);
+
+    setTimeout(() => {
+      setIsCopyToastVisible(false);
+    }, 1600);
 
     setTimeout(() => {
       setCopyStatus("");
-    }, 3000);
+    }, 2000);
   }
 
   // 打印 / 保存 PDF
@@ -571,6 +683,14 @@ export default function PlanPage() {
   return (
     <main className="plan-page-root min-h-screen bg-[#f5f5f7] px-4 py-8 text-slate-950 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-7xl">
+        {copyStatus && (
+          <div
+            className={`no-print pointer-events-none fixed left-1/2 top-8 z-[70] -translate-x-1/2 rounded-full bg-white/90 px-5 py-3 text-sm font-medium text-slate-900 shadow-[0_18px_45px_rgba(15,23,42,0.16)] ring-1 ring-black/10 backdrop-blur-xl transition-all duration-300 ${isCopyToastVisible ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+              }`}
+          >
+            {copyStatus}
+          </div>
+        )}
         {/* PDF 专用报告区域：网页正常浏览时隐藏，只有打印 / 保存 PDF 时显示 */}
         {submitted && (
           <section className="pdf-report-only">
@@ -829,9 +949,9 @@ export default function PlanPage() {
           </section>
         )}
         {/* 页面头部 */}
-        <section className="mb-8 overflow-hidden rounded-[32px] bg-white px-6 py-10 shadow-sm ring-1 ring-black/5 sm:mb-10 sm:px-10 sm:py-14">
+        <section className="mb-8 overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_18%_18%,rgba(14,165,233,0.10),transparent_34%),linear-gradient(135deg,#ffffff_0%,#ffffff_62%,#f8fafc_100%)] px-6 py-10 shadow-[0_18px_55px_rgba(15,23,42,0.06)] ring-1 ring-black/5 sm:mb-10 sm:px-10 sm:py-14">
           <div className="max-w-4xl">
-            <p className="mb-5 inline-flex rounded-full bg-slate-100 px-4 py-1.5 text-sm font-medium text-slate-600">
+            <p className="mb-5 inline-flex rounded-full bg-slate-100 px-4 py-1.5 text-sm font-medium text-slate-600 ring-1 ring-slate-200/70">
               v0.5 · 出国路线决策工作台
             </p>
 
@@ -846,26 +966,25 @@ export default function PlanPage() {
           </div>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl bg-gradient-to-b from-slate-50 to-white px-5 py-4">
-              <p className="text-sm text-slate-500">输入</p>
-              <p className="mt-1 font-semibold text-slate-950">基础条件</p>
-            </div>
-
-            <div className="rounded-2xl bg-gradient-to-b from-slate-50 to-white px-5 py-4">
-              <p className="text-sm text-slate-500">分析</p>
-              <p className="mt-1 font-semibold text-slate-950">路线匹配</p>
-            </div>
-
-            <div className="rounded-2xl bg-gradient-to-b from-slate-50 to-white px-5 py-4">
-              <p className="text-sm text-slate-500">输出</p>
-              <p className="mt-1 font-semibold text-slate-950">规划报告</p>
-            </div>
+            {[
+              ["输入", "基础条件"],
+              ["分析", "路线匹配"],
+              ["输出", "规划报告"],
+            ].map(([label, value]) => (
+              <div
+                key={label}
+                className="rounded-2xl bg-white/70 px-5 py-4 shadow-sm ring-1 ring-slate-200/70"
+              >
+                <p className="text-sm text-slate-500">{label}</p>
+                <p className="mt-1 font-semibold text-slate-950">{value}</p>
+              </div>
+            ))}
           </div>
         </section>
 
         <div className="grid items-start gap-6 lg:grid-cols-[400px_minmax(0,1fr)] lg:gap-8">
           {/* 左侧表单 */}
-          <section className="no-print rounded-[28px] bg-white/90 p-5 shadow-sm ring-1 ring-black/5 backdrop-blur sm:p-6 lg:sticky lg:top-6">
+          <section className="no-print rounded-[28px] bg-[radial-gradient(circle_at_18%_0%,rgba(14,165,233,0.08),transparent_30%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4 shadow-[0_16px_45px_rgba(15,23,42,0.07)] ring-1 ring-black/5 backdrop-blur sm:p-5">
             {submitted && isFormCollapsed ? (
               <form onSubmit={handleSubmit}>
                 <p className="mb-2 text-sm font-medium text-sky-700">
@@ -1074,106 +1193,119 @@ export default function PlanPage() {
                   信息不用特别精确，先填写大概情况即可。修改信息后需要重新生成路线建议，右侧结果才会更新。
                 </p>
 
-                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      年龄
-                    </label>
-                    <input
-                      value={form.age}
-                      onChange={(event) => updateField("age", event.target.value)}
-                      placeholder="例如：22"
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+                <form onSubmit={handleSubmit} className="relative space-y-3 overflow-visible">
+                  <FormSection
+                    title="基础信息"
+                    description="先填写年龄、学历和专业方向。"
+                    isOpen={openFormSections.basic}
+                    onToggle={() => toggleFormSection("basic")}
+                  >
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-700">
+                        年龄
+                      </label>
+                      <input
+                        value={form.age}
+                        onChange={(event) => updateField("age", event.target.value)}
+                        placeholder="例如：22"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-700">
+                        当前学历
+                      </label>
+                      <input
+                        value={form.education}
+                        onChange={(event) => updateField("education", event.target.value)}
+                        placeholder="例如：本科 / 大专 / 高中 / 已工作"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-700">
+                        专业方向 / 工作方向
+                      </label>
+                      <input
+                        value={form.major}
+                        onChange={(event) => updateField("major", event.target.value)}
+                        placeholder="例如：软件工程 / 护理 / 机械 / 无明确方向"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+                      />
+                    </div>
+                  </FormSection>
+
+                  <FormSection
+                    title="路线偏好"
+                    description="预算、语言和目标国家会直接影响推荐结果。"
+                    isOpen={openFormSections.preference}
+                    onToggle={() => toggleFormSection("preference")}
+                  >
+                    <SelectField
+                      label="预算区间"
+                      value={form.budgetLevel}
+                      options={budgetOptions}
+                      onChange={(value) => updateField("budgetLevel", value as BudgetLevel)}
                     />
-                  </div>
 
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      当前学历
-                    </label>
-                    <input
-                      value={form.education}
-                      onChange={(event) => updateField("education", event.target.value)}
-                      placeholder="例如：本科 / 大专 / 高中 / 已工作"
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+                    <SelectField
+                      label="语言能力"
+                      value={form.languageLevel}
+                      options={languageOptions}
+                      onChange={(value) => updateField("languageLevel", value as LanguageLevel)}
                     />
-                  </div>
 
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      专业方向 / 工作方向
-                    </label>
-                    <input
-                      value={form.major}
-                      onChange={(event) => updateField("major", event.target.value)}
-                      placeholder="例如：软件工程 / 护理 / 机械 / 无明确方向"
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+                    <SelectField
+                      label="国家 / 地区偏好"
+                      value={form.countryPreference}
+                      options={countryPreferenceOptions}
+                      onChange={(value) => handleCountryPreferenceChange(value as CountryPreference)}
                     />
-                  </div>
 
-                  <SelectField
-                    label="预算区间"
-                    value={form.budgetLevel}
-                    options={budgetOptions}
-                    onChange={(value) => updateField("budgetLevel", value as BudgetLevel)}
-                  />
+                    <SelectField
+                      label="目标国家偏好"
+                      value={form.targetCountry}
+                      options={availableTargetCountryOptions}
+                      onChange={(value) => updateField("targetCountry", value as TargetCountry)}
+                      helperText="目标国家选项会根据上方的国家 / 地区偏好自动筛选；如果还没确定，就保持默认。"
+                    />
+                  </FormSection>
 
-                  <SelectField
-                    label="语言能力"
-                    value={form.languageLevel}
-                    options={languageOptions}
-                    onChange={(value) => updateField("languageLevel", value as LanguageLevel)}
-                  />
+                  <FormSection
+                    title="长期规划"
+                    description="如果暂时不确定，可以保持默认。"
+                    isOpen={openFormSections.goal}
+                    onToggle={() => toggleFormSection("goal")}
+                  >
+                    <SelectField
+                      label="是否希望边学习边打工？"
+                      value={form.wantsPartTimeJob}
+                      options={preferenceOptions}
+                      onChange={(value) => updateField("wantsPartTimeJob", value as PreferenceAnswer)}
+                    />
 
-                  <SelectField
-                    label="国家 / 地区偏好"
-                    value={form.countryPreference}
-                    options={countryPreferenceOptions}
-                    onChange={(value) =>
-                      handleCountryPreferenceChange(value as CountryPreference)
-                    }
-                  />
+                    <SelectField
+                      label="是否希望未来长期留在海外？"
+                      value={form.wantsLongTermStay}
+                      options={preferenceOptions}
+                      onChange={(value) => updateField("wantsLongTermStay", value as PreferenceAnswer)}
+                    />
 
-                  <SelectField
-                    label="目标国家偏好"
-                    value={form.targetCountry}
-                    options={availableTargetCountryOptions}
-                    onChange={(value) => updateField("targetCountry", value as TargetCountry)}
-                    helperText="目标国家选项会根据上方的国家 / 地区偏好自动筛选；如果还没确定，就保持默认。"
-                  />
-
-                  <SelectField
-                    label="是否希望边学习边打工？"
-                    value={form.wantsPartTimeJob}
-                    options={preferenceOptions}
-                    onChange={(value) =>
-                      updateField("wantsPartTimeJob", value as PreferenceAnswer)
-                    }
-                  />
-
-                  <SelectField
-                    label="是否希望未来长期留在海外？"
-                    value={form.wantsLongTermStay}
-                    options={preferenceOptions}
-                    onChange={(value) =>
-                      updateField("wantsLongTermStay", value as PreferenceAnswer)
-                    }
-                  />
-
-                  <SelectField
-                    label="是否接受低预算过渡路线？"
-                    value={form.acceptsLowBudgetRoute}
-                    options={preferenceOptions}
-                    onChange={(value) =>
-                      updateField("acceptsLowBudgetRoute", value as PreferenceAnswer)
-                    }
-                  />
+                    <SelectField
+                      label="是否接受低预算过渡路线？"
+                      value={form.acceptsLowBudgetRoute}
+                      options={preferenceOptions}
+                      onChange={(value) => updateField("acceptsLowBudgetRoute", value as PreferenceAnswer)}
+                    />
+                  </FormSection>
 
                   <div className="flex gap-3 pt-2">
                     <button
                       type="submit"
                       disabled={isGenerating}
-                      className="flex-1 rounded-xl bg-sky-600 px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="flex-1 rounded-xl bg-sky-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {isGenerating ? "正在生成路线..." : submitted ? "重新生成路线建议" : "生成路线建议"}
                     </button>
@@ -1835,16 +1967,15 @@ export default function PlanPage() {
                 )}
 
                 {submitted && (
-                  <div className="no-print rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="no-print rounded-[28px] bg-white/90 p-5 shadow-sm ring-1 ring-black/5">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="text-xs font-medium text-slate-500">结果操作</p>
                         <h3 className="mt-1 text-lg font-semibold text-slate-950">
                           保存你的路线规划结果
                         </h3>
-                        <p className="mt-2 text-sm leading-6 text-slate-600">
-                          生成时间：
-                          {submittedAt ? submittedAt.toLocaleString("zh-CN") : "暂无记录"}
+                        <p className="mt-2 text-sm leading-6 text-slate-500">
+                          生成时间：{submittedAt ? submittedAt.toLocaleString("zh-CN") : "暂无记录"}
                         </p>
                       </div>
 
@@ -1852,7 +1983,7 @@ export default function PlanPage() {
                         <button
                           type="button"
                           onClick={handleCopyResult}
-                          className="rounded-full bg-sky-600 px-4 py-2 text-sm font-medium text-slate-950 transition-colors hover:bg-sky-700"
+                          className="rounded-full bg-sky-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-700"
                         >
                           复制结果摘要
                         </button>
@@ -1860,22 +1991,16 @@ export default function PlanPage() {
                         <button
                           type="button"
                           onClick={handlePrintResult}
-                          className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                          className="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-200/70 transition-colors hover:bg-slate-200/70"
                         >
                           打印 / 保存 PDF
                         </button>
                       </div>
                     </div>
-
-                    {copyStatus && (
-                      <p className="mt-4 rounded-2xl bg-gradient-to-b from-slate-50 to-white px-4 py-3 text-sm text-slate-600">
-                        {copyStatus}
-                      </p>
-                    )}
                   </div>
                 )}
 
-                <div className="rounded-3xl border border-amber-200 bg-amber-50 p-6 text-sm leading-7 text-amber-800">
+                <div className="rounded-[28px] bg-amber-50/70 p-5 text-sm leading-7 text-amber-800 ring-1 ring-amber-200/70">
                   <strong>重要提示：</strong>
                   当前结果是基于本地规则生成的初步建议，不构成签证、移民、法律或就业承诺。
                   涉及政策、签证、学校和费用的信息，请以官方机构和最新资料为准。
