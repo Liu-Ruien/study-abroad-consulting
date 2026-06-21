@@ -4,23 +4,22 @@
 // 作用：收集用户基本情况，并基于本地规则输出路线建议、用户画像和推荐理由
 // 当前阶段不接真实 AI、不接数据库，只做产品原型
 
-import { FormEvent, ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import PlanForm, {
+  type EditingSummaryField,
+  type FormSectionKey,
+} from "@/components/plan/PlanForm";
+import PlanInsightModal from "@/components/plan/PlanInsightModal";
+import PlanPdfReport from "@/components/plan/PlanPdfReport";
+import PlanRouteDetailModal from "@/components/plan/PlanRouteDetailModal";
 import {
-  budgetOptions,
-  countryPreferenceOptions,
   createPlanInsightSummary,
   createUserProfileSummary,
-  getBudgetLabel,
   getRecommendedRoutes,
-  languageOptions,
-  preferenceOptions,
   targetCountryOptions,
-  type BudgetLevel,
   type CountryPreference,
-  type LanguageLevel,
   type PlanFormState,
-  type PreferenceAnswer,
   type RiskLevel,
   type TargetCountry,
 } from "@/lib/plan-routes";
@@ -37,13 +36,6 @@ const initialForm: PlanFormState = {
   wantsPartTimeJob: "unknown",
   wantsLongTermStay: "unknown",
   acceptsLowBudgetRoute: "unknown",
-};
-
-// 风险等级样式
-const riskLevelStyles: Record<RiskLevel, string> = {
-  low: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-  medium: "bg-amber-50 text-amber-700 ring-amber-200",
-  high: "bg-rose-50 text-rose-700 ring-rose-200",
 };
 
 const routeRiskDisplayLabels: Record<RiskLevel, string> = {
@@ -74,213 +66,6 @@ const targetCountryOptionsByPreference: Record<CountryPreference, TargetCountry[
   europe: ["unknown", "germany", "other"],
 };
 
-type SelectFieldOption<T extends string> = {
-  value: T;
-  label: string;
-};
-
-type SelectFieldProps<T extends string> = {
-  label: string;
-  value: T;
-  options: SelectFieldOption<T>[];
-  onChange: (value: T) => void;
-  helperText?: string;
-};
-
-// 自定义下拉选择框
-// 作用：替代浏览器原生 select，统一圆角、阴影和下滑动画效果
-function SelectField<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-  helperText,
-}: SelectFieldProps<T>) {
-  const [isOpen, setIsOpen] = useState(false);
-  const selectRef = useRef<HTMLDivElement | null>(null);
-
-  const selectedOption = options.find((option) => option.value === value);
-
-  useEffect(() => {
-    function handleOutsideClick(event: MouseEvent) {
-      if (!selectRef.current?.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
-
-  return (
-    <div ref={selectRef} className={`relative ${isOpen ? "z-50" : "z-0"}`}>
-      <label className="mb-2 block text-sm font-medium text-slate-700">
-        {label}
-      </label>
-
-      <button
-        type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={`flex w-full items-center justify-between rounded-xl border bg-white px-4 py-3 text-left text-sm outline-none transition ${isOpen
-          ? "border-sky-400 ring-2 ring-sky-100"
-          : "border-slate-200 hover:border-sky-200"
-          }`}
-      >
-        <span className="text-slate-900">
-          {selectedOption?.label ?? "请选择"}
-        </span>
-
-        <span
-          className={`ml-3 flex h-4 w-4 shrink-0 items-center justify-center transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-            }`}
-          aria-hidden="true"
-        >
-          <span className="h-2 w-2 rotate-45 border-b-2 border-r-2 border-slate-400" />
-        </span>
-      </button>
-
-      <div
-        className={`absolute left-0 right-0 top-full z-50 mt-2 origin-top overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl ring-1 ring-slate-200/60 transition duration-200 ${isOpen
-          ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
-          : "pointer-events-none -translate-y-1 scale-[0.98] opacity-0"
-          }`}
-      >
-        <div className="max-h-[min(16rem,50vh)] overflow-y-auto overscroll-contain p-1 [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.45)_transparent]">
-          {options.map((option) => {
-            const isSelected = option.value === value;
-
-            return (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => {
-                  onChange(option.value);
-                  setIsOpen(false);
-                }}
-                className={`w-full rounded-xl px-3 py-2.5 text-left text-sm transition ${isSelected
-                  ? "bg-sky-50 font-medium text-sky-700"
-                  : "text-slate-700 hover:bg-slate-50"
-                  }`}
-              >
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {helperText && (
-        <p className="mt-2 text-xs leading-5 text-slate-500">
-          {helperText}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function SummaryTextItem({
-  label,
-  value,
-  isEditing,
-  onToggle,
-  children,
-}: {
-  label: string;
-  value: string;
-  isEditing: boolean;
-  onToggle: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      className={`rounded-2xl text-sm leading-6 text-slate-700 ring-1 transition-all duration-200 ${isEditing
-        ? "bg-sky-50/80 ring-sky-200 shadow-sm"
-        : "bg-white/75 ring-slate-200/70 hover:-translate-y-[1px] hover:bg-white hover:shadow-sm hover:ring-sky-100"
-        }`}
-    >
-      <button
-        type="button"
-        onClick={onToggle}
-        className="group flex w-full items-center justify-between gap-4 px-4 py-3 text-left"
-      >
-        <span className={isEditing ? "shrink-0 text-sky-600" : "shrink-0 text-slate-400"}>
-          {label}
-        </span>
-
-        <span className="flex items-center gap-2 text-right">
-          <span className="font-semibold tracking-tight text-slate-900">
-            {value}
-          </span>
-          <span
-            className={`rounded-full px-2 py-0.5 text-[11px] font-medium transition ${isEditing
-              ? "bg-sky-100 text-sky-700"
-              : "bg-slate-100 text-slate-400 opacity-0 group-hover:opacity-100"
-              }`}
-          >
-            {isEditing ? "编辑中" : "修改"}
-          </span>
-        </span>
-      </button>
-
-      {isEditing && (
-        <div className="relative z-50 overflow-visible px-4 pb-4 pt-1">{children}</div>
-      )}
-    </div>
-  );
-}
-
-const SummarySelectItem = SummaryTextItem;
-
-type FormSectionKey = "basic" | "preference" | "goal";
-
-function FormSection({
-  title,
-  description,
-  isOpen,
-  onToggle,
-  children,
-}: {
-  title: string;
-  description: string;
-  isOpen: boolean;
-  onToggle: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <section
-      className={`relative rounded-2xl bg-white/75 ring-1 ring-slate-200/70 transition-all duration-200 ${isOpen ? "z-10 overflow-visible" : "z-0 overflow-hidden"
-        }`}
-    >
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition hover:bg-slate-50/70"
-      >
-        <div>
-          <h3 className="font-semibold text-slate-950">{title}</h3>
-          <p className="mt-1 text-xs leading-5 text-slate-500">{description}</p>
-        </div>
-
-        <span
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm text-slate-500 transition-transform ${isOpen ? "rotate-180" : ""
-            }`}
-        >
-          ˅
-        </span>
-      </button>
-
-      {isOpen && (
-        <div className="relative overflow-visible space-y-3 border-t border-slate-100 px-4 py-4 pb-5">
-          {children}
-        </div>
-      )}
-    </section>
-  );
-}
-
 export default function PlanPage() {
   // 当前正在填写的表单数据
   const [form, setForm] = useState<PlanFormState>(initialForm);
@@ -289,6 +74,7 @@ export default function PlanPage() {
   const [submitted, setSubmitted] = useState(false);
 
   const resultRef = useRef<HTMLDivElement | null>(null);
+  const activeRouteCardRef = useRef<HTMLDivElement | null>(null);
   const [formError, setFormError] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -328,19 +114,8 @@ export default function PlanPage() {
   });
 
   // 摘要模式下，当前正在单独编辑的字段
-  const [editingSummaryField, setEditingSummaryField] = useState<
-    | "age"
-    | "education"
-    | "major"
-    | "budgetLevel"
-    | "languageLevel"
-    | "countryPreference"
-    | "targetCountry"
-    | "wantsPartTimeJob"
-    | "wantsLongTermStay"
-    | "acceptsLowBudgetRoute"
-    | null
-  >(null);
+  const [editingSummaryField, setEditingSummaryField] =
+    useState<EditingSummaryField>(null);
 
   const availableTargetCountryOptions = useMemo(() => {
     const allowedValues = targetCountryOptionsByPreference[form.countryPreference];
@@ -381,8 +156,6 @@ export default function PlanPage() {
 
     return getRecommendedRoutes(submittedForm);
   }, [submittedForm]);
-
-  const hasRecommendedRoutes = recommendedRoutes.length > 0;
 
   // 当前工作台中展示的路线
   const activeRoute = recommendedRoutes[activeRouteIndex] ?? recommendedRoutes[0] ?? null;
@@ -474,6 +247,17 @@ export default function PlanPage() {
       ...prev,
       [key]: value,
     }));
+  }
+
+  function handleRouteSwitch(index: number) {
+    setActiveRouteIndex(index);
+
+    window.setTimeout(() => {
+      activeRouteCardRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 40);
   }
 
   function handleCountryPreferenceChange(value: CountryPreference) {
@@ -600,88 +384,17 @@ export default function PlanPage() {
     window.print();
   }
 
-  // PDF 报告专用路线类型
-  // 说明：这里使用 Record<string, unknown> 是为了避免路线字段变化导致 TypeScript 报错
-  type PrintableRoute = Record<string, unknown>;
-
-  // PDF 报告使用的路线数据
-  const pdfRoutes = recommendedRoutes as unknown as PrintableRoute[];
-
-  // 从路线对象中安全读取文本
-  // 作用：不同路线字段名可能不同，这里统一做兼容处理
-  function readRouteText(
-    route: PrintableRoute,
-    keys: string[],
-    fallback: string
-  ) {
-    for (const key of keys) {
-      const value = route[key];
-
-      if (typeof value === "string" && value.trim()) {
-        return value;
-      }
-
-      if (typeof value === "number") {
-        return String(value);
-      }
-    }
-
-    return fallback;
-  }
-
-  // 从路线对象中安全读取列表
-  // 作用：兼容 suitableFor、advantages、risks、nextSteps 等数组字段
-  function readRouteList(route: PrintableRoute, keys: string[]) {
-    for (const key of keys) {
-      const value = route[key];
-
-      if (Array.isArray(value)) {
-        return value
-          .map((item) => {
-            if (typeof item === "string") {
-              return item;
-            }
-
-            if (item && typeof item === "object") {
-              const objectItem = item as Record<string, unknown>;
-              return String(
-                objectItem.title ||
-                objectItem.label ||
-                objectItem.name ||
-                objectItem.text ||
-                ""
-              );
-            }
-
-            return "";
-          })
-          .filter(Boolean);
-      }
-    }
-
-    return [];
-  }
-
-  // 把用户基础画像文本拆成“标题 + 内容”
-  // 例如：年龄：22 岁左右
-  function splitProfileText(text: string) {
-    const parts = text.split(/：|:/);
-
-    if (parts.length >= 2) {
-      return {
-        label: parts[0],
-        value: parts.slice(1).join("："),
-      };
-    }
-
-    return {
-      label: "用户信息",
-      value: text,
-    };
-  }
-
   return (
     <main className="plan-page-root min-h-screen bg-[#f5f5f7] px-4 py-8 text-slate-950 sm:px-6 sm:py-12">
+      {/* PDF 专用报告区域必须是 .plan-page-root 的直接子元素，避免打印时被普通页面容器隐藏 */}
+      {submitted && (
+        <PlanPdfReport
+          submittedAt={submittedAt}
+          profileSummary={profileSummary}
+          recommendedRoutes={recommendedRoutes}
+        />
+      )}
+
       <div className="mx-auto max-w-7xl">
         {copyStatus && (
           <div
@@ -691,281 +404,23 @@ export default function PlanPage() {
             {copyStatus}
           </div>
         )}
-        {/* PDF 专用报告区域：网页正常浏览时隐藏，只有打印 / 保存 PDF 时显示 */}
-        {submitted && (
-          <section className="pdf-report-only">
-            {/* PDF 第 1 页：报告首页 */}
-            <section className="pdf-page pdf-cover-page">
-              <p className="pdf-kicker">出国咨询信息整理平台</p>
-
-              <h1 className="pdf-main-title">出国路线规划初步报告</h1>
-
-              <p className="pdf-subtitle">
-                本报告根据用户填写的基础信息和当前本地规则生成，用于帮助用户快速理解可选出国方向。
-              </p>
-
-              <div className="pdf-meta-box">
-                <div>
-                  <span>生成时间</span>
-                  <strong>
-                    {submittedAt ? submittedAt.toLocaleString("zh-CN") : "暂无记录"}
-                  </strong>
-                </div>
-
-                <div>
-                  <span>报告性质</span>
-                  <strong>初步路线建议</strong>
-                </div>
-
-                <div>
-                  <span>推荐路线数量</span>
-                  <strong>{pdfRoutes.length} 条</strong>
-                </div>
-              </div>
-
-              <h2 className="pdf-section-title">用户基础信息摘要</h2>
-
-              <div className="pdf-profile-grid">
-                {profileSummary.slice(0, 4).map((item, index) => {
-                  const profile = splitProfileText(String(item));
-
-                  return (
-                    <div className="pdf-profile-item" key={`profile-${index}`}>
-                      <span>{profile.label}</span>
-                      <strong>{profile.value}</strong>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <h2 className="pdf-section-title">推荐路线总览</h2>
-
-              <table className="pdf-route-table">
-                <thead>
-                  <tr>
-                    <th>排名</th>
-                    <th>路线名称</th>
-                    <th>国家 / 地区</th>
-                    <th>预算</th>
-                    <th>匹配度</th>
-                    <th>风险</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {pdfRoutes.slice(0, 3).map((route, index) => {
-                    const title = readRouteText(route, ["title", "name"], `推荐路线 ${index + 1}`);
-                    const country = readRouteText(route, ["country", "countryName"], "综合路线");
-                    const budget = readRouteText(route, ["budget", "budgetRange", "budgetLabel"], "待确认");
-                    const risk = readRouteText(route, ["riskLevel", "risk", "riskLabel"], "中等");
-                    const score = readRouteText(
-                      route,
-                      ["matchScore", "score", "suitabilityScore", "fitScore"],
-                      "待评估"
-                    );
-
-                    return (
-                      <tr key={`pdf-table-route-${index}`}>
-                        <td>{index + 1}</td>
-                        <td>{title}</td>
-                        <td>{country}</td>
-                        <td>{budget}</td>
-                        <td>{score.includes("%") ? score : `${score}%`}</td>
-                        <td>{risk}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-
-              <div className="pdf-cover-notice">
-                <strong>重要说明：</strong>
-                本报告为系统根据当前信息生成的初步参考，不代表最终申请结论。实际选择路线前，仍需结合官方政策、预算、语言能力、学历背景和个人情况进一步确认。
-              </div>
-            </section>
-
-            {/* PDF 第 2 页开始：每条路线单独一页 */}
-            {pdfRoutes.slice(0, 3).map((route, index) => {
-              const title = readRouteText(route, ["title", "name"], `推荐路线 ${index + 1}`);
-              const country = readRouteText(route, ["country", "countryName"], "综合路线");
-              const budget = readRouteText(route, ["budget", "budgetRange", "budgetLabel"], "预算待确认");
-              const risk = readRouteText(route, ["riskLevel", "risk", "riskLabel"], "中等风险");
-              const description = readRouteText(
-                route,
-                ["description", "summary", "intro"],
-                "该路线适合作为出国方向的初步参考，需要结合个人条件继续确认。"
-              );
-              const score = readRouteText(
-                route,
-                ["matchScore", "score", "suitabilityScore", "fitScore"],
-                "待评估"
-              );
-
-              const matchReasons = readRouteList(route, [
-                "matchReasons",
-                "matchingReasons",
-                "reasons",
-                "reasonList",
-              ]).slice(0, 2);
-
-              const suitableFor = readRouteList(route, [
-                "suitableFor",
-                "targetUsers",
-                "audience",
-              ]).slice(0, 2);
-
-              const advantages = readRouteList(route, [
-                "advantages",
-                "benefits",
-                "strengths",
-              ]).slice(0, 2);
-
-              const risks = readRouteList(route, [
-                "risks",
-                "riskTips",
-                "riskReminders",
-              ]).slice(0, 2);
-
-              const nextSteps = readRouteList(route, [
-                "nextSteps",
-                "steps",
-                "actions",
-              ]).slice(0, 2);
-
-              return (
-                <section className="pdf-page pdf-route-page" key={`pdf-route-${index}`}>
-                  <div className="pdf-route-header">
-                    <p className="pdf-kicker">推荐路线 {index + 1}</p>
-                    <h2 className="pdf-route-title">{title}</h2>
-
-                    <div className="pdf-route-tags">
-                      <span>{country}</span>
-                      <span>{budget}</span>
-                      <span>{risk}</span>
-                      <span>{score.includes("%") ? score : `${score}%`} 匹配</span>
-                    </div>
-                  </div>
-
-                  <div className="pdf-score-box">
-                    <div>
-                      <span>路线匹配度</span>
-                      <strong>{score.includes("%") ? score : `${score}%`}</strong>
-                    </div>
-                    <div className="pdf-score-bar">
-                      <div
-                        style={{
-                          width: score === "待评估" ? "70%" : `${Number(score.replace("%", "")) || 70}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <section className="pdf-summary-box">
-                    <h3>路线概述</h3>
-                    <p>{description}</p>
-                  </section>
-
-                  <div className="pdf-two-column">
-                    <section className="pdf-info-block">
-                      <h3>推荐理由</h3>
-                      <ul>
-                        {(matchReasons.length ? matchReasons : ["与当前用户基础条件存在一定匹配度。"]).map(
-                          (item, itemIndex) => (
-                            <li key={`reason-${itemIndex}`}>{item}</li>
-                          )
-                        )}
-                      </ul>
-                    </section>
-
-                    <section className="pdf-info-block">
-                      <h3>适合人群</h3>
-                      <ul>
-                        {(suitableFor.length ? suitableFor : ["适合希望获得明确出国方向的人群。"]).map(
-                          (item, itemIndex) => (
-                            <li key={`suitable-${itemIndex}`}>{item}</li>
-                          )
-                        )}
-                      </ul>
-                    </section>
-
-                    <section className="pdf-info-block">
-                      <h3>路线优势</h3>
-                      <ul>
-                        {(advantages.length ? advantages : ["路线较清晰，适合继续深入了解。"]).map(
-                          (item, itemIndex) => (
-                            <li key={`advantage-${itemIndex}`}>{item}</li>
-                          )
-                        )}
-                      </ul>
-                    </section>
-
-                    <section className="pdf-info-block">
-                      <h3>风险提醒</h3>
-                      <ul>
-                        {(risks.length ? risks : ["政策、预算和个人条件仍需进一步确认。"]).map(
-                          (item, itemIndex) => (
-                            <li key={`risk-${itemIndex}`}>{item}</li>
-                          )
-                        )}
-                      </ul>
-                    </section>
-                  </div>
-
-                  <section className="pdf-next-box">
-                    <h3>下一步建议</h3>
-                    <ol>
-                      {(nextSteps.length ? nextSteps : ["继续确认目标国家政策、预算和个人申请条件。"]).map(
-                        (item, itemIndex) => (
-                          <li key={`step-${itemIndex}`}>{item}</li>
-                        )
-                      )}
-                    </ol>
-                  </section>
-
-                </section>
-              );
-            })}
-
-            {/* PDF 最后一页：免责声明 */}
-            <section className="pdf-page pdf-notice-page">
-              <p className="pdf-kicker">风险提示</p>
-              <h2 className="pdf-route-title">重要提醒与免责声明</h2>
-
-              <div className="pdf-disclaimer-list">
-                <p>
-                  本报告由系统根据用户填写的信息和当前本地规则生成，仅用于帮助用户建立初步出国方向认知。
-                </p>
-                <p>
-                  报告内容不构成正式申请建议、法律建议、移民建议或投资建议。
-                </p>
-                <p>
-                  各国家和地区的留学、签证、就业和移民政策可能随时调整，最终应以官方机构、学校、使领馆及专业顾问的最新信息为准。
-                </p>
-                <p>
-                  用户在做出真实申请、缴费、签约或出国决定前，应进一步核实政策、预算、语言要求、学历要求、签证条件和个人风险承受能力。
-                </p>
-              </div>
-            </section>
-          </section>
-        )}
         {/* 页面头部 */}
-        <section className="mb-8 overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_18%_18%,rgba(14,165,233,0.10),transparent_34%),linear-gradient(135deg,#ffffff_0%,#ffffff_62%,#f8fafc_100%)] px-6 py-10 shadow-[0_18px_55px_rgba(15,23,42,0.06)] ring-1 ring-black/5 sm:mb-10 sm:px-10 sm:py-14">
-          <div className="max-w-4xl">
-            <p className="mb-5 inline-flex rounded-full bg-slate-100 px-4 py-1.5 text-sm font-medium text-slate-600 ring-1 ring-slate-200/70">
-              v0.5 · 出国路线决策工作台
+        <section className="mb-8 overflow-hidden rounded-[36px] bg-[radial-gradient(circle_at_18%_12%,rgba(14,165,233,0.10)_0%,rgba(224,242,254,0.42)_34%,transparent_60%),linear-gradient(145deg,rgba(248,250,252,0.96)_0%,rgba(255,255,255,0.94)_52%,rgba(241,245,249,0.86)_100%)] px-6 py-11 shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/80 backdrop-blur-xl sm:mb-10 sm:px-12 sm:py-16">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="mb-5 inline-flex rounded-full bg-slate-950 px-4 py-1.5 text-sm font-medium text-white shadow-sm">
+              v0.5.2 · 出国路线决策工作台
             </p>
 
-            <h1 className="text-4xl font-semibold tracking-tight text-slate-950 sm:text-6xl">
-              找到更适合你的出国路线。
+            <h1 className="text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-6xl">
+              先看清方向，再决定路线。
             </h1>
 
-            <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
-              输入你的年龄、学历、专业、预算、语言能力和目标偏好，系统会先用本地规则生成路线建议，
-              帮你快速比较方向、风险和下一步行动。
+            <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-slate-500 sm:text-lg">
+              输入基础情况，获得本地规则生成的路线建议、风险提示和下一步行动清单。
             </p>
           </div>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+          <div className="mx-auto mt-9 grid max-w-3xl gap-3 sm:grid-cols-3">
             {[
               ["输入", "基础条件"],
               ["分析", "路线匹配"],
@@ -973,7 +428,7 @@ export default function PlanPage() {
             ].map(([label, value]) => (
               <div
                 key={label}
-                className="rounded-2xl bg-white/70 px-5 py-4 shadow-sm ring-1 ring-slate-200/70"
+                className="rounded-3xl bg-slate-50/80 px-5 py-4 ring-1 ring-slate-200/70"
               >
                 <p className="text-sm text-slate-500">{label}</p>
                 <p className="mt-1 font-semibold text-slate-950">{value}</p>
@@ -984,350 +439,23 @@ export default function PlanPage() {
 
         <div className="grid items-start gap-6 lg:grid-cols-[400px_minmax(0,1fr)] lg:gap-8">
           {/* 左侧表单 */}
-          <section className="no-print rounded-[28px] bg-[radial-gradient(circle_at_18%_0%,rgba(14,165,233,0.08),transparent_30%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4 shadow-[0_16px_45px_rgba(15,23,42,0.07)] ring-1 ring-black/5 backdrop-blur sm:p-5">
-            {submitted && isFormCollapsed ? (
-              <form onSubmit={handleSubmit}>
-                <p className="mb-2 text-sm font-medium text-sky-700">
-                  已填写信息摘要
-                </p>
-
-                <h2 className="mb-3 text-xl font-bold text-slate-900 sm:text-2xl">
-                  当前路线基于这些信息生成
-                </h2>
-
-                <p className="mb-5 text-sm leading-6 text-slate-600">
-                  点击可编辑的信息项即可单独修改。修改后需要重新生成路线建议。
-                </p>
-
-                {isResultOutdated && (
-                  <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800">
-                    你已经修改了左侧信息，右侧路线仍是上一次生成的结果。请点击“重新生成路线建议”更新结果。
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <SummaryTextItem
-                    label="年龄"
-                    value={form.age ? `${form.age} 岁左右` : "未填写"}
-                    isEditing={editingSummaryField === "age"}
-                    onToggle={() => setEditingSummaryField(editingSummaryField === "age" ? null : "age")}
-                  >
-                    <input
-                      value={form.age}
-                      onChange={(event) => updateField("age", event.target.value)}
-                      placeholder="例如：22"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-                    />
-                  </SummaryTextItem>
-
-                  <SummaryTextItem
-                    label="学历背景"
-                    value={form.education || "未填写"}
-                    isEditing={editingSummaryField === "education"}
-                    onToggle={() =>
-                      setEditingSummaryField(editingSummaryField === "education" ? null : "education")
-                    }
-                  >
-                    <input
-                      value={form.education}
-                      onChange={(event) => updateField("education", event.target.value)}
-                      placeholder="例如：本科 / 大专 / 高中 / 已工作"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-                    />
-                  </SummaryTextItem>
-
-                  <SummaryTextItem
-                    label="专业 / 工作方向"
-                    value={form.major || "未填写"}
-                    isEditing={editingSummaryField === "major"}
-                    onToggle={() => setEditingSummaryField(editingSummaryField === "major" ? null : "major")}
-                  >
-                    <input
-                      value={form.major}
-                      onChange={(event) => updateField("major", event.target.value)}
-                      placeholder="例如：软件工程 / 护理 / 机械 / 无明确方向"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-                    />
-                  </SummaryTextItem>
-
-                  <SummarySelectItem
-                    label="预算情况"
-                    value={getBudgetLabel(form.budgetLevel)}
-                    isEditing={editingSummaryField === "budgetLevel"}
-                    onToggle={() =>
-                      setEditingSummaryField(editingSummaryField === "budgetLevel" ? null : "budgetLevel")
-                    }
-                  >
-                    <SelectField
-                      label="预算区间"
-                      value={form.budgetLevel}
-                      options={budgetOptions}
-                      onChange={(value) => updateField("budgetLevel", value as BudgetLevel)}
-                    />
-                  </SummarySelectItem>
-
-                  <SummarySelectItem
-                    label="语言能力"
-                    value={languageOptions.find((option) => option.value === form.languageLevel)?.label ?? "未填写"}
-                    isEditing={editingSummaryField === "languageLevel"}
-                    onToggle={() =>
-                      setEditingSummaryField(editingSummaryField === "languageLevel" ? null : "languageLevel")
-                    }
-                  >
-                    <SelectField
-                      label="语言能力"
-                      value={form.languageLevel}
-                      options={languageOptions}
-                      onChange={(value) => updateField("languageLevel", value as LanguageLevel)}
-                    />
-                  </SummarySelectItem>
-
-                  <SummarySelectItem
-                    label="国家 / 地区偏好"
-                    value={countryPreferenceOptions.find((option) => option.value === form.countryPreference)?.label ?? "未填写"}
-                    isEditing={editingSummaryField === "countryPreference"}
-                    onToggle={() =>
-                      setEditingSummaryField(editingSummaryField === "countryPreference" ? null : "countryPreference")
-                    }
-                  >
-                    <SelectField
-                      label="国家 / 地区偏好"
-                      value={form.countryPreference}
-                      options={countryPreferenceOptions}
-                      onChange={(value) => handleCountryPreferenceChange(value as CountryPreference)}
-                    />
-                  </SummarySelectItem>
-
-                  <SummarySelectItem
-                    label="目标国家偏好"
-                    value={targetCountryOptions.find((option) => option.value === form.targetCountry)?.label ?? "未填写"}
-                    isEditing={editingSummaryField === "targetCountry"}
-                    onToggle={() =>
-                      setEditingSummaryField(editingSummaryField === "targetCountry" ? null : "targetCountry")
-                    }
-                  >
-                    <SelectField
-                      label="目标国家偏好"
-                      value={form.targetCountry}
-                      options={availableTargetCountryOptions}
-                      onChange={(value) => updateField("targetCountry", value as TargetCountry)}
-                    />
-                  </SummarySelectItem>
-
-                  <SummarySelectItem
-                    label="边学习边打工"
-                    value={preferenceOptions.find((option) => option.value === form.wantsPartTimeJob)?.label ?? "未填写"}
-                    isEditing={editingSummaryField === "wantsPartTimeJob"}
-                    onToggle={() =>
-                      setEditingSummaryField(editingSummaryField === "wantsPartTimeJob" ? null : "wantsPartTimeJob")
-                    }
-                  >
-                    <SelectField
-                      label="是否希望边学习边打工？"
-                      value={form.wantsPartTimeJob}
-                      options={preferenceOptions}
-                      onChange={(value) => updateField("wantsPartTimeJob", value as PreferenceAnswer)}
-                    />
-                  </SummarySelectItem>
-
-                  <SummarySelectItem
-                    label="长期留在海外"
-                    value={preferenceOptions.find((option) => option.value === form.wantsLongTermStay)?.label ?? "未填写"}
-                    isEditing={editingSummaryField === "wantsLongTermStay"}
-                    onToggle={() =>
-                      setEditingSummaryField(editingSummaryField === "wantsLongTermStay" ? null : "wantsLongTermStay")
-                    }
-                  >
-                    <SelectField
-                      label="是否希望未来长期留在海外？"
-                      value={form.wantsLongTermStay}
-                      options={preferenceOptions}
-                      onChange={(value) => updateField("wantsLongTermStay", value as PreferenceAnswer)}
-                    />
-                  </SummarySelectItem>
-
-                  <SummarySelectItem
-                    label="低预算过渡路线"
-                    value={preferenceOptions.find((option) => option.value === form.acceptsLowBudgetRoute)?.label ?? "未填写"}
-                    isEditing={editingSummaryField === "acceptsLowBudgetRoute"}
-                    onToggle={() =>
-                      setEditingSummaryField(
-                        editingSummaryField === "acceptsLowBudgetRoute" ? null : "acceptsLowBudgetRoute"
-                      )
-                    }
-                  >
-                    <SelectField
-                      label="是否接受低预算过渡路线？"
-                      value={form.acceptsLowBudgetRoute}
-                      options={preferenceOptions}
-                      onChange={(value) => updateField("acceptsLowBudgetRoute", value as PreferenceAnswer)}
-                    />
-                  </SummarySelectItem>
-                </div>
-
-                <div className="mt-5 space-y-3">
-                  <button
-                    type="submit"
-                    disabled={isGenerating}
-                    className="w-full rounded-xl bg-sky-600 px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {isGenerating ? "正在生成路线..." : "重新生成路线建议"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleReset}
-                    className="w-full rounded-xl border border-slate-200 px-5 py-3 text-sm font-medium text-slate-600 transition hover:border-sky-300 hover:text-sky-700"
-                  >
-                    重置全部信息
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <>
-                <h2 className="mb-2 text-xl font-bold text-slate-900 sm:text-2xl">
-                  填写你的基本情况
-                </h2>
-
-                <p className="mb-6 text-sm leading-6 text-slate-600">
-                  信息不用特别精确，先填写大概情况即可。修改信息后需要重新生成路线建议，右侧结果才会更新。
-                </p>
-
-                <form onSubmit={handleSubmit} className="relative space-y-3 overflow-visible">
-                  <FormSection
-                    title="基础信息"
-                    description="先填写年龄、学历和专业方向。"
-                    isOpen={openFormSections.basic}
-                    onToggle={() => toggleFormSection("basic")}
-                  >
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-slate-700">
-                        年龄
-                      </label>
-                      <input
-                        value={form.age}
-                        onChange={(event) => updateField("age", event.target.value)}
-                        placeholder="例如：22"
-                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-slate-700">
-                        当前学历
-                      </label>
-                      <input
-                        value={form.education}
-                        onChange={(event) => updateField("education", event.target.value)}
-                        placeholder="例如：本科 / 大专 / 高中 / 已工作"
-                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-slate-700">
-                        专业方向 / 工作方向
-                      </label>
-                      <input
-                        value={form.major}
-                        onChange={(event) => updateField("major", event.target.value)}
-                        placeholder="例如：软件工程 / 护理 / 机械 / 无明确方向"
-                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-                      />
-                    </div>
-                  </FormSection>
-
-                  <FormSection
-                    title="路线偏好"
-                    description="预算、语言和目标国家会直接影响推荐结果。"
-                    isOpen={openFormSections.preference}
-                    onToggle={() => toggleFormSection("preference")}
-                  >
-                    <SelectField
-                      label="预算区间"
-                      value={form.budgetLevel}
-                      options={budgetOptions}
-                      onChange={(value) => updateField("budgetLevel", value as BudgetLevel)}
-                    />
-
-                    <SelectField
-                      label="语言能力"
-                      value={form.languageLevel}
-                      options={languageOptions}
-                      onChange={(value) => updateField("languageLevel", value as LanguageLevel)}
-                    />
-
-                    <SelectField
-                      label="国家 / 地区偏好"
-                      value={form.countryPreference}
-                      options={countryPreferenceOptions}
-                      onChange={(value) => handleCountryPreferenceChange(value as CountryPreference)}
-                    />
-
-                    <SelectField
-                      label="目标国家偏好"
-                      value={form.targetCountry}
-                      options={availableTargetCountryOptions}
-                      onChange={(value) => updateField("targetCountry", value as TargetCountry)}
-                      helperText="目标国家选项会根据上方的国家 / 地区偏好自动筛选；如果还没确定，就保持默认。"
-                    />
-                  </FormSection>
-
-                  <FormSection
-                    title="长期规划"
-                    description="如果暂时不确定，可以保持默认。"
-                    isOpen={openFormSections.goal}
-                    onToggle={() => toggleFormSection("goal")}
-                  >
-                    <SelectField
-                      label="是否希望边学习边打工？"
-                      value={form.wantsPartTimeJob}
-                      options={preferenceOptions}
-                      onChange={(value) => updateField("wantsPartTimeJob", value as PreferenceAnswer)}
-                    />
-
-                    <SelectField
-                      label="是否希望未来长期留在海外？"
-                      value={form.wantsLongTermStay}
-                      options={preferenceOptions}
-                      onChange={(value) => updateField("wantsLongTermStay", value as PreferenceAnswer)}
-                    />
-
-                    <SelectField
-                      label="是否接受低预算过渡路线？"
-                      value={form.acceptsLowBudgetRoute}
-                      options={preferenceOptions}
-                      onChange={(value) => updateField("acceptsLowBudgetRoute", value as PreferenceAnswer)}
-                    />
-                  </FormSection>
-
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      type="submit"
-                      disabled={isGenerating}
-                      className="flex-1 rounded-xl bg-sky-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {isGenerating ? "正在生成路线..." : submitted ? "重新生成路线建议" : "生成路线建议"}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleReset}
-                      className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-medium text-slate-600 transition hover:border-sky-300 hover:text-sky-700"
-                    >
-                      重置
-                    </button>
-                  </div>
-
-                  {formError && (
-                    <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">
-                      {formError}
-                    </div>
-                  )}
-                </form>
-              </>
-            )}
-          </section>
+          <PlanForm
+            form={form}
+            submitted={submitted}
+            isFormCollapsed={isFormCollapsed}
+            isResultOutdated={isResultOutdated}
+            isGenerating={isGenerating}
+            formError={formError}
+            openFormSections={openFormSections}
+            editingSummaryField={editingSummaryField}
+            availableTargetCountryOptions={availableTargetCountryOptions}
+            onSubmit={handleSubmit}
+            onReset={handleReset}
+            onToggleFormSection={toggleFormSection}
+            onUpdateField={updateField}
+            onCountryPreferenceChange={handleCountryPreferenceChange}
+            onEditingSummaryFieldChange={setEditingSummaryField}
+          />
 
           {/* 右侧结果 */}
           <section ref={resultRef} className="print-report space-y-6 scroll-mt-6">
@@ -1494,8 +622,8 @@ export default function PlanPage() {
                 {/* 推荐路线卡片 */}
                 {/* v0.3.14：路线结果工作台 */}
                 {activeRoute && (
-                  <article className="overflow-hidden rounded-[30px] bg-white shadow-[0_18px_55px_rgba(15,23,42,0.08)] ring-1 ring-black/5">
-                    <div className="flex flex-col gap-4 border-b border-slate-100 bg-gradient-to-br from-white via-sky-50/40 to-slate-50 px-6 py-6 sm:flex-row sm:items-start sm:justify-between">
+                  <article className="overflow-hidden rounded-[32px] bg-white/90 shadow-[0_20px_60px_rgba(15,23,42,0.07)] ring-1 ring-black/5 backdrop-blur-xl">
+                    <div className="flex flex-col gap-4 border-b border-slate-100 bg-white px-6 py-6 sm:flex-row sm:items-start sm:justify-between">
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-2">
                           <p className="text-sm font-medium text-sky-700">
@@ -1512,7 +640,7 @@ export default function PlanPage() {
                           </span>
                         </div>
 
-                        <h3 className="text-xl font-bold text-slate-900">
+                        <h3 className="text-xl font-semibold tracking-tight text-slate-950">
                           先看最适合你的路线，再切换查看其他备选方案
                         </h3>
                       </div>
@@ -1520,21 +648,21 @@ export default function PlanPage() {
                       <button
                         type="button"
                         onClick={() => setShowInsightModal(true)}
-                        className="inline-flex items-center justify-center rounded-full bg-sky-600 px-4 py-2 text-sm font-medium text-slate-950 shadow-sm transition hover:bg-sky-700"
+                        className="inline-flex items-center justify-center rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800"
                       >
                         查看整体分析
                       </button>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 px-6 py-5">
+                    <div className="grid gap-2 px-6 py-5 sm:grid-cols-3">
                       {recommendedRoutes.map((route, index) => (
                         <button
                           key={route.id}
                           type="button"
-                          onClick={() => setActiveRouteIndex(index)}
-                          className={`rounded-full px-4 py-2 text-sm font-medium transition ${activeRouteIndex === index
-                            ? "bg-sky-600 text-slate-950 shadow-sm"
-                            : "bg-slate-100 text-slate-600 hover:bg-sky-50 hover:text-sky-700"
+                          onClick={() => handleRouteSwitch(index)}
+                          className={`rounded-2xl px-4 py-3 text-left text-sm font-medium transition ${activeRouteIndex === index
+                            ? "bg-slate-950 text-white shadow-sm"
+                            : "bg-slate-100/80 text-slate-600 hover:bg-white hover:text-slate-950 hover:ring-1 hover:ring-slate-200"
                             }`}
                         >
                           推荐 {index + 1} · {route.country}
@@ -1542,7 +670,10 @@ export default function PlanPage() {
                       ))}
                     </div>
 
-                    <div className="mx-6 mb-6 overflow-hidden rounded-[28px] bg-gradient-to-br from-white via-sky-50/50 to-slate-50 shadow-[0_18px_50px_rgba(15,23,42,0.08)] ring-1 ring-black/5">
+                    <div
+                      ref={activeRouteCardRef}
+                      className="scroll-mt-6 mx-4 mb-5 overflow-hidden rounded-[28px] bg-slate-50/80 ring-1 ring-slate-200/70 sm:mx-6 sm:mb-6"
+                    >
                       <div className="p-6 sm:p-7">
                         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                           <div>
@@ -1564,7 +695,7 @@ export default function PlanPage() {
                           {activeRoute.summary}
                         </p>
 
-                        <div className="mb-5 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+                        <div className="mb-5 rounded-3xl bg-white p-4 ring-1 ring-slate-200/70">
                           <div className="mb-2 flex items-center justify-between">
                             <span className="text-sm font-semibold text-slate-950">
                               适合指数
@@ -1581,7 +712,7 @@ export default function PlanPage() {
                             />
                           </div>
 
-                          <p className="mt-2 text-xs leading-5 text-slate-300">
+                          <p className="mt-2 text-xs leading-5 text-slate-400">
                             适合指数表示该路线与你当前目标、预算和基础条件的匹配程度，不代表录取、签证或就业成功率。
                           </p>
 
@@ -1613,7 +744,7 @@ export default function PlanPage() {
                           <button
                             type="button"
                             onClick={() => setSelectedRouteId(activeRoute.id)}
-                            className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-slate-100"
+                            className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950 ring-1 ring-slate-200 transition hover:bg-slate-50"
                           >
                             查看详细内容
                           </button>
@@ -1637,333 +768,28 @@ export default function PlanPage() {
                           ))}
                         </div>
                       </div>
+
                     </div>
 
                   </article>
                 )}
 
                 {showInsightModal && (
-                  <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 px-4 py-6"
-                  >
-                    <div
-                      className="flex max-h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-indigo-50 shadow-2xl"
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      <div className="flex items-start justify-between gap-4 border-b border-sky-100 bg-white/75 px-6 py-5 backdrop-blur">
-                        <div>
-                          <p className="mb-2 text-sm font-medium text-sky-700">
-                            推荐理由总结
-                          </p>
-                          <h3 className="text-2xl font-bold text-slate-950">
-                            初步推荐路线分析
-                          </h3>
-                          <p className="mt-2 text-sm leading-6 text-slate-600">
-                            下面内容会结合你的目标国家、预算、语言能力和长期规划，解释系统为什么这样排序。
-                          </p>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => setShowInsightModal(false)}
-                          className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-medium text-slate-600 shadow-sm ring-1 ring-slate-200/60 transition hover:bg-slate-50"
-                        >
-                          关闭
-                        </button>
-                      </div>
-
-                      <div className="overflow-y-auto overscroll-contain px-6 py-5 pr-4 [scrollbar-gutter:stable] [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.25)_transparent] hover:[scrollbar-color:rgba(148,163,184,0.55)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-200/25 [&::-webkit-scrollbar-thumb]:transition-colors [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70">
-                        <div className="grid gap-4 md:grid-cols-2">
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <h4 className="mb-3 font-semibold text-slate-900">
-                              你的基础画像
-                            </h4>
-
-                            <div className="space-y-3 text-sm">
-                              {profileSummary.slice(0, 6).map((item) => (
-                                <p
-                                  key={item}
-                                  className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600"
-                                >
-                                  {item}
-                                </p>
-                              ))}
-                            </div>
-                          </section>
-
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <h4 className="mb-3 font-semibold text-slate-900">
-                              系统判断结论
-                            </h4>
-
-                            <p className="text-sm leading-7 text-slate-600">
-                              {insightSummary}
-                            </p>
-                          </section>
-                        </div>
-
-                        <section className="mt-4 rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                          <h4 className="mb-4 font-semibold text-slate-900">
-                            推荐路线对比
-                          </h4>
-
-                          <div className="grid gap-3 md:grid-cols-3">
-                            {recommendedRoutes.map((route, index) => (
-                              <div
-                                key={route.id}
-                                className="flex min-h-[220px] flex-col rounded-2xl border border-slate-100 bg-slate-50 p-4"
-                              >
-                                <p className="mb-2 text-xs font-medium text-sky-700">
-                                  推荐 {index + 1} · {route.country}
-                                </p>
-
-                                <h5 className="mb-3 min-h-[52px] font-semibold leading-6 text-slate-900">
-                                  {route.title}
-                                </h5>
-
-                                <div className="mt-auto">
-                                  <div className="mb-2 flex items-center justify-between text-sm">
-                                    <span className="text-slate-500">匹配度</span>
-                                    <strong className="text-sky-700">
-                                      {route.matchScore}%
-                                    </strong>
-                                  </div>
-
-                                  <div className="mb-3 h-2 overflow-hidden rounded-full bg-slate-200">
-                                    <div
-                                      className="h-full rounded-full bg-sky-600"
-                                      style={{ width: `${route.matchScore}%` }}
-                                    />
-                                  </div>
-
-                                  <p className="text-xs leading-5 text-slate-500">
-                                    {route.matchReasons.slice(0, 2).join("；")}
-                                  </p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </section>
-
-                        <div className="mt-4 grid gap-4 md:grid-cols-2">
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <h4 className="mb-3 font-semibold text-slate-900">
-                              需要重点注意
-                            </h4>
-
-                            <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                              <li>• 匹配度不是录取率、签证通过率或就业成功率。</li>
-                              <li>• 如果目标国家路线排第一但分数不高，说明系统尊重你的目标，但仍认为风险需要谨慎评估。</li>
-                              <li>• 高预算、高语言门槛或政策变化快的路线，建议优先做人工复核。</li>
-                            </ul>
-                          </section>
-
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <h4 className="mb-3 font-semibold text-slate-900">
-                              下一步建议
-                            </h4>
-
-                            <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                              {(primaryRoute?.nextSteps.slice(0, 3) ?? [
-                                "先确认目标国家、预算和语言能力是否匹配。",
-                                "再核实签证、学校、项目和费用信息。",
-                                "最后决定是否需要一对一人工评估。",
-                              ]).map((item) => (
-                                <li key={item}>• {item}</li>
-                              ))}
-                            </ul>
-                          </section>
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
+                  <PlanInsightModal
+                    profileSummary={profileSummary}
+                    insightSummary={insightSummary}
+                    recommendedRoutes={recommendedRoutes}
+                    primaryRoute={primaryRoute}
+                    onClose={() => setShowInsightModal(false)}
+                  />
                 )}
 
                 {selectedRoute && (
-                  <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 px-4 py-6"
-                  >
-                    <div
-                      className="flex max-h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-indigo-50 shadow-2xl"
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      <div className="flex items-start justify-between gap-4 border-b border-sky-100 bg-white/75 px-6 py-5 backdrop-blur">
-                        <div>
-                          <p className="mb-2 text-sm font-medium text-sky-700">
-                            {selectedRoute.country} · 路线详细分析
-                          </p>
-
-                          <h3 className="text-2xl font-bold text-slate-950">
-                            {selectedRoute.title}
-                          </h3>
-
-                          <p className="mt-2 text-sm leading-6 text-slate-600">
-                            这份内容会帮助你判断该路线是否真的适合自己，重点关注预算、语言、风险和下一步行动。
-                          </p>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => setSelectedRouteId(null)}
-                          className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-medium text-slate-600 shadow-sm ring-1 ring-slate-200/60 transition hover:bg-slate-50"
-                        >
-                          关闭
-                        </button>
-                      </div>
-
-                      <div className="overflow-y-auto overscroll-contain px-6 py-5 pr-4 [scrollbar-gutter:stable] [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.25)_transparent] hover:[scrollbar-color:rgba(148,163,184,0.55)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-200/25 [&::-webkit-scrollbar-thumb]:transition-colors [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70">
-                        <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                          <h4 className="mb-3 font-semibold text-slate-900">
-                            路线概述
-                          </h4>
-
-                          <p className="text-sm leading-7 text-slate-600">
-                            {selectedRoute.summary}
-                          </p>
-                        </section>
-
-                        <div className="mt-4 grid gap-4 md:grid-cols-3">
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <p className="text-xs font-medium text-slate-500">
-                              国家 / 地区
-                            </p>
-                            <p className="mt-2 font-semibold text-slate-900">
-                              {selectedRoute.country}
-                            </p>
-                          </section>
-
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <p className="text-xs font-medium text-slate-500">
-                              预算判断
-                            </p>
-                            <p className="mt-2 font-semibold text-slate-900">
-                              {getBudgetLabel(selectedRoute.budgetLevel)}
-                            </p>
-                          </section>
-
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <p className="text-xs font-medium text-slate-500">
-                              路线难度
-                            </p>
-                            <p className="mt-2 font-semibold text-slate-900">
-                              {routeRiskDisplayLabels[selectedRoute.riskLevel]}
-                            </p>
-                          </section>
-                        </div>
-
-                        <section className="mt-4 rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                          <div className="mb-2 flex items-center justify-between">
-                            <h4 className="font-semibold text-slate-900">
-                              路线匹配度
-                            </h4>
-                            <strong className="text-sky-700">
-                              {selectedRoute.matchScore}%
-                            </strong>
-                          </div>
-
-                          <div className="h-2 overflow-hidden rounded-full bg-slate-200">
-                            <div
-                              className="h-full rounded-full bg-sky-600"
-                              style={{ width: `${selectedRoute.matchScore}%` }}
-                            />
-                          </div>
-
-                          <p className="mt-3 text-xs leading-5 text-slate-500">
-                            匹配度表示该路线与你当前目标、预算、语言和基础条件的接近程度，不代表录取、签证或就业成功率。
-                          </p>
-                        </section>
-
-                        <section className="mt-4 rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                          <h4 className="mb-3 font-semibold text-slate-900">
-                            为什么推荐这条路线
-                          </h4>
-
-                          <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                            {selectedRoute.matchReasons.map((reason) => (
-                              <li key={reason}>• {reason}</li>
-                            ))}
-                          </ul>
-                        </section>
-
-                        <div className="mt-4 grid gap-4 md:grid-cols-2">
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <h4 className="mb-3 font-semibold text-slate-900">
-                              适合人群
-                            </h4>
-                            <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                              {selectedRoute.suitableFor.map((item) => (
-                                <li key={item}>• {item}</li>
-                              ))}
-                            </ul>
-                          </section>
-
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <h4 className="mb-3 font-semibold text-slate-900">
-                              路线优势
-                            </h4>
-                            <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                              {selectedRoute.advantages.map((item) => (
-                                <li key={item}>• {item}</li>
-                              ))}
-                            </ul>
-                          </section>
-
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <h4 className="mb-3 font-semibold text-slate-900">
-                              风险提醒
-                            </h4>
-                            <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                              {selectedRoute.risks.map((item) => (
-                                <li key={item}>• {item}</li>
-                              ))}
-                            </ul>
-                          </section>
-
-                          <section className="rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                            <h4 className="mb-3 font-semibold text-slate-900">
-                              下一步建议
-                            </h4>
-                            <ul className="space-y-2 text-sm leading-6 text-slate-600">
-                              {selectedRoute.nextSteps.map((item) => (
-                                <li key={item}>• {item}</li>
-                              ))}
-                            </ul>
-                          </section>
-                        </div>
-
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {selectedRoute.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="rounded-full bg-white/80 px-3 py-1 text-xs text-slate-600 shadow-sm ring-1 ring-slate-200/60"
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
-
-                        <section className="mt-4 rounded-2xl bg-white/85 p-5 shadow-sm ring-1 ring-slate-200/60">
-                          <h4 className="mb-3 font-semibold text-slate-900">
-                            推荐阅读
-                          </h4>
-
-                          <div className="flex flex-wrap gap-3">
-                            {selectedRoute.relatedArticles.map((article) => (
-                              <Link
-                                key={article.href}
-                                href={article.href}
-                                className="text-sm font-medium text-sky-600 hover:text-sky-700"
-                              >
-                                {article.title} →
-                              </Link>
-                            ))}
-                          </div>
-                        </section>
-                      </div>
-
-                    </div>
-                  </div>
+                  <PlanRouteDetailModal
+                    route={selectedRoute}
+                    riskDisplayLabels={routeRiskDisplayLabels}
+                    onClose={() => setSelectedRouteId(null)}
+                  />
                 )}
 
                 {submitted && (
