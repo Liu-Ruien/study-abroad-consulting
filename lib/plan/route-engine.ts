@@ -4,6 +4,33 @@ import type { PlanFormState, RecommendedPlanRoute } from "./types";
 import { planRoutes } from "./route-data";
 import { targetCountryToRouteCountry } from "./scoring-engine";
 
+const riskOrder: Record<RecommendedPlanRoute["riskLevel"], number> = {
+  low: 0,
+  medium: 1,
+  high: 2,
+};
+
+const routeOrder = new Map(planRoutes.map((route, index) => [route.id, index]));
+
+function compareRecommendedRoutes(
+  a: RecommendedPlanRoute,
+  b: RecommendedPlanRoute
+) {
+  const scoreDiff = b.matchScore - a.matchScore;
+
+  if (scoreDiff !== 0) {
+    return scoreDiff;
+  }
+
+  const riskDiff = riskOrder[a.riskLevel] - riskOrder[b.riskLevel];
+
+  if (riskDiff !== 0) {
+    return riskDiff;
+  }
+
+  return (routeOrder.get(a.id) ?? 0) - (routeOrder.get(b.id) ?? 0);
+}
+
 // 根据用户输入计算推荐路线
 export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[] {
   const ageNumber = Number(form.age);
@@ -588,7 +615,7 @@ export function getRecommendedRoutes(form: PlanFormState): RecommendedPlanRoute[
 
   const visibleRoutes = scoredRoutes
     .filter((route) => route.matchScore >= 45)
-    .sort((a, b) => b.matchScore - a.matchScore);
+    .sort(compareRecommendedRoutes);
 
   // 如果用户明确选择了目标国家，该国家路线优先展示在第一位。
   // 即使匹配度较低，也要让用户第一眼看到自己关心的路线和对应风险。

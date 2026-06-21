@@ -6,6 +6,7 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import ConfirmResetModal from "@/components/plan/ConfirmResetModal";
 import PlanForm, {
   type EditingSummaryField,
   type FormSectionKey,
@@ -101,6 +102,9 @@ export default function PlanPage() {
   // 是否打开整体分析弹窗
   const [showInsightModal, setShowInsightModal] = useState(false);
 
+  // 是否打开重置确认弹窗，避免误触清空当前结果
+  const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
+
   // 当前正在查看的推荐路线下标
   // v0.3.14：右侧结果区改为路线工作台后，用它切换路线 1 / 2 / 3
   const [activeRouteIndex, setActiveRouteIndex] = useState(0);
@@ -186,7 +190,8 @@ export default function PlanPage() {
   const primaryRoute = recommendedRoutes[0] ?? null;
 
   useEffect(() => {
-    const hasOpenModal = showInsightModal || selectedRouteId !== null;
+    const hasOpenModal =
+      showInsightModal || selectedRouteId !== null || showResetConfirmModal;
 
     if (!hasOpenModal) {
       return;
@@ -206,7 +211,7 @@ export default function PlanPage() {
       document.body.style.overflow = originalOverflow;
       document.body.style.paddingRight = originalPaddingRight;
     };
-  }, [showInsightModal, selectedRouteId]);
+  }, [showInsightModal, selectedRouteId, showResetConfirmModal]);
 
   // 生成可以复制给用户保存的路线规划摘要文本
   // 注意：这里生成的是纯文本，方便复制到微信、备忘录或文档中
@@ -343,6 +348,7 @@ export default function PlanPage() {
     setCopyStatus("");
     setSelectedRouteId(null);
     setShowInsightModal(false);
+    setShowResetConfirmModal(false);
     setActiveRouteIndex(0);
     setIsFormCollapsed(false);
     setEditingSummaryField(null);
@@ -382,16 +388,6 @@ export default function PlanPage() {
     } catch {
       showCopyToast("复制失败，请手动复制页面内容");
     }
-
-    setIsCopyToastVisible(true);
-
-    setTimeout(() => {
-      setIsCopyToastVisible(false);
-    }, 1600);
-
-    setTimeout(() => {
-      setCopyStatus("");
-    }, 2000);
   }
 
   // 打印 / 保存 PDF
@@ -419,6 +415,14 @@ export default function PlanPage() {
             {copyStatus}
           </div>
         )}
+
+        {showResetConfirmModal && (
+          <ConfirmResetModal
+            onCancel={() => setShowResetConfirmModal(false)}
+            onConfirm={handleReset}
+          />
+        )}
+
         {/* 页面头部 */}
         <section className="mb-8 overflow-hidden rounded-[36px] bg-[radial-gradient(circle_at_18%_12%,rgba(14,165,233,0.10)_0%,rgba(224,242,254,0.42)_34%,transparent_60%),linear-gradient(145deg,rgba(248,250,252,0.96)_0%,rgba(255,255,255,0.94)_52%,rgba(241,245,249,0.86)_100%)] px-6 py-11 shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/80 backdrop-blur-xl sm:mb-10 sm:px-12 sm:py-16">
           <div className="mx-auto max-w-4xl text-center">
@@ -468,7 +472,7 @@ export default function PlanPage() {
             editingSummaryField={editingSummaryField}
             availableTargetCountryOptions={availableTargetCountryOptions}
             onSubmit={handleSubmit}
-            onReset={handleReset}
+            onReset={() => setShowResetConfirmModal(true)}
             onToggleFormSection={toggleFormSection}
             onUpdateField={updateField}
             onCountryPreferenceChange={handleCountryPreferenceChange}
