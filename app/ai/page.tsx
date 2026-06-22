@@ -6,21 +6,27 @@ import AiChatPanel from "@/components/ai/AiChatPanel";
 const focusCards = [
   {
     title: "目标",
-    description: "先明确你想留学、工作、短期体验还是长期发展。",
+    description: "先判断你要留学、工作、短期体验，还是长期发展。",
+    toneClass:
+      "bg-[radial-gradient(circle_at_18%_12%,rgba(191,219,254,0.72),transparent_48%),linear-gradient(145deg,rgba(255,255,255,0.54),rgba(238,242,255,0.38))]",
   },
   {
     title: "预算",
-    description: "把学费、生活费、保证金和应急金分开看。",
+    description: "把学费、生活费、保证金和应急金拆开计算。",
+    toneClass:
+      "bg-[radial-gradient(circle_at_18%_12%,rgba(253,230,138,0.54),transparent_48%),linear-gradient(145deg,rgba(255,255,255,0.54),rgba(255,247,237,0.36))]",
   },
   {
     title: "风险",
-    description: "把签证、语言、就业和政策变化提前列出来。",
+    description: "提前看见签证、语言、就业和政策变化的不确定性。",
+    toneClass:
+      "bg-[radial-gradient(circle_at_18%_12%,rgba(251,207,232,0.54),transparent_48%),linear-gradient(145deg,rgba(255,255,255,0.54),rgba(248,250,252,0.36))]",
   },
 ];
 
 export default function AiPage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_16%_8%,rgba(125,211,252,0.32),transparent_32%),radial-gradient(circle_at_84%_4%,rgba(244,114,182,0.22),transparent_34%),radial-gradient(circle_at_52%_34%,rgba(251,191,36,0.16),transparent_36%),linear-gradient(180deg,#f8fbff_0%,#f6f7fb_42%,#f5f5f7_100%)] px-4 py-7 text-slate-950 sm:px-6 sm:py-10">
+    <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_16%_8%,rgba(125,211,252,0.32),transparent_32%),radial-gradient(circle_at_84%_4%,rgba(244,114,182,0.22),transparent_34%),radial-gradient(circle_at_52%_34%,rgba(251,191,36,0.16),transparent_36%),radial-gradient(circle_at_50%_100%,rgba(186,230,253,0.18),transparent_42%),linear-gradient(180deg,#f8fbff_0%,#f6f7fb_42%,#f5f5f7_100%)] px-4 py-7 pb-12 text-slate-950 sm:px-6 sm:py-10 sm:pb-16">
       <div className="mx-auto max-w-6xl">
         <section className="relative mb-8 overflow-hidden rounded-[40px] px-5 py-14 text-center shadow-[0_30px_100px_rgba(15,23,42,0.08)] ring-1 ring-white/75 sm:px-8 sm:py-20">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(186,230,253,0.78),transparent_34%),radial-gradient(circle_at_80%_18%,rgba(251,207,232,0.62),transparent_34%),radial-gradient(circle_at_50%_85%,rgba(187,247,208,0.50),transparent_38%),linear-gradient(135deg,rgba(255,255,255,0.82)_0%,rgba(248,250,252,0.42)_100%)]" />
@@ -55,16 +61,16 @@ export default function AiPage() {
           </div>
         </section>
 
-        <section className="mb-8 grid gap-4 md:grid-cols-3">
+        <section className="mb-8 grid gap-5 md:grid-cols-3">
           {focusCards.map((card) => (
             <div
               key={card.title}
-              className="rounded-[30px] bg-white/48 px-6 py-6 shadow-[0_18px_60px_rgba(15,23,42,0.055)] ring-1 ring-white/72 backdrop-blur-xl"
+              className={`min-h-[178px] rounded-[34px] px-6 py-7 shadow-[0_22px_70px_rgba(15,23,42,0.065)] ring-1 ring-white/72 backdrop-blur-2xl ${card.toneClass}`}
             >
-              <h2 className="text-2xl font-medium tracking-tight text-slate-950">
+              <h2 className="text-3xl font-medium tracking-[-0.045em] text-slate-950 sm:text-4xl">
                 {card.title}
               </h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600">
+              <p className="mt-5 max-w-xs text-sm leading-7 text-slate-600">
                 {card.description}
               </p>
             </div>

@@ -77,7 +77,7 @@ export default function AiChatPanel() {
 
   return (
     <section className="grid gap-8 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:items-start">
-      <div className="rounded-[34px] bg-white/52 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.08)] ring-1 ring-white/72 backdrop-blur-2xl sm:p-5">
+      <div className="rounded-[36px] bg-[linear-gradient(145deg,rgba(255,255,255,0.58),rgba(255,255,255,0.34))] p-4 shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/72 backdrop-blur-2xl sm:p-5">
         <AiQuestionForm
           question={question}
           error={error}
@@ -114,14 +114,14 @@ export default function AiChatPanel() {
         ) : answer && submittedQuestion ? (
           <AiAnswerCard question={submittedQuestion} answer={answer} />
         ) : (
-          <div className="flex min-h-[420px] flex-col justify-between rounded-[36px] bg-white/44 p-7 shadow-[0_24px_90px_rgba(15,23,42,0.07)] ring-1 ring-white/70 backdrop-blur-2xl sm:p-10">
+          <div className="flex min-h-[420px] flex-col justify-between overflow-hidden rounded-[36px] bg-[radial-gradient(circle_at_82%_14%,rgba(191,219,254,0.36),transparent_34%),linear-gradient(145deg,rgba(255,255,255,0.52),rgba(255,255,255,0.28))] p-7 shadow-[0_24px_90px_rgba(15,23,42,0.07)] ring-1 ring-white/70 backdrop-blur-2xl sm:p-10">
             <div>
-              <p className="mb-4 text-sm font-medium text-sky-700">
-                等待你的问题
+              <p className="mb-4 inline-flex rounded-full bg-white/48 px-3.5 py-1.5 text-sm font-medium text-sky-700 ring-1 ring-white/70 backdrop-blur-xl">
+                回答结构预览
               </p>
 
-              <h2 className="mb-5 text-3xl font-medium tracking-[-0.035em] text-slate-950 sm:text-4xl">
-                这里会显示本地模拟回答
+              <h2 className="mb-5 max-w-xl text-3xl font-medium tracking-[-0.04em] text-slate-950 sm:text-5xl">
+                一个问题，会被拆成三个部分。
               </h2>
 
               <p className="max-w-2xl text-base leading-8 text-slate-600">
@@ -130,8 +130,20 @@ export default function AiChatPanel() {
               </p>
             </div>
 
-            <div className="mt-10 rounded-[28px] bg-white/44 p-4 text-sm leading-7 text-slate-500 ring-1 ring-white/70 backdrop-blur-xl">
-              回答仅适合作为初步信息整理。涉及政策、签证、学校和费用时，请继续核实官方渠道。
+            <div className="mt-10 grid gap-3 sm:grid-cols-3">
+              {["结论", "建议", "风险"].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-[26px] bg-white/42 px-4 py-4 ring-1 ring-white/68 backdrop-blur-xl"
+                >
+                  <p className="text-lg font-medium tracking-tight text-slate-950">
+                    {item}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                    先看清楚，再继续核实。
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         )}

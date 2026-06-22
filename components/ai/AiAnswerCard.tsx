@@ -9,7 +9,7 @@ type AiAnswerCardProps = {
 
 export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
   return (
-    <article className="overflow-hidden rounded-[36px] bg-white/50 shadow-[0_24px_90px_rgba(15,23,42,0.08)] ring-1 ring-white/72 backdrop-blur-2xl">
+    <article className="overflow-hidden rounded-[38px] bg-[radial-gradient(circle_at_88%_8%,rgba(251,207,232,0.28),transparent_34%),linear-gradient(145deg,rgba(255,255,255,0.54),rgba(255,255,255,0.30))] shadow-[0_24px_90px_rgba(15,23,42,0.08)] ring-1 ring-white/72 backdrop-blur-2xl">
       <div className="px-6 py-7 sm:px-9 sm:py-9">
         <p className="text-xs font-medium uppercase tracking-[0.16em] text-sky-600/90">
           模拟回答
@@ -19,7 +19,7 @@ export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
           {answer.title}
         </h2>
 
-        <p className="mt-5 rounded-[24px] bg-white/42 px-4 py-3 text-sm leading-6 text-slate-500 ring-1 ring-white/60">
+        <p className="mt-5 rounded-[24px] bg-white/38 px-4 py-3 text-sm leading-6 text-slate-500 ring-1 ring-white/58 backdrop-blur-xl">
           你的问题：{question}
         </p>
 
@@ -28,9 +28,9 @@ export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
         </p>
       </div>
 
-      <div className="space-y-6 border-t border-white/60 px-6 py-6 sm:px-9 sm:py-8">
-        <section className="grid gap-4 lg:grid-cols-3">
-          <div className="rounded-[28px] bg-white/42 p-5 ring-1 ring-white/62 backdrop-blur-xl">
+      <div className="space-y-7 border-t border-white/58 px-6 py-6 sm:px-9 sm:py-8">
+        <section className="grid gap-5 lg:grid-cols-3">
+          <div className="rounded-[30px] bg-white/36 p-5 ring-1 ring-white/58 backdrop-blur-xl">
             <h3 className="text-lg font-medium tracking-tight text-slate-950">
               建议
             </h3>
@@ -41,7 +41,7 @@ export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
             </ul>
           </div>
 
-          <div className="rounded-[28px] bg-orange-50/32 p-5 ring-1 ring-white/62 backdrop-blur-xl">
+          <div className="rounded-[30px] bg-orange-50/26 p-5 ring-1 ring-white/58 backdrop-blur-xl">
             <h3 className="text-lg font-medium tracking-tight text-slate-950">
               风险
             </h3>
@@ -52,7 +52,7 @@ export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
             </ul>
           </div>
 
-          <div className="rounded-[28px] bg-sky-50/34 p-5 ring-1 ring-white/62 backdrop-blur-xl">
+          <div className="rounded-[30px] bg-sky-50/30 p-5 ring-1 ring-white/58 backdrop-blur-xl">
             <h3 className="text-lg font-medium tracking-tight text-slate-950">
               下一步
             </h3>
@@ -66,7 +66,7 @@ export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
           </div>
         </section>
 
-        <p className="border-t border-white/65 pt-5 text-xs leading-6 text-slate-500">
+        <p className="border-t border-white/62 pt-5 text-xs leading-6 text-slate-500">
           {answer.disclaimer}
         </p>
       </div>

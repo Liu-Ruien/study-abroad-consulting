@@ -20,7 +20,7 @@ export default function AiQuestionForm({
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div>
-        <label className="mb-3 block text-sm font-medium text-slate-600">
+        <label className="mb-3 block text-sm font-medium text-slate-500">
           输入你的出国问题
         </label>
 
@@ -29,7 +29,7 @@ export default function AiQuestionForm({
           onChange={(event) => onQuestionChange(event.target.value)}
           placeholder="例如：预算 15 万人民币适合哪些出国路线？"
           rows={5}
-          className="w-full resize-none rounded-[28px] border border-transparent bg-white/54 px-4 py-4 text-sm leading-7 text-slate-900 shadow-inner outline-none ring-1 ring-white/70 transition placeholder:text-slate-400 focus:bg-white/78 focus:ring-4 focus:ring-white/70"
+          className="w-full resize-none rounded-[30px] border border-transparent bg-white/42 px-4 py-4 text-sm leading-7 text-slate-900 shadow-inner outline-none ring-1 ring-white/68 backdrop-blur-xl transition placeholder:text-slate-400 focus:bg-white/72 focus:ring-4 focus:ring-white/65"
         />
       </div>
 
@@ -42,7 +42,7 @@ export default function AiQuestionForm({
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full rounded-full bg-slate-950 px-5 py-3.5 text-sm font-medium text-white shadow-[0_14px_35px_rgba(15,23,42,0.18)] transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-full bg-slate-950 px-5 py-3.5 text-sm font-medium text-white shadow-[0_16px_40px_rgba(15,23,42,0.20)] transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isLoading ? "正在整理回答..." : "生成模拟回答"}
       </button>
