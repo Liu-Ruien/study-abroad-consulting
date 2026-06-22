@@ -7,9 +7,9 @@
 ## 1. 项目基本信息
 
 - 项目名称：出国咨询信息整理平台 / overseas-consulting / study-abroad-consulting
-- 项目定位：面向中国大陆用户的出国路线规划与真实经验整理平台
-- 当前版本：v0.8.7
-- 当前阶段：第四阶段进行中，已增强 `/ai` 问答交互能力
+- 项目定位：面向日本 IT 求职的个人作品集项目（出国规划 / AI 应用场景演示）
+- 当前版本：v0.10.0
+- 当前阶段：第四阶段收尾，已升级 /case-study 作品集案例页
 - 在线地址：https://study-abroad-consulting.vercel.app/
 - 技术栈：Next.js 16、React、TypeScript、Tailwind CSS、Git / GitHub、Vercel
 
@@ -43,6 +43,8 @@
 app/
   ai/
     page.tsx
+  case-study/
+    page.tsx
   plan/
     page.tsx
 
@@ -64,6 +66,8 @@ lib/
     types.ts
     mock-answer.ts
     index.ts
+  ui/
+    card-system.ts
   plan/
     types.ts
     options.ts
@@ -111,12 +115,54 @@ lib/plan-routes.ts
 - v0.8.5 已为 `/ai` 新增复制回答功能。
 - v0.8.6 已优化 `/ai` 移动端布局与首屏体验。
 - v0.8.7 已为 `/ai` 新增重新开始功能。
+- v0.10.0 已升级 `/case-study` 作品集案例页，强化求职展示定位。
+- v0.9.2 已修复 /ai 全白卡片问题，恢复 Apple 风格柔和渐变与色彩层级。
+- v0.9.1.1 已完成全站灰阶对比度修复，消除全白玻璃 UI。
+- v0.9.1 已完成全站 Apple 级信息层级与设计系统统一。
+- v0.9.0 已新增 `/case-study` 作品集页面。
 - `/ai` 页面当前不影响 `/plan` 推荐规则和既有功能。
 - 完成版本后应运行 `npm run build`、`npm run lint` 和 `npm run dev` 手动测试。
 
 ---
 
 ## 6. 版本记录
+
+### v0.10.0
+
+- 升级 `/case-study` 作品集案例页，面向日本 IT 求职展示场景
+- 补充项目背景、核心功能、技术栈、工程亮点、架构说明、能力映射、当前边界与后续计划
+- 强化个人作品集定位，不改变 `/plan` 与 `/ai` 业务逻辑
+- 小幅扩展 `lib/ui/card-system.ts` 中 case-study 专用模块 token
+
+### v0.9.2
+
+- 修复 `/ai` 页面全白卡片问题，恢复 Apple 风格柔和渐变和色彩层级
+- 扩展 `lib/ui/card-system.ts`：Hero / 输入 / 回答 / 三卡分色 tint token
+- `/ai` 文案轻微调整为作品集方向，强调本地模拟 MVP 与工程能力展示
+- 不改变本地模拟问答逻辑，不接真实 AI、不接数据库
+
+### v0.9.1.1
+
+- 全局背景改为 `#f5f6f8` 灰阶，消除整页发白
+- 卡片系统从 `white/60~80 + backdrop-blur` 改为实色 `bg-white` + 分层 border/shadow
+- 三卡区域（建议 / 风险 / 下一步）主卡 `scale-[1.03]` + `border-black/20`，次级卡 `opacity-80`
+- 按钮、输入框增强边界对比度，不改结构与业务逻辑
+
+### v0.9.1
+
+- 新增 `lib/ui/card-system.ts` 统一三层卡片系统（Base / Elevated / Floating）
+- 全站卡片、按钮、输入框统一设计 token，不改业务逻辑与组件拆分
+- `/ai` 回答区改为 Apple 文档式阅读层级（semibold 标题、relaxed 正文、段落间距）
+- 三卡区域（建议 / 风险 / 下一步）中间「风险」卡视觉权重提升
+- `/case-study` 同步 Floating Card 与 Apple tag 样式
+- 减少纯白 UI，强化阴影分层与 glass 质感
+
+### v0.9.0
+
+- 新增 Case Study 作品集页面
+- 将项目从功能型升级为作品集展示型结构
+- 强化 Apple 风格 UI 表达
+- 提升面试展示能力
 
 ### v0.8.7
 
