@@ -11,8 +11,9 @@ export type AiAnswerCategory =
 export type AiMockAnswer = {
   category: AiAnswerCategory;
   title: string;
-  conclusion: string;
+  summary: string;
   suggestions: string[];
   risks: string[];
   nextSteps: string[];
+  disclaimer: string;
 };

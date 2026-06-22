@@ -2,12 +2,14 @@
 
 type AiSuggestionChipsProps = {
   suggestions: string[];
+  selectedQuestion: string;
   isLoading: boolean;
   onSelect: (question: string) => void;
 };
 
 export default function AiSuggestionChips({
   suggestions,
+  selectedQuestion,
   isLoading,
   onSelect,
 }: AiSuggestionChipsProps) {
@@ -24,7 +26,11 @@ export default function AiSuggestionChips({
             type="button"
             disabled={isLoading}
             onClick={() => onSelect(suggestion)}
-            className="rounded-full bg-slate-100/85 px-4 py-2 text-sm font-medium text-slate-600 ring-1 ring-slate-200/70 transition hover:bg-white hover:text-slate-950 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
+            className={`rounded-full px-4 py-2 text-sm font-medium ring-1 transition disabled:cursor-not-allowed disabled:opacity-60 ${
+              selectedQuestion === suggestion
+                ? "bg-slate-950 text-white ring-slate-950 shadow-sm"
+                : "bg-slate-100/85 text-slate-600 ring-slate-200/70 hover:bg-white hover:text-slate-950 hover:shadow-sm"
+            }`}
           >
             {suggestion}
           </button>

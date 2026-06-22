@@ -7,9 +7,6 @@ type AiAnswerCardProps = {
   answer: AiMockAnswer;
 };
 
-const safetyNotice =
-  "以上内容仅作为初步信息整理，不构成签证、移民、录取或就业承诺。具体政策请以学校、使领馆、入管局及官方渠道为准。";
-
 export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
   return (
     <article className="overflow-hidden rounded-[32px] bg-white/92 shadow-[0_22px_70px_rgba(15,23,42,0.08)] ring-1 ring-black/5 backdrop-blur-xl">
@@ -33,7 +30,7 @@ export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
             简短结论
           </h3>
           <p className="text-sm leading-7 text-slate-600">
-            {answer.conclusion}
+            {answer.summary}
           </p>
         </section>
 
@@ -74,8 +71,8 @@ export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
           </ol>
         </section>
 
-        <p className="rounded-3xl bg-slate-950 px-4 py-3 text-xs leading-6 text-white/82">
-          {safetyNotice}
+        <p className="rounded-3xl bg-slate-950 px-4 py-3 text-xs leading-6 text-white/85">
+          {answer.disclaimer}
         </p>
       </div>
     </article>

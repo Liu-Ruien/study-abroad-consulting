@@ -19,6 +19,7 @@ export default function AiChatPanel() {
   const [answer, setAnswer] = useState<AiMockAnswer | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedQuickQuestion, setSelectedQuickQuestion] = useState("");
   const loadingTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function AiChatPanel() {
     const trimmedQuestion = nextQuestion.trim();
 
     if (!trimmedQuestion) {
-      setError("请先输入一个想咨询的问题。");
+      setError("请先输入你想了解的问题。");
       return;
     }
 
@@ -42,24 +43,36 @@ export default function AiChatPanel() {
     }
 
     setQuestion(trimmedQuestion);
+    setSubmittedQuestion(trimmedQuestion);
+    setAnswer(null);
     setError("");
     setIsLoading(true);
 
     // 用短暂延迟模拟整理回答的过程，当前阶段不调用任何 AI API。
     loadingTimerRef.current = window.setTimeout(() => {
-      setSubmittedQuestion(trimmedQuestion);
       setAnswer(createMockAiAnswer(trimmedQuestion));
       setIsLoading(false);
-    }, 520);
+    }, 680);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSelectedQuickQuestion("");
     generateAnswer(question);
   }
 
   function handleSuggestionSelect(nextQuestion: string) {
+    setSelectedQuickQuestion(nextQuestion);
     generateAnswer(nextQuestion);
+  }
+
+  function handleQuestionChange(value: string) {
+    setQuestion(value);
+    setSelectedQuickQuestion("");
+
+    if (error) {
+      setError("");
+    }
   }
 
   return (
@@ -69,13 +82,14 @@ export default function AiChatPanel() {
           question={question}
           error={error}
           isLoading={isLoading}
-          onQuestionChange={setQuestion}
+          onQuestionChange={handleQuestionChange}
           onSubmit={handleSubmit}
         />
 
         <div className="mt-6 border-t border-slate-200/70 pt-5">
           <AiSuggestionChips
             suggestions={quickQuestions}
+            selectedQuestion={selectedQuickQuestion}
             isLoading={isLoading}
             onSelect={handleSuggestionSelect}
           />
@@ -83,7 +97,21 @@ export default function AiChatPanel() {
       </div>
 
       <div className="min-h-[360px]">
-        {answer && submittedQuestion ? (
+        {isLoading ? (
+          <div className="flex min-h-[360px] flex-col justify-center rounded-[32px] bg-white/90 p-6 text-center shadow-[0_22px_70px_rgba(15,23,42,0.08)] ring-1 ring-black/5 backdrop-blur-xl sm:p-8">
+            <p className="mx-auto mb-4 inline-flex rounded-full bg-sky-50 px-4 py-1.5 text-sm font-medium text-sky-700 ring-1 ring-sky-100">
+              正在整理回答
+            </p>
+
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
+              正在根据你的问题生成初步建议
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-slate-500">
+              当前使用本地模拟逻辑，不调用真实 AI，也不会保存你的问题历史。
+            </p>
+          </div>
+        ) : answer && submittedQuestion ? (
           <AiAnswerCard question={submittedQuestion} answer={answer} />
         ) : (
           <div className="flex min-h-[360px] flex-col justify-between rounded-[32px] border border-dashed border-sky-200 bg-gradient-to-br from-sky-50 to-white p-5 shadow-sm sm:p-8">

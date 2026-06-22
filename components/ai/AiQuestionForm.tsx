@@ -28,7 +28,7 @@ export default function AiQuestionForm({
           value={question}
           onChange={(event) => onQuestionChange(event.target.value)}
           placeholder="例如：预算 15 万人民币适合哪些出国路线？"
-          rows={5}
+          rows={4}
           className="w-full resize-none rounded-[26px] border border-slate-200 bg-white/92 px-4 py-4 text-sm leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-4 focus:ring-sky-100/80"
         />
       </div>

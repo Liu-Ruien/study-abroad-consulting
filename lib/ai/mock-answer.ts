@@ -2,6 +2,9 @@
 
 import type { AiMockAnswer } from "./types";
 
+const disclaimer =
+  "以上内容仅作为初步信息整理，不构成签证、移民、录取或就业承诺。具体政策请以学校、使领馆、入管局及官方渠道为准。";
+
 function includesAny(text: string, keywords: string[]) {
   return keywords.some((keyword) => text.includes(keyword.toLowerCase()));
 }
@@ -9,26 +12,27 @@ function includesAny(text: string, keywords: string[]) {
 export function createMockAiAnswer(question: string): AiMockAnswer {
   const normalizedQuestion = question.trim().toLowerCase();
 
-  if (includesAny(normalizedQuestion, ["日本", "语言学校", "大阪"])) {
+  if (includesAny(normalizedQuestion, ["签证", "移民", "永住"])) {
     return {
-      category: "japan",
-      title: "日本路线适合先拆成语言、预算和后续衔接三件事",
-      conclusion:
-        "日本语言学校可以作为过渡入口，但它不是最终结果，后续升学、专门学校或就职准备要提前规划。",
+      category: "visa",
+      title: "签证和长期身份问题必须以官方信息为准",
+      summary:
+        "签证、移民和永住结果受政策、材料、个人背景和时间窗口影响，不能用单一案例判断。",
       suggestions: [
-        "先确认首年预算是否覆盖学费、住宿、生活费和 3-6 个月应急金。",
-        "如果目标是 IT 求职，语言学校期间要同步准备日语、作品集和基础面试表达。",
-        "选校时重点看出勤管理、升学支持、就职支持和退费规则，而不是只看城市名气。",
+        "先区分留学签证、工作签证、打工度假、长期居留等不同路径。",
+        "看政策时优先查使领馆、入管局、移民局和学校官方信息。",
+        "把中介说法当作线索，不要当作最终结论。",
       ],
       risks: [
-        "不能把语言学校理解为稳定留下的保证。",
-        "日语长期停留在基础水平，会明显影响升学、签证更新和求职。",
+        "任何保证签证、保证移民、保证永住的说法都需要高度警惕。",
+        "政策变化、材料真实性和资金证明都会影响最终结果。",
       ],
       nextSteps: [
-        "列出首年预算清单。",
-        "制定 N3 到 N2 的日语学习计划。",
-        "整理学历、成绩、经费支付能力和目标城市信息。",
+        "列出目标签证类型和申请目的。",
+        "核对官方材料清单、资金要求和更新时间。",
+        "必要时咨询合规专业人士。",
       ],
+      disclaimer,
     };
   }
 
@@ -36,7 +40,7 @@ export function createMockAiAnswer(question: string): AiMockAnswer {
     return {
       category: "budget",
       title: "预算判断要先看首年现金流，再看路线风险",
-      conclusion:
+      summary:
         "预算不是只看学费，还要把住宿、生活费、保险、机票、材料费和应急金一起算进去。",
       suggestions: [
         "低预算用户更适合先比较日本、马来西亚、菲律宾等过渡路线。",
@@ -52,29 +56,7 @@ export function createMockAiAnswer(question: string): AiMockAnswer {
         "区分必须支出和可变支出。",
         "保留至少 3-6 个月应急资金。",
       ],
-    };
-  }
-
-  if (includesAny(normalizedQuestion, ["英语", "日语", "语言"])) {
-    return {
-      category: "language",
-      title: "语言能力决定路线门槛和后续适应成本",
-      conclusion:
-        "语言基础弱也可以规划出国，但更适合先选择过渡路线或把语言提升作为第一阶段目标。",
-      suggestions: [
-        "英语弱时，可以先考虑语言提升、低成本过渡或英语授课门槛较低的项目。",
-        "日语路线建议尽早把目标设到 N3，再根据升学或就职提高到 N2。",
-        "不要只用日常沟通判断语言能力，申请、课堂和面试要求会更高。",
-      ],
-      risks: [
-        "语言不足会放大学习、签证材料、实习面试和求职压力。",
-        "只依赖出国后再学语言，容易导致预算和时间成本失控。",
-      ],
-      nextSteps: [
-        "先做一次真实水平测试。",
-        "确定 3 个月和 6 个月语言目标。",
-        "把目标国家的语言门槛列成清单。",
-      ],
+      disclaimer,
     };
   }
 
@@ -82,7 +64,7 @@ export function createMockAiAnswer(question: string): AiMockAnswer {
     return {
       category: "career",
       title: "求职路线要同时准备技能、语言和本地化材料",
-      conclusion:
+      summary:
         "海外求职不是只看专业名，更看语言表达、作品或项目、实习经历和当地招聘规则。",
       suggestions: [
         "IT 方向建议准备可展示项目、简历、GitHub 或作品集。",
@@ -98,36 +80,62 @@ export function createMockAiAnswer(question: string): AiMockAnswer {
         "准备一份目标国家版本简历。",
         "用 2-3 个项目证明自己的技能方向。",
       ],
+      disclaimer,
     };
   }
 
-  if (includesAny(normalizedQuestion, ["签证", "移民", "永住"])) {
+  if (includesAny(normalizedQuestion, ["日本", "语言学校", "大阪"])) {
     return {
-      category: "visa",
-      title: "签证和长期身份问题必须以官方信息为准",
-      conclusion:
-        "签证、移民和永住结果受政策、材料、个人背景和时间窗口影响，不能用单一案例判断。",
+      category: "japan",
+      title: "日本路线适合先拆成语言、预算和后续衔接三件事",
+      summary:
+        "日本语言学校可以作为过渡入口，但它不是最终结果，后续升学、专门学校或就职准备要提前规划。",
       suggestions: [
-        "先区分留学签证、工作签证、打工度假、长期居留等不同路径。",
-        "看政策时优先查使领馆、入管局、移民局和学校官方信息。",
-        "把中介说法当作线索，不要当作最终结论。",
+        "先确认首年预算是否覆盖学费、住宿、生活费和 3-6 个月应急金。",
+        "如果目标是 IT 求职，语言学校期间要同步准备日语、作品集和基础面试表达。",
+        "选校时重点看出勤管理、升学支持、就职支持和退费规则，而不是只看城市名气。",
       ],
       risks: [
-        "任何保证签证、保证移民、保证永住的说法都需要高度警惕。",
-        "政策变化、材料真实性和资金证明都会影响最终结果。",
+        "不能把语言学校理解为稳定留下的保证。",
+        "日语长期停留在基础水平，会明显影响升学、签证更新和求职。",
       ],
       nextSteps: [
-        "列出目标签证类型。",
-        "核对官方材料清单和更新时间。",
-        "必要时咨询合规专业人士。",
+        "列出首年预算清单。",
+        "制定 N3 到 N2 的日语学习计划。",
+        "整理学历、成绩、经费支付能力和目标城市信息。",
       ],
+      disclaimer,
+    };
+  }
+
+  if (includesAny(normalizedQuestion, ["英语", "日语", "语言"])) {
+    return {
+      category: "language",
+      title: "语言能力决定路线门槛和后续适应成本",
+      summary:
+        "语言基础弱也可以规划出国，但更适合先选择过渡路线或把语言提升作为第一阶段目标。",
+      suggestions: [
+        "英语弱时，可以先考虑语言提升、低成本过渡或英语授课门槛较低的项目。",
+        "日语路线建议尽早把目标设到 N3，再根据升学或就职提高到 N2。",
+        "不要只用日常沟通判断语言能力，申请、课堂和面试要求会更高。",
+      ],
+      risks: [
+        "语言不足会放大学习、签证材料、实习面试和求职压力。",
+        "只依赖出国后再学语言，容易导致预算和时间成本失控。",
+      ],
+      nextSteps: [
+        "先做一次真实水平测试。",
+        "确定 3 个月和 6 个月语言目标。",
+        "把目标国家的语言门槛列成清单。",
+      ],
+      disclaimer,
     };
   }
 
   return {
     category: "general",
     title: "先把出国问题拆成目标、预算、语言和风险",
-    conclusion:
+    summary:
       "多数出国问题不能只看国家喜好，需要同时评估预算、学历、专业、语言能力和长期目标。",
     suggestions: [
       "先明确你是想留学、工作、短期体验，还是长期发展。",
@@ -143,5 +151,6 @@ export function createMockAiAnswer(question: string): AiMockAnswer {
       "先使用 `/plan` 生成初步路线建议。",
       "再针对目标路线逐项核实政策和费用。",
     ],
+    disclaimer,
   };
 }
