@@ -28,6 +28,25 @@ import {
   type RiskLevel,
   type TargetCountry,
 } from "@/lib/plan-routes";
+import {
+  badgeSoft,
+  btnPrimary,
+  btnSecondary,
+  cardAnswer,
+  cardHero,
+  cardInfo,
+  cardPreviewConclusion,
+  cardPreviewRisk,
+  cardPreviewSuggestion,
+  cardTintIndigo,
+  cardTintSky,
+  chipSecondary,
+  linkAccent,
+  pageBackground,
+  progressFill,
+  progressTrack,
+  tagCategory,
+} from "@/lib/ui/card-system";
 
 // 表单初始值
 const initialForm: PlanFormState = {
@@ -429,7 +448,7 @@ export default function PlanPage() {
   }
 
   return (
-    <main className="plan-page-root min-h-screen bg-[#f5f5f7] px-4 py-8 text-slate-950 sm:px-6 sm:py-12">
+    <main className={`plan-page-root min-h-screen px-4 py-8 text-slate-950 sm:px-6 sm:py-12 ${pageBackground}`}>
       {/* PDF 专用报告区域必须是 .plan-page-root 的直接子元素，避免打印时被普通页面容器隐藏 */}
       {submitted && (
         <PlanPdfReport
@@ -442,8 +461,9 @@ export default function PlanPage() {
       <div className="mx-auto max-w-7xl">
         {copyStatus && (
           <div
-            className={`no-print pointer-events-none fixed left-1/2 top-8 z-[70] -translate-x-1/2 rounded-full bg-white/90 px-5 py-3 text-sm font-medium text-slate-900 shadow-[0_18px_45px_rgba(15,23,42,0.16)] ring-1 ring-black/10 backdrop-blur-xl transition-all duration-300 ${isCopyToastVisible ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
-              }`}
+            className={`no-print pointer-events-none fixed left-1/2 top-8 z-[70] -translate-x-1/2 px-5 py-3 text-sm font-medium text-slate-900 transition-all duration-300 ${badgeSoft} ${
+              isCopyToastVisible ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+            }`}
           >
             {copyStatus}
           </div>
@@ -457,9 +477,9 @@ export default function PlanPage() {
         )}
 
         {/* 页面头部 */}
-        <section className="mb-8 overflow-hidden rounded-[36px] bg-[radial-gradient(circle_at_18%_12%,rgba(14,165,233,0.10)_0%,rgba(224,242,254,0.42)_34%,transparent_60%),linear-gradient(145deg,rgba(248,250,252,0.96)_0%,rgba(255,255,255,0.94)_52%,rgba(241,245,249,0.86)_100%)] px-6 py-11 shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/80 backdrop-blur-xl sm:mb-10 sm:px-12 sm:py-16">
+        <section className={`mb-8 overflow-hidden px-6 py-11 sm:mb-10 sm:px-12 sm:py-16 ${cardHero}`}>
           <div className="mx-auto max-w-4xl text-center">
-            <p className="mb-5 inline-flex rounded-full bg-slate-950 px-4 py-1.5 text-sm font-medium text-white shadow-sm">
+            <p className={`mb-5 inline-flex px-4 py-1.5 text-sm ${badgeSoft}`}>
               v0.5.2 · 出国路线决策工作台
             </p>
 
@@ -474,14 +494,11 @@ export default function PlanPage() {
 
           <div className="mx-auto mt-9 grid max-w-3xl gap-3 sm:grid-cols-3">
             {[
-              ["输入", "基础条件"],
-              ["分析", "路线匹配"],
-              ["输出", "规划报告"],
-            ].map(([label, value]) => (
-              <div
-                key={label}
-                className="rounded-3xl bg-slate-50/80 px-5 py-4 ring-1 ring-slate-200/70"
-              >
+              ["输入", "基础条件", cardTintSky],
+              ["分析", "路线匹配", cardTintIndigo],
+              ["输出", "规划报告", cardPreviewConclusion],
+            ].map(([label, value, toneClass]) => (
+              <div key={label} className={`px-5 py-4 ${toneClass}`}>
                 <p className="text-sm text-slate-500">{label}</p>
                 <p className="mt-1 font-semibold text-slate-950">{value}</p>
               </div>
@@ -564,41 +581,19 @@ export default function PlanPage() {
                 </p>
 
                 <div className="grid gap-4 sm:grid-cols-3">
-                  <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
-                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-sky-700">
-                      1
+                  {[
+                    ["1", "填写基本情况", "年龄、学历、专业、预算和语言能力。", cardPreviewConclusion],
+                    ["2", "生成路线建议", "系统会给出路线、优势、风险和下一步建议。", cardPreviewSuggestion],
+                    ["3", "保存规划结果", "你可以复制摘要，也可以打印保存为 PDF。", cardPreviewRisk],
+                  ].map(([step, title, desc, toneClass]) => (
+                    <div key={step} className={`p-4 ${toneClass}`}>
+                      <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold ${tagCategory}`}>
+                        {step}
+                      </div>
+                      <h3 className="mb-2 font-semibold text-slate-900">{title}</h3>
+                      <p className="text-sm leading-6 text-slate-600">{desc}</p>
                     </div>
-                    <h3 className="mb-2 font-semibold text-slate-900">
-                      填写基本情况
-                    </h3>
-                    <p className="text-sm leading-6 text-slate-600">
-                      年龄、学历、专业、预算和语言能力。
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
-                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-sky-700">
-                      2
-                    </div>
-                    <h3 className="mb-2 font-semibold text-slate-900">
-                      生成路线建议
-                    </h3>
-                    <p className="text-sm leading-6 text-slate-600">
-                      系统会给出路线、优势、风险和下一步建议。
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
-                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-sky-700">
-                      3
-                    </div>
-                    <h3 className="mb-2 font-semibold text-slate-900">
-                      保存规划结果
-                    </h3>
-                    <p className="text-sm leading-6 text-slate-600">
-                      你可以复制摘要，也可以打印保存为 PDF。
-                    </p>
-                  </div>
+                  ))}
                 </div>
 
                 <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800">
@@ -622,7 +617,7 @@ export default function PlanPage() {
                     {profileSummary.map((item) => (
                       <div
                         key={item}
-                        className="rounded-2xl bg-white px-4 py-3 text-sm text-slate-700 shadow-sm"
+                        className={`px-4 py-3 text-sm text-slate-700 ${cardInfo}`}
                       >
                         {item}
                       </div>
@@ -632,7 +627,7 @@ export default function PlanPage() {
 
                 {/* 推荐路线为空时的兜底提示 */}
                 {recommendedRoutes.length === 0 && (
-                  <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                  <div className={`p-5 sm:p-6 ${cardInfo}`}>
                     <p className="mb-2 text-sm font-medium text-amber-700">
                       暂未匹配到明确路线
                     </p>
@@ -667,7 +662,7 @@ export default function PlanPage() {
                         <button
                           type="button"
                           onClick={handleCopyResult}
-                          className="inline-flex items-center justify-center rounded-full border border-amber-200 bg-white px-4 py-2 text-sm font-medium text-amber-800 transition hover:bg-amber-100"
+                          className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium ${btnSecondary}`}
                         >
                           先复制当前信息
                         </button>
@@ -681,9 +676,9 @@ export default function PlanPage() {
                 {activeRoute && (
                   <article
                     ref={resultWorkbenchRef}
-                    className="scroll-mt-28 overflow-hidden rounded-[32px] bg-white/90 shadow-[0_20px_60px_rgba(15,23,42,0.07)] ring-1 ring-black/5 backdrop-blur-xl [overflow-anchor:none]"
+                    className={`scroll-mt-28 overflow-hidden [overflow-anchor:none] ${cardAnswer}`}
                   >
-                    <div className="flex flex-col gap-4 border-b border-slate-100 bg-white px-6 py-6 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex flex-col gap-4 border-b border-sky-100/70 bg-gradient-to-r from-sky-50/30 via-white/90 to-indigo-50/20 px-6 py-6 sm:flex-row sm:items-start sm:justify-between">
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-2">
                           <p className="text-sm font-medium text-sky-700">
@@ -708,7 +703,7 @@ export default function PlanPage() {
                       <button
                         type="button"
                         onClick={() => setShowInsightModal(true)}
-                        className="inline-flex items-center justify-center rounded-full border border-sky-100 bg-sky-50/80 px-4 py-2 text-sm font-medium text-sky-700 ring-1 ring-sky-100/70 transition hover:bg-sky-100/80 hover:text-sky-800"
+                        className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium ${chipSecondary}`}
                       >
                         查看整体分析
                       </button>
@@ -757,7 +752,7 @@ export default function PlanPage() {
                           {activeRoute.summary}
                         </p>
 
-                        <div className="mb-5 rounded-3xl bg-white p-4 ring-1 ring-slate-200/70">
+                        <div className={`mb-5 p-4 ${cardInfo}`}>
                           <div className="mb-2 flex items-center justify-between">
                             <span className="text-sm font-semibold text-slate-950">
                               适合指数
@@ -767,9 +762,9 @@ export default function PlanPage() {
                             </span>
                           </div>
 
-                          <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+                          <div className={progressTrack}>
                             <div
-                              className="h-full rounded-full bg-sky-600"
+                              className={progressFill}
                               style={{ width: `${activeRoute.matchScore}%` }}
                             />
                           </div>
@@ -806,7 +801,7 @@ export default function PlanPage() {
                           <div className="flex flex-col gap-2 sm:flex-row">
                             <Link
                               href={`/ai?q=${encodeURIComponent(createAiQuestionForRoute(activeRoute))}`}
-                              className="inline-flex shrink-0 items-center justify-center rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+                              className={`inline-flex shrink-0 items-center justify-center rounded-full px-4 py-2 text-sm font-medium ${btnPrimary}`}
                             >
                               带着这条路线问 AI
                             </Link>
@@ -814,7 +809,7 @@ export default function PlanPage() {
                             <button
                               type="button"
                               onClick={() => setSelectedRouteId(activeRoute.id)}
-                              className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950 ring-1 ring-slate-200 transition hover:bg-slate-50"
+                              className={`inline-flex shrink-0 items-center justify-center rounded-full px-4 py-2 text-sm font-medium ${btnSecondary}`}
                             >
                               查看详细内容
                             </button>
@@ -822,7 +817,7 @@ export default function PlanPage() {
                         </div>
                       </div>
 
-                      <div className="border-t border-white/10 bg-white/95 px-6 py-5 text-slate-950 sm:px-7">
+                      <div className="border-t border-sky-100/60 bg-gradient-to-b from-white/95 to-slate-50/40 px-6 py-5 text-slate-950 sm:px-7">
                         <h4 className="mb-3 font-semibold">
                           推荐阅读
                         </h4>
@@ -832,7 +827,7 @@ export default function PlanPage() {
                             <Link
                               key={article.href}
                               href={article.href}
-                              className="text-sm font-medium text-sky-600 hover:text-sky-700"
+                              className={linkAccent}
                             >
                               {article.title} →
                             </Link>
@@ -864,7 +859,7 @@ export default function PlanPage() {
                 )}
 
                 {submitted && (
-                  <div className="no-print rounded-[28px] bg-white/90 p-5 shadow-sm ring-1 ring-black/5">
+                  <div className={`no-print p-5 ${cardInfo}`}>
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="text-xs font-medium text-slate-500">结果操作</p>
@@ -880,7 +875,7 @@ export default function PlanPage() {
                         <button
                           type="button"
                           onClick={handleCopyResult}
-                          className="rounded-full bg-sky-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-700"
+                          className={`rounded-full px-4 py-2 text-sm font-medium ${btnPrimary}`}
                         >
                           复制结果摘要
                         </button>
@@ -888,7 +883,7 @@ export default function PlanPage() {
                         <button
                           type="button"
                           onClick={handlePrintResult}
-                          className="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-200/70 transition-colors hover:bg-slate-200/70"
+                          className={`rounded-full px-4 py-2 text-sm font-medium ${btnSecondary}`}
                         >
                           打印 / 保存 PDF
                         </button>

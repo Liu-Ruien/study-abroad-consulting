@@ -3,6 +3,15 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createMockAiAnswer, type AiMockAnswer } from "@/lib/ai";
+import {
+  badgeSoft,
+  cardAnswerPreview,
+  cardHover,
+  cardInput,
+  cardPreviewConclusion,
+  cardPreviewRisk,
+  cardPreviewSuggestion,
+} from "@/lib/ui/card-system";
 import AiAnswerCard from "./AiAnswerCard";
 import AiQuestionForm from "./AiQuestionForm";
 import AiSuggestionChips from "./AiSuggestionChips";
@@ -12,6 +21,12 @@ const quickQuestions = [
   "预算 15 万人民币适合哪些出国路线？",
   "英语不好还能出国吗？",
   "留学、打工度假和工签路线有什么区别？",
+];
+
+const previewCards = [
+  { label: "结论", hint: "先看清楚，再继续核实。", toneClass: cardPreviewConclusion },
+  { label: "建议", hint: "先看清楚，再继续核实。", toneClass: cardPreviewSuggestion },
+  { label: "风险", hint: "先看清楚，再继续核实。", toneClass: cardPreviewRisk },
 ];
 
 type AiChatPanelProps = {
@@ -112,7 +127,7 @@ export default function AiChatPanel({
 
   return (
     <section className="grid min-w-0 gap-5 sm:gap-6 lg:grid-cols-[minmax(0,440px)_minmax(0,1fr)] lg:items-start lg:gap-8 xl:grid-cols-[minmax(0,460px)_minmax(0,1fr)]">
-      <div className="min-w-0 rounded-[28px] bg-[radial-gradient(circle_at_14%_16%,rgba(186,230,253,0.48),transparent_42%),radial-gradient(circle_at_92%_10%,rgba(221,214,254,0.34),transparent_38%),linear-gradient(145deg,rgba(255,255,255,0.54),rgba(241,245,249,0.32))] p-4 shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/72 backdrop-blur-2xl sm:rounded-[32px] sm:p-5 lg:rounded-[36px] lg:p-6 lg:shadow-[0_28px_90px_rgba(15,23,42,0.08)] xl:p-7">
+      <div className={`min-w-0 p-4 sm:p-5 lg:p-6 xl:p-7 ${cardInput}`}>
         <AiQuestionForm
           question={question}
           error={error}
@@ -123,7 +138,7 @@ export default function AiChatPanel({
           onReset={handleReset}
         />
 
-        <div className="mt-4 border-t border-white/65 pt-4 sm:mt-5 sm:pt-5 lg:mt-5">
+        <div className="mt-4 border-t border-sky-100/80 pt-4 sm:mt-5 sm:pt-5">
           <AiSuggestionChips
             suggestions={quickQuestions}
             selectedQuestion={selectedQuickQuestion}
@@ -135,49 +150,53 @@ export default function AiChatPanel({
 
       <div className="min-h-[min(320px,52vh)] min-w-0 sm:min-h-[360px] lg:min-h-[420px]">
         {isLoading ? (
-          <div className="flex min-h-[min(320px,52vh)] flex-col justify-center rounded-[28px] bg-[radial-gradient(circle_at_18%_14%,rgba(186,230,253,0.36),transparent_40%),radial-gradient(circle_at_84%_12%,rgba(251,207,232,0.28),transparent_36%),linear-gradient(145deg,rgba(255,255,255,0.48),rgba(248,250,252,0.28))] p-5 text-center shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/72 backdrop-blur-2xl sm:min-h-[360px] sm:rounded-[32px] sm:p-7 lg:min-h-[420px] lg:rounded-[36px] lg:p-10">
-            <p className="mx-auto mb-4 inline-flex rounded-full bg-white/58 px-3.5 py-1.5 text-xs font-medium text-sky-700 ring-1 ring-white/75 backdrop-blur-xl sm:mb-5 sm:px-4 sm:text-sm">
+          <div
+            className={`flex min-h-[min(320px,52vh)] flex-col justify-center p-5 text-center sm:min-h-[360px] sm:p-7 lg:min-h-[420px] lg:p-10 ${cardAnswerPreview}`}
+          >
+            <p className={`mx-auto mb-4 inline-flex sm:mb-5 sm:px-4 sm:text-sm ${badgeSoft} px-3.5 py-1.5 text-sky-700`}>
               正在整理回答
             </p>
 
-            <h2 className="text-2xl font-medium tracking-[-0.035em] text-slate-950 sm:text-3xl lg:text-4xl">
+            <h2 className="text-2xl font-semibold leading-snug tracking-tight text-gray-950 sm:text-3xl lg:text-4xl">
               正在根据你的问题生成初步建议
             </h2>
 
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-slate-500 sm:mt-5 sm:leading-7">
-              当前使用本地模拟逻辑，不调用真实 AI，也不会保存你的问题历史。
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gray-600 sm:mt-5 sm:text-base">
+              当前为本地模拟逻辑，用于演示 AI 问答场景下的信息拆解，不调用真实 API，也不会保存问题历史。
             </p>
           </div>
         ) : answer && submittedQuestion ? (
           <AiAnswerCard answer={answer} />
         ) : (
-          <div className="flex min-h-[min(320px,52vh)] flex-col justify-between overflow-hidden rounded-[28px] bg-[radial-gradient(circle_at_16%_12%,rgba(186,230,253,0.38),transparent_38%),radial-gradient(circle_at_82%_14%,rgba(221,214,254,0.28),transparent_34%),linear-gradient(145deg,rgba(255,255,255,0.48),rgba(248,250,252,0.26))] p-5 shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/72 backdrop-blur-2xl sm:min-h-[360px] sm:rounded-[32px] sm:p-7 lg:min-h-[420px] lg:rounded-[36px] lg:p-10">
+          <div
+            className={`flex min-h-[min(320px,52vh)] flex-col justify-between overflow-hidden p-5 sm:min-h-[360px] sm:p-7 lg:min-h-[420px] lg:p-10 ${cardAnswerPreview}`}
+          >
             <div className="min-w-0">
-              <p className="mb-3 inline-flex rounded-full bg-white/48 px-3 py-1.5 text-xs font-medium text-sky-700 ring-1 ring-white/70 backdrop-blur-xl sm:mb-4 sm:px-3.5 sm:text-sm">
+              <p className={`mb-3 inline-flex sm:mb-4 sm:px-3.5 sm:text-sm ${badgeSoft} px-3 py-1.5 text-sky-700`}>
                 回答结构预览
               </p>
 
-              <h2 className="mb-4 max-w-xl text-2xl font-medium tracking-[-0.04em] text-slate-950 sm:mb-5 sm:text-3xl lg:text-5xl">
+              <h2 className="mb-4 max-w-xl text-2xl font-semibold leading-snug tracking-tight text-gray-950 sm:mb-5 sm:text-3xl lg:text-5xl">
                 一个问题，会被拆成三个部分。
               </h2>
 
-              <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
+              <p className="max-w-2xl text-sm leading-relaxed text-gray-700 sm:text-base">
                 你可以询问留学、语言学校、预算、路线选择、求职准备或签证风险。
-                当前 MVP 只使用本地规则整理回答，不调用真实 AI 服务。
+                本 MVP 用 Next.js + TypeScript 组件化实现，仅做本地规则整理，不接真实 AI。
               </p>
             </div>
 
             <div className="mt-6 grid gap-2.5 sm:mt-8 sm:grid-cols-3 sm:gap-3">
-              {["结论", "建议", "风险"].map((item) => (
+              {previewCards.map((item) => (
                 <div
-                  key={item}
-                  className="rounded-[22px] bg-white/42 px-3.5 py-3.5 ring-1 ring-white/68 backdrop-blur-xl sm:rounded-[26px] sm:px-4 sm:py-4"
+                  key={item.label}
+                  className={`px-3.5 py-3.5 sm:px-4 sm:py-4 ${item.toneClass} ${cardHover}`}
                 >
-                  <p className="text-base font-medium tracking-tight text-slate-950 sm:text-lg">
-                    {item}
+                  <p className="text-base font-semibold leading-snug text-gray-950 sm:text-lg">
+                    {item.label}
                   </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">
-                    先看清楚，再继续核实。
+                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                    {item.hint}
                   </p>
                 </div>
               ))}

@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  inputField,
+  selectMenu,
+  selectOptionActive,
+  selectOptionIdle,
+} from "@/lib/ui/card-system";
 
 export type SelectFieldOption<T extends string> = {
   value: T;
@@ -50,18 +56,18 @@ export default function SelectField<T extends string>({
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`flex w-full items-center justify-between rounded-2xl border bg-white/90 px-4 py-3 text-left text-sm outline-none transition duration-200 ${isOpen
-          ? "border-slate-300 shadow-sm ring-4 ring-sky-100/80"
-          : "border-slate-200 hover:border-slate-300 hover:bg-white"
-          }`}
+        className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm outline-none transition duration-200 ${inputField} ${
+          isOpen ? "ring-2 ring-sky-400/20" : ""
+        }`}
       >
         <span className="text-slate-950">
           {selectedOption?.label ?? "请选择"}
         </span>
 
         <span
-          className={`ml-3 flex h-4 w-4 shrink-0 items-center justify-center transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-            }`}
+          className={`ml-3 flex h-4 w-4 shrink-0 items-center justify-center transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
           aria-hidden="true"
         >
           <span className="h-2 w-2 rotate-45 border-b-2 border-r-2 border-slate-400" />
@@ -69,12 +75,13 @@ export default function SelectField<T extends string>({
       </button>
 
       <div
-        className={`absolute left-0 right-0 top-full z-50 mt-2 origin-top overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.14)] ring-1 ring-black/5 transition duration-200 ${isOpen
-          ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
-          : "pointer-events-none -translate-y-1 scale-[0.98] opacity-0"
-          }`}
+        className={`absolute left-0 right-0 top-full z-50 mt-2 origin-top p-1.5 transition duration-200 ${selectMenu} ${
+          isOpen
+            ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
+            : "pointer-events-none -translate-y-1 scale-[0.98] opacity-0"
+        }`}
       >
-        <div className="max-h-[min(16rem,50vh)] overflow-y-auto overscroll-contain p-1.5 [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.45)_transparent]">
+        <div className="max-h-[min(16rem,50vh)] overflow-y-auto overscroll-contain [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.45)_transparent]">
           {options.map((option) => {
             const isSelected = option.value === value;
 
@@ -86,10 +93,9 @@ export default function SelectField<T extends string>({
                   onChange(option.value);
                   setIsOpen(false);
                 }}
-                className={`w-full rounded-xl border px-3 py-2.5 text-left text-sm transition ${isSelected
-                  ? "border-sky-100 bg-sky-50 font-medium text-sky-700 ring-1 ring-sky-100"
-                  : "border-transparent text-slate-700 hover:bg-slate-50 hover:text-slate-950"
-                  }`}
+                className={`mb-0.5 w-full rounded-xl px-3 py-2.5 text-left text-sm transition last:mb-0 ${
+                  isSelected ? selectOptionActive : selectOptionIdle
+                }`}
               >
                 {option.label}
               </button>
@@ -99,9 +105,7 @@ export default function SelectField<T extends string>({
       </div>
 
       {helperText && (
-        <p className="mt-2 text-xs leading-5 text-slate-500">
-          {helperText}
-        </p>
+        <p className="mt-2 text-xs leading-5 text-slate-500">{helperText}</p>
       )}
     </div>
   );

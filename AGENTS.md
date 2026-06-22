@@ -10,6 +10,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 这是一个个人开发的出国咨询信息整理平台，面向准备出国留学、生活、办签证，以及规划海外发展路线的中文用户。
 
+本项目已从功能性应用升级为作品集级产品，用于展示前端工程能力与 UI 设计能力。
+
 当前技术栈：
 
 - Next.js

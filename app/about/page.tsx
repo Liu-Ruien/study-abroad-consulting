@@ -5,13 +5,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { categories } from "@/lib/articles";
+import {
+  cardHero,
+  cardHover,
+  cardInfo,
+  cardTintIndigo,
+  cardTintSky,
+} from "@/lib/ui/card-system";
 
 export const metadata: Metadata = {
   title: "关于本站",
   description: "了解出国咨询网站的定位、内容方向与未来发展规划。",
 };
 
-/** 网站各阶段发展路线（与 README 保持一致） */
 const roadmap = [
   {
     phase: "第一版（当前）",
@@ -57,37 +63,49 @@ const roadmap = [
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">关于本站</h1>
-      <p className="mt-4 text-lg leading-relaxed text-slate-600">
-        「出国咨询」是一个个人开发的出国信息整理平台，旨在把分散的留学、签证与海外生活信息结构化呈现，帮助有出国计划的同学快速入门。
-      </p>
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
+      <section className={`mb-10 px-6 py-8 sm:px-8 ${cardHero}`}>
+        <h1 className="text-3xl font-semibold tracking-tight text-gray-950 sm:text-4xl">
+          关于本站
+        </h1>
+        <p className="mt-4 text-base leading-relaxed text-gray-600 sm:text-lg">
+          「出国咨询」是个人开发的出国信息整理平台，也是面向日本 IT
+          求职的作品集项目之一。本站把分散的留学、签证与海外生活信息结构化呈现，并配合路线规划、本地
+          AI 问答 MVP 与项目案例页，展示工程实现与产品思路。
+        </p>
+      </section>
 
       <section className="mt-12">
-        <h2 className="text-xl font-bold text-slate-900">网站定位</h2>
-        <div className="mt-4 space-y-4 text-base leading-8 text-slate-700">
+        <h2 className="text-xl font-semibold text-gray-950">网站定位</h2>
+        <div
+          className={`mt-4 space-y-4 p-6 text-base leading-relaxed text-gray-700 sm:p-7 ${cardInfo}`}
+        >
           <p>
             本站目前聚焦日本留学与新西兰留学两大方向，同时覆盖签证材料准备、落地后的银行卡与租房等海外生活话题。
-            所有内容以实用为导向，力求语言清晰、结构分明，适合初次了解出国流程的读者。
+            所有内容以实用为导向，力求语言清晰、结构分明。
           </p>
           <p>
-            第一版 MVP 采用 Next.js 构建，文章数据暂存于本地 TypeScript 文件，不依赖数据库与第三方服务，
-            便于快速迭代与后期扩展。
+            项目采用 Next.js 构建，文章数据暂存于本地 TypeScript
+            文件，不依赖数据库与第三方服务，便于快速迭代与作品集演示。
           </p>
         </div>
       </section>
 
       <section className="mt-12">
-        <h2 className="text-xl font-bold text-slate-900">内容分类</h2>
+        <h2 className="text-xl font-semibold text-gray-950">内容分类</h2>
         <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-          {categories.map((category) => (
+          {categories.map((category, index) => (
             <li key={category.slug}>
               <Link
                 href={`/categories/${category.slug}`}
-                className="block rounded-xl border border-slate-200 p-4 transition-colors hover:border-sky-200 hover:bg-sky-50"
+                className={`block p-4 ${index % 2 === 0 ? cardTintSky : cardTintIndigo} ${cardHover}`}
               >
-                <span className="font-semibold text-slate-900">{category.name}</span>
-                <p className="mt-1 text-sm text-slate-600">{category.description}</p>
+                <span className="font-semibold text-gray-950">
+                  {category.name}
+                </span>
+                <p className="mt-1 text-sm text-gray-600">
+                  {category.description}
+                </p>
               </Link>
             </li>
           ))}
@@ -95,22 +113,19 @@ export default function AboutPage() {
       </section>
 
       <section className="mt-12">
-        <h2 className="text-xl font-bold text-slate-900">发展路线</h2>
-        <div className="mt-6 space-y-6">
+        <h2 className="text-xl font-semibold text-gray-950">发展路线</h2>
+        <div className="mt-6 space-y-4">
           {roadmap.map((item) => (
-            <div
-              key={item.phase}
-              className="rounded-2xl border border-slate-200 p-6"
-            >
+            <div key={item.phase} className={`p-6 ${cardInfo}`}>
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                <h3 className="font-semibold text-slate-900">{item.phase}</h3>
-                <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                <h3 className="font-semibold text-gray-950">{item.phase}</h3>
+                <span className="rounded-full border border-sky-100/80 bg-sky-50/80 px-2.5 py-0.5 text-xs font-medium text-gray-600">
                   {item.status}
                 </span>
               </div>
               <ul className="space-y-1.5">
                 {item.items.map((feature) => (
-                  <li key={feature} className="text-sm text-slate-600">
+                  <li key={feature} className="text-sm text-gray-600">
                     · {feature}
                   </li>
                 ))}
@@ -120,11 +135,11 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mt-12 rounded-2xl bg-sky-50 p-8">
-        <h2 className="text-xl font-bold text-slate-900">免责声明</h2>
-        <p className="mt-4 text-sm leading-7 text-slate-700">
+      <section className={`mt-12 p-8 ${cardTintSky}`}>
+        <h2 className="text-xl font-semibold text-gray-950">免责声明</h2>
+        <p className="mt-4 text-sm leading-7 text-gray-700">
           本站内容仅供参考，不构成任何法律、移民或留学申请建议。各国政策、院校要求与费用标准可能随时变化，
-          请以官方机构、使领馆及院校发布的最新信息为准。如需个性化咨询，请等待后续付费咨询功能上线，或自行联系专业机构。
+          请以官方机构、使领馆及院校发布的最新信息为准。本站为作品集演示项目，不提供签证、移民、录取或就业承诺。
         </p>
       </section>
     </div>

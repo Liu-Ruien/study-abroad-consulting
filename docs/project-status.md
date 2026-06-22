@@ -8,8 +8,8 @@
 
 - 项目名称：出国咨询信息整理平台 / overseas-consulting / study-abroad-consulting
 - 项目定位：面向日本 IT 求职的个人作品集项目（出国规划 / AI 应用场景演示）
-- 当前版本：v0.10.0
-- 当前阶段：第四阶段收尾，已升级 /case-study 作品集案例页
+- 当前版本：v0.10.3
+- 当前阶段：第四阶段收尾，已完成文章卡片与 Navbar 视觉强修复
 - 在线地址：https://study-abroad-consulting.vercel.app/
 - 技术栈：Next.js 16、React、TypeScript、Tailwind CSS、Git / GitHub、Vercel
 
@@ -115,6 +115,9 @@ lib/plan-routes.ts
 - v0.8.5 已为 `/ai` 新增复制回答功能。
 - v0.8.6 已优化 `/ai` 移动端布局与首屏体验。
 - v0.8.7 已为 `/ai` 新增重新开始功能。
+- v0.10.3 已强化 ArticleCard tinted gradient，并修复 Navbar 滚动透底问题。
+- v0.10.2 已完成全站视觉收口 QA，统一残留卡片、按钮、chip 与输入框风格。
+- v0.10.1 已新增 /case-study 导航入口，并初步统一首页与内容页视觉风格。
 - v0.10.0 已升级 `/case-study` 作品集案例页，强化求职展示定位。
 - v0.9.2 已修复 /ai 全白卡片问题，恢复 Apple 风格柔和渐变与色彩层级。
 - v0.9.1.1 已完成全站灰阶对比度修复，消除全白玻璃 UI。
@@ -126,6 +129,27 @@ lib/plan-routes.ts
 ---
 
 ## 6. 版本记录
+
+### v0.10.3
+
+- 强化 `ArticleCard` 与首页推荐阅读区：按分类应用明显但克制的 tinted gradient
+- `/articles` 列表统一使用 `ArticleCard`，解决卡片仍接近纯白的问题
+- 增强 Navbar：`bg-white/95` + `backdrop-blur-xl` + `z-50`，修复滚动时内容透底
+- 保持 `/plan`、`/ai` 业务逻辑不变
+
+### v0.10.2
+
+- 完成全站视觉收口 QA，统一残留卡片、按钮、chip、输入框与 Footer 风格
+- `/plan` 仅做轻量视觉同步（表单、弹窗、结果卡片 token），不改业务逻辑
+- 扩展 `lib/ui/card-system.ts` 导航、链接、弹窗、进度条等共用 token
+- 保持 `/ai`、`/case-study` 视觉效果与业务逻辑不变
+
+### v0.10.1
+
+- 顶部导航与 Footer 新增「项目案例」入口，链接 `/case-study`
+- 首页 Hero 视觉升级，新增「查看项目案例」CTA，文案调整为作品集定位
+- 初步统一首页、文章列表/详情、分类页、关于页的视觉风格（复用 `card-system` token）
+- 保持 `/ai`、`/case-study`、`/plan` 业务逻辑不变
 
 ### v0.10.0
 

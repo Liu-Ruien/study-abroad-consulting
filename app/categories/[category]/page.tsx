@@ -3,6 +3,7 @@
 
 import { articles, categories } from "@/lib/articles";
 import Link from "next/link";
+import { cardHero, cardHover, cardInfo } from "@/lib/ui/card-system";
 
 type CategoryPageProps = {
   params: Promise<{
@@ -11,31 +12,28 @@ type CategoryPageProps = {
 };
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  // Next.js 16 中 params 是异步对象，需要 await
   const { category } = await params;
 
-  // 找到当前分类信息
   const currentCategory = categories.find((item) => item.slug === category);
 
-  // 根据分类 slug 筛选文章
   const filteredArticles = articles.filter(
     (article) => article.category === category
   );
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
-      {/* 页面标题 */}
-      <h1 className="mb-2 text-3xl font-bold text-slate-900">
-        {currentCategory ? currentCategory.name : "未知分类"}
-      </h1>
+    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+      <section className={`mb-8 px-6 py-8 sm:px-8 ${cardHero}`}>
+        <h1 className="text-3xl font-semibold tracking-tight text-gray-950">
+          {currentCategory ? currentCategory.name : "未知分类"}
+        </h1>
 
-      <p className="mb-8 text-slate-600">
-        当前分类下共有 {filteredArticles.length} 篇文章
-      </p>
+        <p className="mt-3 text-gray-600">
+          当前分类下共有 {filteredArticles.length} 篇文章
+        </p>
+      </section>
 
-      {/* 如果没有文章，显示提示 */}
       {filteredArticles.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-slate-600">
+        <div className={`p-6 text-gray-600 ${cardInfo}`}>
           当前分类下暂无文章。
         </div>
       ) : (
@@ -44,12 +42,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <Link
               key={article.slug}
               href={`/articles/${article.slug}`}
-              className="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-sky-300 hover:shadow-sm"
+              className={`p-5 sm:p-6 ${cardInfo} ${cardHover}`}
             >
-              <h2 className="mb-2 text-lg font-bold text-slate-900">
+              <h2 className="mb-2 text-lg font-semibold text-gray-950">
                 {article.title}
               </h2>
-              <p className="text-sm leading-6 text-slate-600">
+              <p className="text-sm leading-relaxed text-gray-600">
                 {article.excerpt}
               </p>
             </Link>

@@ -6,6 +6,16 @@ import {
   type RecommendedPlanRoute,
   type RiskLevel,
 } from "@/lib/plan-routes";
+import {
+  btnSecondary,
+  cardInfo,
+  linkAccent,
+  modalHeader,
+  modalShell,
+  progressFill,
+  progressTrack,
+  tagApple,
+} from "@/lib/ui/card-system";
 
 type PlanRouteDetailModalProps = {
   route: RecommendedPlanRoute;
@@ -21,10 +31,10 @@ export default function PlanRouteDetailModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-4 py-6 backdrop-blur-sm">
       <div
-        className="flex max-h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-[32px] border border-white/80 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.22)]"
+        className={`flex max-h-[86vh] w-full max-w-4xl flex-col overflow-hidden ${modalShell}`}
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-slate-200/70 bg-[radial-gradient(circle_at_18%_10%,rgba(14,165,233,0.08)_0%,rgba(224,242,254,0.28)_34%,transparent_62%),linear-gradient(145deg,rgba(255,255,255,0.92)_0%,rgba(248,250,252,0.90)_100%)] px-6 py-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] backdrop-blur-xl">
+        <div className={`flex items-start justify-between gap-4 ${modalHeader}`}>
           <div>
             <p className="mb-2 text-sm font-medium text-sky-700">
               {route.country} · 路线详细分析
@@ -42,14 +52,14 @@ export default function PlanRouteDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600 ring-1 ring-slate-200/70 transition hover:bg-slate-200/70"
+            className={`shrink-0 rounded-full px-3 py-1 text-sm font-medium ${btnSecondary}`}
           >
             关闭
           </button>
         </div>
 
         <div className="overflow-y-auto overscroll-contain px-6 py-5 pr-4 [scrollbar-gutter:stable] [scrollbar-width:thin] [scrollbar-color:rgba(203,213,225,0.25)_transparent] hover:[scrollbar-color:rgba(148,163,184,0.55)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-200/25 [&::-webkit-scrollbar-thumb]:transition-colors [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70">
-          <section className="rounded-3xl bg-slate-50/80 p-5 ring-1 ring-slate-200/70">
+          <section className={`p-5 ${cardInfo}`}>
             <h4 className="mb-3 font-semibold text-slate-900">
               路线概述
             </h4>
@@ -60,19 +70,19 @@ export default function PlanRouteDetailModal({
           </section>
 
           <div className="mt-4 grid gap-4 md:grid-cols-3">
-            <section className="rounded-3xl bg-slate-50/80 p-5 ring-1 ring-slate-200/70">
+            <section className={`p-5 ${cardInfo}`}>
               <p className="text-xs font-medium text-slate-500">国家 / 地区</p>
               <p className="mt-2 font-semibold text-slate-900">{route.country}</p>
             </section>
 
-            <section className="rounded-3xl bg-slate-50/80 p-5 ring-1 ring-slate-200/70">
+            <section className={`p-5 ${cardInfo}`}>
               <p className="text-xs font-medium text-slate-500">预算判断</p>
               <p className="mt-2 font-semibold text-slate-900">
                 {getBudgetLabel(route.budgetLevel)}
               </p>
             </section>
 
-            <section className="rounded-3xl bg-slate-50/80 p-5 ring-1 ring-slate-200/70">
+            <section className={`p-5 ${cardInfo}`}>
               <p className="text-xs font-medium text-slate-500">路线难度</p>
               <p className="mt-2 font-semibold text-slate-900">
                 {riskDisplayLabels[route.riskLevel]}
@@ -86,9 +96,9 @@ export default function PlanRouteDetailModal({
               <strong className="text-sky-700">{route.matchScore}%</strong>
             </div>
 
-            <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+            <div className={progressTrack}>
               <div
-                className="h-full rounded-full bg-sky-600"
+                className={progressFill}
                 style={{ width: `${route.matchScore}%` }}
               />
             </div>
@@ -111,7 +121,7 @@ export default function PlanRouteDetailModal({
           </section>
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <section className="rounded-3xl bg-slate-50/80 p-5 ring-1 ring-slate-200/70">
+            <section className={`p-5 ${cardInfo}`}>
               <h4 className="mb-3 font-semibold text-slate-900">适合人群</h4>
               <ul className="space-y-2 text-sm leading-6 text-slate-600">
                 {route.suitableFor.map((item) => (
@@ -120,7 +130,7 @@ export default function PlanRouteDetailModal({
               </ul>
             </section>
 
-            <section className="rounded-3xl bg-slate-50/80 p-5 ring-1 ring-slate-200/70">
+            <section className={`p-5 ${cardInfo}`}>
               <h4 className="mb-3 font-semibold text-slate-900">路线优势</h4>
               <ul className="space-y-2 text-sm leading-6 text-slate-600">
                 {route.advantages.map((item) => (
@@ -129,7 +139,7 @@ export default function PlanRouteDetailModal({
               </ul>
             </section>
 
-            <section className="rounded-3xl bg-slate-50/80 p-5 ring-1 ring-slate-200/70">
+            <section className={`p-5 ${cardInfo}`}>
               <h4 className="mb-3 font-semibold text-slate-900">风险提醒</h4>
               <ul className="space-y-2 text-sm leading-6 text-slate-600">
                 {route.risks.map((item) => (
@@ -138,7 +148,7 @@ export default function PlanRouteDetailModal({
               </ul>
             </section>
 
-            <section className="rounded-3xl bg-slate-50/80 p-5 ring-1 ring-slate-200/70">
+            <section className={`p-5 ${cardInfo}`}>
               <h4 className="mb-3 font-semibold text-slate-900">下一步建议</h4>
               <ul className="space-y-2 text-sm leading-6 text-slate-600">
                 {route.nextSteps.map((item) => (
@@ -152,7 +162,7 @@ export default function PlanRouteDetailModal({
             {route.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-white/80 px-3 py-1 text-xs text-slate-600 shadow-sm ring-1 ring-slate-200/60"
+                className={tagApple}
               >
                 #{tag}
               </span>
@@ -167,7 +177,7 @@ export default function PlanRouteDetailModal({
                 <Link
                   key={article.href}
                   href={article.href}
-                  className="text-sm font-medium text-sky-600 hover:text-sky-700"
+                  className={linkAccent}
                 >
                   {article.title} →
                 </Link>

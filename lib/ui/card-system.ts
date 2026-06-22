@@ -100,3 +100,100 @@ export const caseStudyModuleRose =
 
 export const tagApple =
   "rounded-full border border-black/10 bg-neutral-100 px-3 py-1 text-sm text-gray-700";
+
+/** 全站导航栏 — 滚动时保持不透明 */
+export const navbarShell =
+  "sticky top-0 z-50 border-b border-slate-200/70 bg-white/95 shadow-sm backdrop-blur-xl supports-[backdrop-filter]:bg-white/90";
+
+export const navbarSubBar =
+  "border-t border-slate-200/60 bg-white/90 backdrop-blur-xl supports-[backdrop-filter]:bg-white/85";
+
+/** 文字链接 accent */
+export const linkAccent =
+  "font-medium text-sky-700 transition-colors hover:text-sky-800";
+
+export const linkMuted =
+  "text-sm text-gray-600 transition-colors hover:text-sky-700";
+
+/** 文章分类标签 */
+export const tagCategory =
+  "rounded-full border border-sky-200/70 bg-sky-100/55 px-2.5 py-1 text-xs font-medium text-sky-800";
+
+/** 文章卡片 — 按分类 tint（明显非纯白） */
+export const articleCardJapan =
+  "rounded-2xl border border-sky-200/65 bg-gradient-to-br from-sky-50/95 via-white/90 to-blue-50/85 shadow-[0_8px_26px_rgba(14,165,233,0.12)]";
+
+export const articleCardNewZealand =
+  "rounded-2xl border border-indigo-200/60 bg-gradient-to-br from-indigo-50/90 via-white/90 to-violet-50/80 shadow-[0_8px_26px_rgba(99,102,241,0.11)]";
+
+export const articleCardVisa =
+  "rounded-2xl border border-cyan-200/55 bg-gradient-to-br from-cyan-50/90 via-white/90 to-slate-50/85 shadow-[0_8px_26px_rgba(6,182,212,0.10)]";
+
+export const articleCardLife =
+  "rounded-2xl border border-rose-200/55 bg-gradient-to-br from-rose-50/88 via-white/90 to-orange-50/78 shadow-[0_8px_26px_rgba(244,63,94,0.10)]";
+
+export const articleCardDefault =
+  "rounded-2xl border border-sky-200/55 bg-gradient-to-br from-sky-50/85 via-white/90 to-indigo-50/75 shadow-[0_8px_26px_rgba(14,165,233,0.10)]";
+
+export const articleCardHover =
+  "transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(15,23,42,0.12)]";
+
+export function getArticleCardTone(categorySlug: string): string {
+  switch (categorySlug) {
+    case "japan-study":
+      return articleCardJapan;
+    case "new-zealand-study":
+      return articleCardNewZealand;
+    case "visa-guide":
+      return articleCardVisa;
+    case "overseas-life":
+      return articleCardLife;
+    default:
+      return articleCardDefault;
+  }
+}
+
+export function getArticleTagTone(categorySlug: string): string {
+  const base =
+    "rounded-full border px-2.5 py-1 text-xs font-medium backdrop-blur-sm";
+  switch (categorySlug) {
+    case "japan-study":
+      return `${base} border-sky-200/70 bg-sky-100/70 text-sky-800`;
+    case "new-zealand-study":
+      return `${base} border-indigo-200/65 bg-indigo-100/60 text-indigo-800`;
+    case "visa-guide":
+      return `${base} border-cyan-200/60 bg-cyan-50/75 text-cyan-900`;
+    case "overseas-life":
+      return `${base} border-rose-200/60 bg-rose-50/70 text-rose-800`;
+    default:
+      return tagCategory;
+  }
+}
+
+/** 弹窗容器 */
+export const modalShell =
+  "overflow-hidden rounded-[30px] border border-sky-100/80 bg-gradient-to-br from-white via-sky-50/25 to-indigo-50/20 shadow-[0_24px_80px_rgba(15,23,42,0.12)]";
+
+export const modalHeader =
+  "border-b border-sky-100/80 bg-gradient-to-br from-sky-50/40 via-white to-indigo-50/25 px-5 py-5 sm:px-6";
+
+export const modalFooter =
+  "border-t border-sky-100/70 bg-gradient-to-b from-white/95 to-slate-50/50 px-5 py-4 sm:px-6";
+
+/** /plan 表单外壳 */
+export const planFormShell =
+  "no-print rounded-[30px] border border-sky-100/90 bg-gradient-to-br from-white via-slate-50/70 to-sky-50/50 p-4 shadow-[0_10px_30px_rgba(14,116,144,0.07)] sm:p-5";
+
+export const progressTrack =
+  "h-2 overflow-hidden rounded-full bg-slate-200/80";
+
+export const progressFill = "h-full rounded-full bg-slate-900";
+
+export const selectMenu =
+  "overflow-hidden rounded-2xl border border-sky-100/90 bg-gradient-to-br from-white to-slate-50/90 shadow-[0_12px_40px_rgba(15,23,42,0.08)]";
+
+export const selectOptionActive =
+  "border border-black/10 bg-black text-white font-medium shadow-sm";
+
+export const selectOptionIdle =
+  "border border-transparent text-gray-700 hover:bg-sky-50/55 hover:text-gray-950";

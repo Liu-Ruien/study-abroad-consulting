@@ -15,6 +15,12 @@ import {
   type PreferenceAnswer,
   type TargetCountry,
 } from "@/lib/plan-routes";
+import {
+  btnPrimary,
+  btnSecondary,
+  inputField,
+  planFormShell,
+} from "@/lib/ui/card-system";
 import FormSection from "./FormSection";
 import SelectField, { type SelectFieldOption } from "./SelectField";
 import SummaryItem, { SummarySelectItem } from "./SummaryItem";
@@ -55,8 +61,11 @@ type PlanFormProps = {
   onEditingSummaryFieldChange: (field: EditingSummaryField) => void;
 };
 
-const inputClassName =
-  "w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-sm outline-none transition focus:border-slate-300 focus:ring-4 focus:ring-sky-100/80";
+const inputClassName = `w-full rounded-2xl px-4 py-3 text-sm ${inputField}`;
+
+const submitButtonClass = `w-full rounded-2xl px-5 py-3 text-sm font-medium ${btnPrimary}`;
+
+const resetButtonClass = `w-full rounded-2xl px-5 py-3 text-sm font-medium ${btnSecondary}`;
 
 export default function PlanForm({
   form,
@@ -80,7 +89,7 @@ export default function PlanForm({
   }
 
   return (
-    <section className="no-print rounded-[30px] bg-[radial-gradient(circle_at_16%_8%,rgba(14,165,233,0.075)_0%,rgba(224,242,254,0.30)_34%,transparent_62%),linear-gradient(145deg,rgba(255,255,255,0.94)_0%,rgba(248,250,252,0.88)_58%,rgba(255,255,255,0.92)_100%)] p-4 shadow-[0_22px_55px_rgba(15,23,42,0.075)] ring-1 ring-white/80 backdrop-blur-xl sm:p-5">
+    <section className={planFormShell}>
       {submitted && isFormCollapsed ? (
         <form onSubmit={onSubmit}>
           <p className="mb-2 text-sm font-medium text-sky-700">
@@ -96,7 +105,7 @@ export default function PlanForm({
           </p>
 
           {isResultOutdated && (
-            <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800">
+            <div className="mb-4 rounded-2xl border border-amber-200/80 bg-amber-50/80 px-4 py-3 text-sm leading-6 text-amber-800">
               你已经修改了左侧信息，右侧路线仍是上一次生成的结果。请点击“重新生成路线建议”更新结果。
             </div>
           )}
@@ -124,14 +133,16 @@ export default function PlanForm({
             >
               <input
                 value={form.education}
-                onChange={(event) => onUpdateField("education", event.target.value)}
+                onChange={(event) =>
+                  onUpdateField("education", event.target.value)
+                }
                 placeholder="例如：本科 / 大专 / 高中 / 已工作"
                 className={inputClassName}
               />
             </SummaryItem>
 
             <SummaryItem
-              label="专业 / 工作方向"
+              label="专业方向"
               value={form.major || "未填写"}
               isEditing={editingSummaryField === "major"}
               onToggle={() => toggleSummaryField("major")}
@@ -145,7 +156,7 @@ export default function PlanForm({
             </SummaryItem>
 
             <SummarySelectItem
-              label="预算情况"
+              label="预算区间"
               value={getBudgetLabel(form.budgetLevel)}
               isEditing={editingSummaryField === "budgetLevel"}
               onToggle={() => toggleSummaryField("budgetLevel")}
@@ -154,13 +165,19 @@ export default function PlanForm({
                 label="预算区间"
                 value={form.budgetLevel}
                 options={budgetOptions}
-                onChange={(value) => onUpdateField("budgetLevel", value as BudgetLevel)}
+                onChange={(value) =>
+                  onUpdateField("budgetLevel", value as BudgetLevel)
+                }
               />
             </SummarySelectItem>
 
             <SummarySelectItem
               label="语言能力"
-              value={languageOptions.find((option) => option.value === form.languageLevel)?.label ?? "未填写"}
+              value={
+                languageOptions.find(
+                  (option) => option.value === form.languageLevel
+                )?.label ?? "未填写"
+              }
               isEditing={editingSummaryField === "languageLevel"}
               onToggle={() => toggleSummaryField("languageLevel")}
             >
@@ -168,13 +185,19 @@ export default function PlanForm({
                 label="语言能力"
                 value={form.languageLevel}
                 options={languageOptions}
-                onChange={(value) => onUpdateField("languageLevel", value as LanguageLevel)}
+                onChange={(value) =>
+                  onUpdateField("languageLevel", value as LanguageLevel)
+                }
               />
             </SummarySelectItem>
 
             <SummarySelectItem
               label="国家 / 地区偏好"
-              value={countryPreferenceOptions.find((option) => option.value === form.countryPreference)?.label ?? "未填写"}
+              value={
+                countryPreferenceOptions.find(
+                  (option) => option.value === form.countryPreference
+                )?.label ?? "未填写"
+              }
               isEditing={editingSummaryField === "countryPreference"}
               onToggle={() => toggleSummaryField("countryPreference")}
             >
@@ -182,13 +205,19 @@ export default function PlanForm({
                 label="国家 / 地区偏好"
                 value={form.countryPreference}
                 options={countryPreferenceOptions}
-                onChange={(value) => onCountryPreferenceChange(value as CountryPreference)}
+                onChange={(value) =>
+                  onCountryPreferenceChange(value as CountryPreference)
+                }
               />
             </SummarySelectItem>
 
             <SummarySelectItem
               label="目标国家偏好"
-              value={targetCountryOptions.find((option) => option.value === form.targetCountry)?.label ?? "未填写"}
+              value={
+                targetCountryOptions.find(
+                  (option) => option.value === form.targetCountry
+                )?.label ?? "未填写"
+              }
               isEditing={editingSummaryField === "targetCountry"}
               onToggle={() => toggleSummaryField("targetCountry")}
             >
@@ -196,13 +225,19 @@ export default function PlanForm({
                 label="目标国家偏好"
                 value={form.targetCountry}
                 options={availableTargetCountryOptions}
-                onChange={(value) => onUpdateField("targetCountry", value as TargetCountry)}
+                onChange={(value) =>
+                  onUpdateField("targetCountry", value as TargetCountry)
+                }
               />
             </SummarySelectItem>
 
             <SummarySelectItem
-              label="边学习边打工"
-              value={preferenceOptions.find((option) => option.value === form.wantsPartTimeJob)?.label ?? "未填写"}
+              label="边学边打工"
+              value={
+                preferenceOptions.find(
+                  (option) => option.value === form.wantsPartTimeJob
+                )?.label ?? "未填写"
+              }
               isEditing={editingSummaryField === "wantsPartTimeJob"}
               onToggle={() => toggleSummaryField("wantsPartTimeJob")}
             >
@@ -210,13 +245,19 @@ export default function PlanForm({
                 label="是否希望边学习边打工？"
                 value={form.wantsPartTimeJob}
                 options={preferenceOptions}
-                onChange={(value) => onUpdateField("wantsPartTimeJob", value as PreferenceAnswer)}
+                onChange={(value) =>
+                  onUpdateField("wantsPartTimeJob", value as PreferenceAnswer)
+                }
               />
             </SummarySelectItem>
 
             <SummarySelectItem
-              label="长期留在海外"
-              value={preferenceOptions.find((option) => option.value === form.wantsLongTermStay)?.label ?? "未填写"}
+              label="长期留海外"
+              value={
+                preferenceOptions.find(
+                  (option) => option.value === form.wantsLongTermStay
+                )?.label ?? "未填写"
+              }
               isEditing={editingSummaryField === "wantsLongTermStay"}
               onToggle={() => toggleSummaryField("wantsLongTermStay")}
             >
@@ -224,13 +265,19 @@ export default function PlanForm({
                 label="是否希望未来长期留在海外？"
                 value={form.wantsLongTermStay}
                 options={preferenceOptions}
-                onChange={(value) => onUpdateField("wantsLongTermStay", value as PreferenceAnswer)}
+                onChange={(value) =>
+                  onUpdateField("wantsLongTermStay", value as PreferenceAnswer)
+                }
               />
             </SummarySelectItem>
 
             <SummarySelectItem
               label="低预算过渡路线"
-              value={preferenceOptions.find((option) => option.value === form.acceptsLowBudgetRoute)?.label ?? "未填写"}
+              value={
+                preferenceOptions.find(
+                  (option) => option.value === form.acceptsLowBudgetRoute
+                )?.label ?? "未填写"
+              }
               isEditing={editingSummaryField === "acceptsLowBudgetRoute"}
               onToggle={() => toggleSummaryField("acceptsLowBudgetRoute")}
             >
@@ -238,7 +285,12 @@ export default function PlanForm({
                 label="是否接受低预算过渡路线？"
                 value={form.acceptsLowBudgetRoute}
                 options={preferenceOptions}
-                onChange={(value) => onUpdateField("acceptsLowBudgetRoute", value as PreferenceAnswer)}
+                onChange={(value) =>
+                  onUpdateField(
+                    "acceptsLowBudgetRoute",
+                    value as PreferenceAnswer
+                  )
+                }
               />
             </SummarySelectItem>
           </div>
@@ -247,7 +299,7 @@ export default function PlanForm({
             <button
               type="submit"
               disabled={isGenerating}
-              className="w-full rounded-2xl bg-slate-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              className={submitButtonClass}
             >
               {isGenerating ? "正在生成路线..." : "重新生成路线建议"}
             </button>
@@ -255,7 +307,7 @@ export default function PlanForm({
             <button
               type="button"
               onClick={onReset}
-              className="w-full rounded-2xl border border-slate-200 px-5 py-3 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-white hover:text-slate-900"
+              className={resetButtonClass}
             >
               重置全部信息
             </button>
@@ -296,7 +348,9 @@ export default function PlanForm({
                 </label>
                 <input
                   value={form.education}
-                  onChange={(event) => onUpdateField("education", event.target.value)}
+                  onChange={(event) =>
+                    onUpdateField("education", event.target.value)
+                  }
                   placeholder="例如：本科 / 大专 / 高中 / 已工作"
                   className={inputClassName}
                 />
@@ -325,28 +379,36 @@ export default function PlanForm({
                 label="预算区间"
                 value={form.budgetLevel}
                 options={budgetOptions}
-                onChange={(value) => onUpdateField("budgetLevel", value as BudgetLevel)}
+                onChange={(value) =>
+                  onUpdateField("budgetLevel", value as BudgetLevel)
+                }
               />
 
               <SelectField
                 label="语言能力"
                 value={form.languageLevel}
                 options={languageOptions}
-                onChange={(value) => onUpdateField("languageLevel", value as LanguageLevel)}
+                onChange={(value) =>
+                  onUpdateField("languageLevel", value as LanguageLevel)
+                }
               />
 
               <SelectField
                 label="国家 / 地区偏好"
                 value={form.countryPreference}
                 options={countryPreferenceOptions}
-                onChange={(value) => onCountryPreferenceChange(value as CountryPreference)}
+                onChange={(value) =>
+                  onCountryPreferenceChange(value as CountryPreference)
+                }
               />
 
               <SelectField
                 label="目标国家偏好"
                 value={form.targetCountry}
                 options={availableTargetCountryOptions}
-                onChange={(value) => onUpdateField("targetCountry", value as TargetCountry)}
+                onChange={(value) =>
+                  onUpdateField("targetCountry", value as TargetCountry)
+                }
                 helperText="目标国家选项会根据上方的国家 / 地区偏好自动筛选；如果还没确定，就保持默认。"
               />
             </FormSection>
@@ -361,21 +423,30 @@ export default function PlanForm({
                 label="是否希望边学习边打工？"
                 value={form.wantsPartTimeJob}
                 options={preferenceOptions}
-                onChange={(value) => onUpdateField("wantsPartTimeJob", value as PreferenceAnswer)}
+                onChange={(value) =>
+                  onUpdateField("wantsPartTimeJob", value as PreferenceAnswer)
+                }
               />
 
               <SelectField
                 label="是否希望未来长期留在海外？"
                 value={form.wantsLongTermStay}
                 options={preferenceOptions}
-                onChange={(value) => onUpdateField("wantsLongTermStay", value as PreferenceAnswer)}
+                onChange={(value) =>
+                  onUpdateField("wantsLongTermStay", value as PreferenceAnswer)
+                }
               />
 
               <SelectField
                 label="是否接受低预算过渡路线？"
                 value={form.acceptsLowBudgetRoute}
                 options={preferenceOptions}
-                onChange={(value) => onUpdateField("acceptsLowBudgetRoute", value as PreferenceAnswer)}
+                onChange={(value) =>
+                  onUpdateField(
+                    "acceptsLowBudgetRoute",
+                    value as PreferenceAnswer
+                  )
+                }
               />
             </FormSection>
 
@@ -383,22 +454,26 @@ export default function PlanForm({
               <button
                 type="submit"
                 disabled={isGenerating}
-                className="flex-1 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                className={`flex-1 rounded-2xl px-5 py-3 text-sm font-medium ${btnPrimary}`}
               >
-                {isGenerating ? "正在生成路线..." : submitted ? "重新生成路线建议" : "生成路线建议"}
+                {isGenerating
+                  ? "正在生成路线..."
+                  : submitted
+                    ? "重新生成路线建议"
+                    : "生成路线建议"}
               </button>
 
               <button
                 type="button"
                 onClick={onReset}
-                className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-white hover:text-slate-900"
+                className={`rounded-2xl px-5 py-3 text-sm font-medium ${btnSecondary}`}
               >
                 重置
               </button>
             </div>
 
             {formError && (
-              <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">
+              <div className="mt-4 rounded-2xl border border-rose-200/80 bg-rose-50/50 px-4 py-3 text-sm leading-6 text-rose-700">
                 {formError}
               </div>
             )}
