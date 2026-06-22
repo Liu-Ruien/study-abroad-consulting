@@ -17,10 +17,14 @@ import PlanRouteDetailModal from "@/components/plan/PlanRouteDetailModal";
 import {
   createPlanInsightSummary,
   createUserProfileSummary,
+  getBudgetLabel,
+  getLanguageLabel,
   getRecommendedRoutes,
+  getTargetCountryLabel,
   targetCountryOptions,
   type CountryPreference,
   type PlanFormState,
+  type RecommendedPlanRoute,
   type RiskLevel,
   type TargetCountry,
 } from "@/lib/plan-routes";
@@ -393,6 +397,35 @@ export default function PlanPage() {
   // 打印 / 保存 PDF
   function handlePrintResult() {
     window.print();
+  }
+
+  function createAiQuestionForRoute(route: RecommendedPlanRoute) {
+    const profileParts = [
+      submittedForm.age ? `年龄${submittedForm.age}` : "",
+      submittedForm.education.trim() ? `学历${submittedForm.education.trim()}` : "",
+      submittedForm.major.trim() ? `专业或方向${submittedForm.major.trim()}` : "",
+      submittedForm.budgetLevel !== "unknown"
+        ? `预算${getBudgetLabel(submittedForm.budgetLevel)}`
+        : "",
+      submittedForm.languageLevel
+        ? `语言能力${getLanguageLabel(submittedForm.languageLevel)}`
+        : "",
+      submittedForm.targetCountry !== "unknown"
+        ? `目标国家${getTargetCountryLabel(submittedForm.targetCountry)}`
+        : "",
+    ].filter(Boolean);
+
+    const profileText = profileParts.length
+      ? `我的基础情况是：${profileParts.join("，")}。`
+      : "";
+
+    return [
+      `我刚刚生成了一条出国路线：${route.title}。`,
+      profileText,
+      "请帮我分析这条路线的主要风险、准备重点和下一步行动。",
+    ]
+      .filter(Boolean)
+      .join("");
   }
 
   return (
@@ -770,13 +803,22 @@ export default function PlanPage() {
                             ))}
                           </div>
 
-                          <button
-                            type="button"
-                            onClick={() => setSelectedRouteId(activeRoute.id)}
-                            className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950 ring-1 ring-slate-200 transition hover:bg-slate-50"
-                          >
-                            查看详细内容
-                          </button>
+                          <div className="flex flex-col gap-2 sm:flex-row">
+                            <Link
+                              href={`/ai?q=${encodeURIComponent(createAiQuestionForRoute(activeRoute))}`}
+                              className="inline-flex shrink-0 items-center justify-center rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+                            >
+                              带着这条路线问 AI
+                            </Link>
+
+                            <button
+                              type="button"
+                              onClick={() => setSelectedRouteId(activeRoute.id)}
+                              className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950 ring-1 ring-slate-200 transition hover:bg-slate-50"
+                            >
+                              查看详细内容
+                            </button>
+                          </div>
                         </div>
                       </div>
 

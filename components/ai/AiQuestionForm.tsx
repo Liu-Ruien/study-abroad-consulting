@@ -29,12 +29,12 @@ export default function AiQuestionForm({
           onChange={(event) => onQuestionChange(event.target.value)}
           placeholder="例如：预算 15 万人民币适合哪些出国路线？"
           rows={5}
-          className="w-full resize-none rounded-[30px] border border-transparent bg-white/42 px-4 py-4 text-sm leading-7 text-slate-900 shadow-inner outline-none ring-1 ring-white/68 backdrop-blur-xl transition placeholder:text-slate-400 focus:bg-white/72 focus:ring-4 focus:ring-white/65"
+          className="w-full resize-none rounded-[30px] border border-transparent bg-[linear-gradient(145deg,rgba(255,255,255,0.36),rgba(248,250,252,0.24))] px-4 py-4 text-sm leading-7 text-slate-900 shadow-inner outline-none ring-1 ring-white/62 backdrop-blur-xl transition placeholder:text-slate-400 focus:bg-[linear-gradient(145deg,rgba(255,255,255,0.58),rgba(248,250,252,0.42))] focus:ring-4 focus:ring-white/60"
         />
       </div>
 
       {error && (
-        <p className="rounded-2xl bg-white/58 px-4 py-3 text-sm leading-6 text-rose-700 ring-1 ring-rose-100/70">
+        <p className="rounded-2xl bg-[linear-gradient(145deg,rgba(255,255,255,0.48),rgba(254,242,242,0.32))] px-4 py-3 text-sm leading-6 text-rose-700 ring-1 ring-rose-100/60">
           {error}
         </p>
       )}

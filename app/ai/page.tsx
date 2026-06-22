@@ -24,7 +24,19 @@ const focusCards = [
   },
 ];
 
-export default function AiPage() {
+type AiPageProps = {
+  searchParams?: Promise<{
+    q?: string | string[];
+  }>;
+};
+
+export default async function AiPage({ searchParams }: AiPageProps) {
+  const resolvedSearchParams = await searchParams;
+  const rawQuestion = resolvedSearchParams?.q;
+  const initialQuestion = Array.isArray(rawQuestion)
+    ? rawQuestion[0]?.trim() ?? ""
+    : rawQuestion?.trim() ?? "";
+
   return (
     <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_16%_8%,rgba(125,211,252,0.32),transparent_32%),radial-gradient(circle_at_84%_4%,rgba(244,114,182,0.22),transparent_34%),radial-gradient(circle_at_52%_34%,rgba(251,191,36,0.16),transparent_36%),radial-gradient(circle_at_50%_100%,rgba(186,230,253,0.18),transparent_42%),linear-gradient(180deg,#f8fbff_0%,#f6f7fb_42%,#f5f5f7_100%)] px-4 py-7 pb-12 text-slate-950 sm:px-6 sm:py-10 sm:pb-16">
       <div className="mx-auto max-w-6xl">
@@ -77,7 +89,7 @@ export default function AiPage() {
           ))}
         </section>
 
-        <AiChatPanel />
+        <AiChatPanel initialQuestion={initialQuestion} />
 
         <section className="mx-auto mt-8 max-w-4xl rounded-[28px] bg-white/42 px-5 py-4 text-sm leading-7 text-slate-500 shadow-[0_12px_40px_rgba(15,23,42,0.045)] ring-1 ring-white/70 backdrop-blur-xl sm:px-6">
           <strong className="text-slate-950">使用边界：</strong>

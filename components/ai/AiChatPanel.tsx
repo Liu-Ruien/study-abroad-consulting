@@ -13,10 +13,23 @@ const quickQuestions = [
   "留学、打工度假和工签路线有什么区别？",
 ];
 
-export default function AiChatPanel() {
-  const [question, setQuestion] = useState("");
-  const [submittedQuestion, setSubmittedQuestion] = useState("");
-  const [answer, setAnswer] = useState<AiMockAnswer | null>(null);
+type AiChatPanelProps = {
+  initialQuestion?: string;
+};
+
+export default function AiChatPanel({
+  initialQuestion = "",
+}: AiChatPanelProps) {
+  const normalizedInitialQuestion = initialQuestion.trim();
+  const [question, setQuestion] = useState(normalizedInitialQuestion);
+  const [submittedQuestion, setSubmittedQuestion] = useState(
+    normalizedInitialQuestion
+  );
+  const [answer, setAnswer] = useState<AiMockAnswer | null>(() =>
+    normalizedInitialQuestion
+      ? createMockAiAnswer(normalizedInitialQuestion)
+      : null
+  );
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedQuickQuestion, setSelectedQuickQuestion] = useState("");
@@ -77,7 +90,7 @@ export default function AiChatPanel() {
 
   return (
     <section className="grid gap-8 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:items-start">
-      <div className="rounded-[36px] bg-[linear-gradient(145deg,rgba(255,255,255,0.58),rgba(255,255,255,0.34))] p-4 shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/72 backdrop-blur-2xl sm:p-5">
+      <div className="rounded-[36px] bg-[radial-gradient(circle_at_14%_16%,rgba(186,230,253,0.44),transparent_42%),radial-gradient(circle_at_92%_10%,rgba(221,214,254,0.30),transparent_38%),linear-gradient(145deg,rgba(255,255,255,0.50),rgba(241,245,249,0.30))] p-4 shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/72 backdrop-blur-2xl sm:p-5">
         <AiQuestionForm
           question={question}
           error={error}
@@ -98,7 +111,7 @@ export default function AiChatPanel() {
 
       <div className="min-h-[420px]">
         {isLoading ? (
-          <div className="flex min-h-[420px] flex-col justify-center rounded-[36px] bg-white/50 p-7 text-center shadow-[0_24px_90px_rgba(15,23,42,0.08)] ring-1 ring-white/72 backdrop-blur-2xl sm:p-10">
+          <div className="flex min-h-[420px] flex-col justify-center rounded-[36px] bg-[radial-gradient(circle_at_18%_14%,rgba(186,230,253,0.36),transparent_40%),radial-gradient(circle_at_84%_12%,rgba(251,207,232,0.28),transparent_36%),linear-gradient(145deg,rgba(255,255,255,0.48),rgba(248,250,252,0.28))] p-7 text-center shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/72 backdrop-blur-2xl sm:p-10">
             <p className="mx-auto mb-5 inline-flex rounded-full bg-white/58 px-4 py-1.5 text-sm font-medium text-sky-700 ring-1 ring-white/75 backdrop-blur-xl">
               正在整理回答
             </p>
@@ -112,9 +125,9 @@ export default function AiChatPanel() {
             </p>
           </div>
         ) : answer && submittedQuestion ? (
-          <AiAnswerCard question={submittedQuestion} answer={answer} />
+          <AiAnswerCard answer={answer} />
         ) : (
-          <div className="flex min-h-[420px] flex-col justify-between overflow-hidden rounded-[36px] bg-[radial-gradient(circle_at_82%_14%,rgba(191,219,254,0.36),transparent_34%),linear-gradient(145deg,rgba(255,255,255,0.52),rgba(255,255,255,0.28))] p-7 shadow-[0_24px_90px_rgba(15,23,42,0.07)] ring-1 ring-white/70 backdrop-blur-2xl sm:p-10">
+          <div className="flex min-h-[420px] flex-col justify-between overflow-hidden rounded-[36px] bg-[radial-gradient(circle_at_16%_12%,rgba(186,230,253,0.38),transparent_38%),radial-gradient(circle_at_82%_14%,rgba(221,214,254,0.28),transparent_34%),linear-gradient(145deg,rgba(255,255,255,0.48),rgba(248,250,252,0.26))] p-7 shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/72 backdrop-blur-2xl sm:p-10">
             <div>
               <p className="mb-4 inline-flex rounded-full bg-white/48 px-3.5 py-1.5 text-sm font-medium text-sky-700 ring-1 ring-white/70 backdrop-blur-xl">
                 回答结构预览
