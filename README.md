@@ -138,7 +138,7 @@ docs/product-blueprint-v0.2.md
 当前项目状态文档：
 
 ```text
-docs/project-status-v0.7.0.md
+docs/project-status.md
 ```
 
 该文档用于新聊天、Cursor、Codex 或其他 AI 工具快速理解当前项目状态。
@@ -176,7 +176,7 @@ lib/
 
 docs/
   product-blueprint-v0.2.md   产品蓝图文档
-  project-status-v0.7.0.md    当前项目状态文档
+  project-status.md           当前项目状态文档
 ```
 
 ------
@@ -481,7 +481,7 @@ npm run build
 
 已完成：
 
-- 新增 `docs/project-status-v0.7.0.md`
+- 新增项目状态文档，后续统一维护在 `docs/project-status.md`
 - 正式标记第三阶段完成
 - 明确第四阶段开发方向为 AI 问答页面
 

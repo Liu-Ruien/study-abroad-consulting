@@ -9,24 +9,24 @@ type AiAnswerCardProps = {
 
 export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
   return (
-    <article className="overflow-hidden rounded-[32px] bg-white/92 shadow-[0_22px_70px_rgba(15,23,42,0.08)] ring-1 ring-black/5 backdrop-blur-xl">
-      <div className="border-b border-slate-100 bg-[linear-gradient(145deg,rgba(255,255,255,0.96)_0%,rgba(248,250,252,0.92)_100%)] px-5 py-5 sm:px-7">
-        <p className="text-xs font-medium uppercase tracking-[0.16em] text-sky-600">
+    <article className="overflow-hidden rounded-[30px] bg-white/78 shadow-[0_18px_60px_rgba(15,23,42,0.055)] ring-1 ring-white/85 backdrop-blur-xl">
+      <div className="px-5 py-5 sm:px-7 sm:py-6">
+        <p className="text-xs font-medium uppercase tracking-[0.16em] text-sky-600/90">
           模拟回答
         </p>
 
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+        <h2 className="mt-2 text-2xl font-medium tracking-tight text-slate-950">
           {answer.title}
         </h2>
 
-        <p className="mt-3 rounded-2xl bg-slate-50/90 px-4 py-3 text-sm leading-6 text-slate-500 ring-1 ring-slate-200/70">
+        <p className="mt-4 rounded-2xl bg-slate-50/72 px-4 py-3 text-sm leading-6 text-slate-500">
           你的问题：{question}
         </p>
       </div>
 
-      <div className="space-y-5 px-5 py-5 sm:px-7 sm:py-6">
+      <div className="space-y-6 border-t border-slate-200/45 px-5 py-5 sm:px-7 sm:py-6">
         <section>
-          <h3 className="mb-2 text-sm font-semibold text-slate-950">
+          <h3 className="mb-2 text-sm font-medium text-slate-950">
             简短结论
           </h3>
           <p className="text-sm leading-7 text-slate-600">
@@ -34,32 +34,42 @@ export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
           </p>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-3xl bg-slate-50/80 p-4 ring-1 ring-slate-200/70">
-            <h3 className="mb-3 text-sm font-semibold text-slate-950">
+        <section className="grid gap-5 md:grid-cols-2">
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-slate-950">
               分点建议
             </h3>
-            <ul className="space-y-2 text-sm leading-6 text-slate-600">
+            <ul className="space-y-2.5 text-sm leading-6 text-slate-600">
               {answer.suggestions.map((item) => (
-                <li key={item}>• {item}</li>
+                <li
+                  key={item}
+                  className="rounded-2xl bg-slate-50/68 px-3.5 py-2.5"
+                >
+                  {item}
+                </li>
               ))}
             </ul>
           </div>
 
-          <div className="rounded-3xl bg-amber-50/70 p-4 ring-1 ring-amber-200/70">
-            <h3 className="mb-3 text-sm font-semibold text-amber-900">
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-slate-950">
               风险提醒
             </h3>
-            <ul className="space-y-2 text-sm leading-6 text-amber-800">
+            <ul className="space-y-2.5 text-sm leading-6 text-slate-600">
               {answer.risks.map((item) => (
-                <li key={item}>• {item}</li>
+                <li
+                  key={item}
+                  className="rounded-2xl bg-orange-50/42 px-3.5 py-2.5 text-slate-600"
+                >
+                  {item}
+                </li>
               ))}
             </ul>
           </div>
         </section>
 
-        <section className="rounded-3xl bg-sky-50/70 p-4 ring-1 ring-sky-100">
-          <h3 className="mb-3 text-sm font-semibold text-slate-950">
+        <section className="rounded-3xl bg-sky-50/45 p-4">
+          <h3 className="mb-3 text-sm font-medium text-slate-950">
             下一步行动
           </h3>
           <ol className="space-y-2 text-sm leading-6 text-slate-600">
@@ -71,7 +81,7 @@ export default function AiAnswerCard({ question, answer }: AiAnswerCardProps) {
           </ol>
         </section>
 
-        <p className="rounded-3xl bg-slate-950 px-4 py-3 text-xs leading-6 text-white/85">
+        <p className="border-t border-slate-200/55 pt-4 text-xs leading-6 text-slate-400">
           {answer.disclaimer}
         </p>
       </div>
