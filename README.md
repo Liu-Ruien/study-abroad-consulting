@@ -2,7 +2,7 @@
 
 这是一个个人开发的出国信息整理与路线规划项目，用于展示内容组织、路线规划、本地 AI 问答 MVP、组件化前端工程和作品集级 UI 设计能力。
 
-**当前版本：** v0.11.0  
+**当前版本：** v0.11.1  
 **当前定位：** 个人作品集项目 / 日本 IT 求职展示项目
 
 ---
@@ -10,6 +10,36 @@
 ## 在线访问
 
 [https://study-abroad-consulting.vercel.app](https://study-abroad-consulting.vercel.app)
+
+---
+
+## 项目截图
+
+以下截图展示了项目的主要页面，包括首页、路线规划、本地 AI 问答 MVP 和作品集案例页。
+
+### 首页
+
+![首页](./public/screenshots/home.png)
+
+首页展示项目定位、内容分类和推荐阅读入口。
+
+### 路线规划
+
+![路线规划](./public/screenshots/plan.png)
+
+路线规划页展示基于本地规则的出国路线推荐流程。
+
+### AI 问答 MVP
+
+![AI 问答 MVP](./public/screenshots/ai.png)
+
+AI 问答页展示本地模拟问答 MVP 与问题拆解能力。
+
+### 项目案例页
+
+![项目案例页](./public/screenshots/case-study.png)
+
+项目案例页展示项目背景、技术栈、架构和工程亮点。
 
 ---
 
