@@ -123,6 +123,7 @@ lib/plan-routes.ts
 - 保持本地模拟问答，不接真实 AI、不接数据库、不保存历史记录。
 - 小幅精简回答卡片重复问题展示。
 - 优化 /ai 主功能区输入卡片与回答卡片的渐变和视觉一致性。
+- 开发工作流优化：完善 `AGENTS.md` 项目协作规则，统一 Cursor 开发边界与输出要求。
 
 ### v0.8.3
 
@@ -175,13 +176,30 @@ lib/plan-routes.ts
 
 ## 8. 给新聊天 / Cursor 的使用说明
 
-如果以后开启新聊天，请先发送本文件内容，或让 AI 阅读本文件，再继续开发。
+如果以后开启新聊天，请先让 AI 阅读本文件和项目根目录 `AGENTS.md`，再继续开发。
 
 后续开发前应先确认当前版本、目标版本和本次任务范围。每次完成版本后都要：
 
 - `npm run build`
 - `npm run lint`
 - `npm run dev` 手动测试
-- `git add`
-- `git commit`
-- `git push`
+
+Git 操作需用户明确指令后再执行，见 `AGENTS.md`。
+
+---
+
+## 9. 开发工具计划
+
+### 已采用
+
+- Cursor + ChatGPT 协作开发
+- AGENTS.md 项目规则约束
+
+### 建议配置
+
+- Context7 MCP：用于让 Cursor 查询较新的官方文档，减少 API 和框架用法乱猜。
+- 使用方式：后续在需要查 Next.js、React、Tailwind、OpenAI 等官方文档时再启用。
+
+### 后续计划
+
+- Serena MCP：等项目组件和业务逻辑继续变多后再安装，用于更强的语义代码检索和编辑。
