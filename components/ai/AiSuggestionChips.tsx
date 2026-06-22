@@ -19,20 +19,20 @@ export default function AiSuggestionChips({
         常见问题
       </p>
 
-      <div className="flex flex-wrap gap-2.5">
+      <div className="flex flex-wrap gap-2 sm:gap-2.5">
         {suggestions.map((suggestion) => (
           <button
             key={suggestion}
             type="button"
             disabled={isLoading}
             onClick={() => onSelect(suggestion)}
-            className={`rounded-full px-4 py-2 text-sm leading-6 ring-1 transition disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={`max-w-full rounded-full px-3.5 py-2 text-left text-[13px] leading-6 ring-1 transition disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:text-sm ${
               selectedQuestion === suggestion
                 ? "bg-slate-950 text-white ring-slate-950 shadow-sm"
                 : "bg-[linear-gradient(145deg,rgba(255,255,255,0.34),rgba(248,250,252,0.22))] text-slate-600 ring-white/62 backdrop-blur-xl hover:bg-[linear-gradient(145deg,rgba(255,255,255,0.58),rgba(248,250,252,0.38))] hover:text-slate-950 hover:shadow-sm"
             }`}
           >
-            {suggestion}
+            <span className="block break-words">{suggestion}</span>
           </button>
         ))}
       </div>
