@@ -194,11 +194,8 @@ Git 操作需用户明确指令后再执行，见 `AGENTS.md`。
 
 - Cursor + ChatGPT 协作开发
 - AGENTS.md 项目规则约束
-
-### 建议配置
-
-- Context7 MCP：用于让 Cursor 查询较新的官方文档，减少 API 和框架用法乱猜。
-- 使用方式：后续在需要查 Next.js、React、Tailwind、OpenAI 等官方文档时再启用。
+- Context7 MCP：用于在需要时查询 Next.js、React、Tailwind、OpenAI 等官方文档，减少框架 API 用法误判。
+- Context7 使用边界：仅在涉及框架/API/第三方库用法不确定时使用；普通样式、文案和页面微调不需要调用，避免增加上下文噪音。
 
 ### 后续计划
 
