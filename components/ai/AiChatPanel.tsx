@@ -76,8 +76,8 @@ export default function AiChatPanel() {
   }
 
   return (
-    <section className="grid gap-7 lg:grid-cols-[minmax(0,390px)_minmax(0,1fr)] lg:items-start">
-      <div className="rounded-[30px] bg-white/74 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.055)] ring-1 ring-white/85 backdrop-blur-xl sm:p-5">
+    <section className="grid gap-8 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:items-start">
+      <div className="rounded-[34px] bg-white/52 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.08)] ring-1 ring-white/72 backdrop-blur-2xl sm:p-5">
         <AiQuestionForm
           question={question}
           error={error}
@@ -86,7 +86,7 @@ export default function AiChatPanel() {
           onSubmit={handleSubmit}
         />
 
-        <div className="mt-6 border-t border-slate-200/50 pt-5">
+        <div className="mt-6 border-t border-white/65 pt-5">
           <AiSuggestionChips
             suggestions={quickQuestions}
             selectedQuestion={selectedQuickQuestion}
@@ -96,41 +96,41 @@ export default function AiChatPanel() {
         </div>
       </div>
 
-      <div className="min-h-[360px]">
+      <div className="min-h-[420px]">
         {isLoading ? (
-          <div className="flex min-h-[340px] flex-col justify-center rounded-[30px] bg-white/76 p-6 text-center shadow-[0_18px_55px_rgba(15,23,42,0.055)] ring-1 ring-white/85 backdrop-blur-xl sm:p-8">
-            <p className="mx-auto mb-4 inline-flex rounded-full bg-sky-50/85 px-4 py-1.5 text-sm font-medium text-sky-700 ring-1 ring-sky-100/80">
+          <div className="flex min-h-[420px] flex-col justify-center rounded-[36px] bg-white/50 p-7 text-center shadow-[0_24px_90px_rgba(15,23,42,0.08)] ring-1 ring-white/72 backdrop-blur-2xl sm:p-10">
+            <p className="mx-auto mb-5 inline-flex rounded-full bg-white/58 px-4 py-1.5 text-sm font-medium text-sky-700 ring-1 ring-white/75 backdrop-blur-xl">
               正在整理回答
             </p>
 
-            <h2 className="text-2xl font-medium tracking-tight text-slate-950">
+            <h2 className="text-3xl font-medium tracking-[-0.035em] text-slate-950 sm:text-4xl">
               正在根据你的问题生成初步建议
             </h2>
 
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-slate-500">
+            <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-slate-500">
               当前使用本地模拟逻辑，不调用真实 AI，也不会保存你的问题历史。
             </p>
           </div>
         ) : answer && submittedQuestion ? (
           <AiAnswerCard question={submittedQuestion} answer={answer} />
         ) : (
-          <div className="flex min-h-[340px] flex-col justify-between rounded-[30px] bg-white/64 p-5 shadow-[0_14px_45px_rgba(15,23,42,0.045)] ring-1 ring-white/80 backdrop-blur-xl sm:p-8">
+          <div className="flex min-h-[420px] flex-col justify-between rounded-[36px] bg-white/44 p-7 shadow-[0_24px_90px_rgba(15,23,42,0.07)] ring-1 ring-white/70 backdrop-blur-2xl sm:p-10">
             <div>
-              <p className="mb-3 text-sm font-medium text-sky-700">
+              <p className="mb-4 text-sm font-medium text-sky-700">
                 等待你的问题
               </p>
 
-              <h2 className="mb-4 text-2xl font-medium tracking-tight text-slate-950">
+              <h2 className="mb-5 text-3xl font-medium tracking-[-0.035em] text-slate-950 sm:text-4xl">
                 这里会显示本地模拟回答
               </h2>
 
-              <p className="max-w-2xl text-sm leading-7 text-slate-600">
+              <p className="max-w-2xl text-base leading-8 text-slate-600">
                 你可以询问留学、语言学校、预算、路线选择、求职准备或签证风险。
                 当前 MVP 只使用本地规则整理回答，不调用真实 AI 服务。
               </p>
             </div>
 
-            <div className="mt-8 rounded-3xl bg-slate-50/80 p-4 text-sm leading-7 text-slate-500 ring-1 ring-slate-200/60">
+            <div className="mt-10 rounded-[28px] bg-white/44 p-4 text-sm leading-7 text-slate-500 ring-1 ring-white/70 backdrop-blur-xl">
               回答仅适合作为初步信息整理。涉及政策、签证、学校和费用时，请继续核实官方渠道。
             </div>
           </div>

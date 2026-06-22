@@ -8,8 +8,8 @@
 
 - 项目名称：出国咨询信息整理平台 / overseas-consulting / study-abroad-consulting
 - 项目定位：面向中国大陆用户的出国路线规划与真实经验整理平台
-- 当前版本：v0.8.2
-- 当前阶段：第四阶段进行中，正在打磨 `/ai` AI 问答 MVP 页面
+- 当前版本：v0.8.3
+- 当前阶段：第四阶段进行中，正在以产品化视觉打磨 `/ai` AI 问答 MVP 页面
 - 在线地址：https://study-abroad-consulting.vercel.app/
 - 技术栈：Next.js 16、React、TypeScript、Tailwind CSS、Git / GitHub、Vercel
 
@@ -106,12 +106,20 @@ lib/plan-routes.ts
 - v0.8.0 已新增 `/ai` MVP 页面。
 - v0.8.1 已完成 `/ai` 体验和回答结构优化。
 - v0.8.2 已完成 `/ai` 视觉精修。
+- v0.8.3 已完成 `/ai` 产品化渐变视觉重构。
 - `/ai` 页面当前不影响 `/plan` 推荐规则和既有功能。
 - 完成版本后应运行 `npm run build`、`npm run lint` 和 `npm run dev` 手动测试。
 
 ---
 
 ## 6. 版本记录
+
+### v0.8.3
+
+- 参考 Apple Card 官网风格重构 `/ai` 页面视觉。
+- 将纯白工具面板改为柔和渐变产品视觉。
+- 优化 Hero、输入区、回答区和说明模块。
+- 保持本地模拟问答，不接真实 AI、不接数据库、不保存历史记录。
 
 ### v0.8.2
 
