@@ -2,3 +2,4 @@
 
 export * from "./types";
 export * from "./mock-answer";
+export * from "./format-answer";

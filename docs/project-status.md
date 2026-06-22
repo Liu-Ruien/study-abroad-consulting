@@ -8,8 +8,8 @@
 
 - 项目名称：出国咨询信息整理平台 / overseas-consulting / study-abroad-consulting
 - 项目定位：面向中国大陆用户的出国路线规划与真实经验整理平台
-- 当前版本：v0.8.4
-- 当前阶段：第四阶段进行中，已开始打通 `/plan` 与 `/ai` 的本地模拟问答联动
+- 当前版本：v0.8.5
+- 当前阶段：第四阶段进行中，已增强 `/ai` 本地模拟问答交互能力
 - 在线地址：https://study-abroad-consulting.vercel.app/
 - 技术栈：Next.js 16、React、TypeScript、Tailwind CSS、Git / GitHub、Vercel
 
@@ -108,12 +108,20 @@ lib/plan-routes.ts
 - v0.8.2 已完成 `/ai` 视觉精修。
 - v0.8.3 已完成 `/ai` 产品化渐变视觉重构。
 - v0.8.4 已新增 `/plan` 到 `/ai` 的联动入口。
+- v0.8.5 已为 `/ai` 新增复制回答功能。
 - `/ai` 页面当前不影响 `/plan` 推荐规则和既有功能。
 - 完成版本后应运行 `npm run build`、`npm run lint` 和 `npm run dev` 手动测试。
 
 ---
 
 ## 6. 版本记录
+
+### v0.8.5
+
+- 为 `/ai` 页面新增复制回答功能
+- 支持复制标题、结论、建议、风险、下一步和边界提示
+- 保持本地模拟问答，不接真实 AI、不接数据库、不保存历史记录
+- 将复制成功反馈从按钮文案变化改为独立 toast 提示，避免挤压回答标题
 
 ### v0.8.4
 
