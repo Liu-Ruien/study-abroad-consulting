@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createMockAiAnswer, type AiMockAnswer } from "@/lib/ai";
 import AiAnswerCard from "./AiAnswerCard";
 import AiQuestionForm from "./AiQuestionForm";
@@ -20,6 +21,7 @@ type AiChatPanelProps = {
 export default function AiChatPanel({
   initialQuestion = "",
 }: AiChatPanelProps) {
+  const router = useRouter();
   const normalizedInitialQuestion = initialQuestion.trim();
   const [question, setQuestion] = useState(normalizedInitialQuestion);
   const [submittedQuestion, setSubmittedQuestion] = useState(
@@ -88,6 +90,26 @@ export default function AiChatPanel({
     }
   }
 
+  function handleReset() {
+    if (loadingTimerRef.current) {
+      window.clearTimeout(loadingTimerRef.current);
+      loadingTimerRef.current = null;
+    }
+
+    setQuestion("");
+    setSubmittedQuestion("");
+    setAnswer(null);
+    setError("");
+    setSelectedQuickQuestion("");
+    setIsLoading(false);
+    router.replace("/ai");
+  }
+
+  const showReset =
+    Boolean(question.trim()) ||
+    Boolean(submittedQuestion.trim()) ||
+    answer !== null;
+
   return (
     <section className="grid min-w-0 gap-5 sm:gap-6 lg:grid-cols-[minmax(0,440px)_minmax(0,1fr)] lg:items-start lg:gap-8 xl:grid-cols-[minmax(0,460px)_minmax(0,1fr)]">
       <div className="min-w-0 rounded-[28px] bg-[radial-gradient(circle_at_14%_16%,rgba(186,230,253,0.48),transparent_42%),radial-gradient(circle_at_92%_10%,rgba(221,214,254,0.34),transparent_38%),linear-gradient(145deg,rgba(255,255,255,0.54),rgba(241,245,249,0.32))] p-4 shadow-[0_24px_80px_rgba(15,23,42,0.075)] ring-1 ring-white/72 backdrop-blur-2xl sm:rounded-[32px] sm:p-5 lg:rounded-[36px] lg:p-6 lg:shadow-[0_28px_90px_rgba(15,23,42,0.08)] xl:p-7">
@@ -95,8 +117,10 @@ export default function AiChatPanel({
           question={question}
           error={error}
           isLoading={isLoading}
+          showReset={showReset}
           onQuestionChange={handleQuestionChange}
           onSubmit={handleSubmit}
+          onReset={handleReset}
         />
 
         <div className="mt-4 border-t border-white/65 pt-4 sm:mt-5 sm:pt-5 lg:mt-5">
