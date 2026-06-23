@@ -8,6 +8,8 @@ import { uiStrings } from "@/lib/i18n/ui-strings";
 type LanguageDropdownProps = {
   className?: string;
   variant?: "navbar" | "menu";
+  isDark?: boolean;
+  menuClassName?: string;
 };
 
 function CheckIcon() {
@@ -56,6 +58,8 @@ const menuPanelClass =
 export default function LanguageDropdown({
   className = "",
   variant = "navbar",
+  isDark = false,
+  menuClassName = "z-[80]",
 }: LanguageDropdownProps) {
   const { language, setLanguage } = useLanguage();
   const [open, setOpen] = useState(false);
@@ -102,7 +106,7 @@ export default function LanguageDropdown({
         className={`${menuPanelClass} ${
           inline
             ? "mt-1.5"
-            : "absolute right-0 top-[calc(100%+0.4rem)] z-50 min-w-[9.5rem] origin-top-right scale-100 opacity-100 transition duration-150 ease-out"
+            : `absolute right-0 top-[calc(100%+0.4rem)] ${menuClassName} min-w-[9.5rem] origin-top-right scale-100 opacity-100 transition duration-150 ease-out`
         }`}
         role="menu"
       >
@@ -160,7 +164,11 @@ export default function LanguageDropdown({
         aria-haspopup="menu"
         aria-label="Language"
         onClick={() => setOpen((current) => !current)}
-        className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/70 bg-white/70 px-2.5 py-1.5 text-sm font-medium text-slate-600 shadow-sm backdrop-blur-sm transition duration-150 ease-out hover:border-slate-300/80 hover:bg-white/90 hover:text-slate-950"
+        className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-sm font-medium shadow-sm backdrop-blur-sm transition duration-150 ease-out ${
+          isDark
+            ? "border-white/15 bg-white/10 text-slate-100 hover:border-white/25 hover:bg-white/15 hover:text-white"
+            : "border-slate-200/70 bg-white/70 text-slate-600 hover:border-slate-300/80 hover:bg-white/90 hover:text-slate-950"
+        }`}
       >
         <span aria-hidden="true" className="text-[13px] leading-none">
           🌐

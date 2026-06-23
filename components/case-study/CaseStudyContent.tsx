@@ -10,10 +10,25 @@ export default function CaseStudyContent() {
   const content = caseStudyContent[language];
 
   useEffect(() => {
-    document.documentElement.classList.add("case-study-presentation-page");
-    document.body.classList.add("case-study-presentation-page");
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+
+    const syncPresentationClass = () => {
+      const targets = [document.documentElement, document.body];
+
+      for (const target of targets) {
+        if (mediaQuery.matches) {
+          target.classList.add("case-study-presentation-page");
+        } else {
+          target.classList.remove("case-study-presentation-page");
+        }
+      }
+    };
+
+    syncPresentationClass();
+    mediaQuery.addEventListener("change", syncPresentationClass);
 
     return () => {
+      mediaQuery.removeEventListener("change", syncPresentationClass);
       document.documentElement.classList.remove("case-study-presentation-page");
       document.body.classList.remove("case-study-presentation-page");
     };

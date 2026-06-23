@@ -6,6 +6,8 @@
   --foreground: #0f172a;
   --case-study-nav: 5.25rem;
   --case-study-nav-height: 5.25rem;
+  --navbar-height: 5.25rem;
+  --navbar-main-height: 3.25rem;
   --font-system-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
     "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
     "Yu Gothic", "Noto Sans CJK JP", "PingFang SC", "Microsoft YaHei",
@@ -19,9 +21,32 @@
   --font-mono: var(--font-geist-mono);
 }
 
-body {
-  color: var(--foreground);
-  font-family: var(--font-system-sans);
+@keyframes navbar-mega-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-mega-panel {
+  animation: navbar-mega-enter 180ms ease-out;
+}
+
+.navbar-page-blur {
+  animation: navbar-blur-enter 150ms ease-out;
+}
+
+@keyframes navbar-blur-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media (min-width: 768px) {

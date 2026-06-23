@@ -21,10 +21,21 @@ type UiStrings = {
   languageMenuLabel: string;
   footerCategoriesTitle: string;
   footerQuickLinksTitle: string;
+  footerPortfolioTitle: string;
   footerCopyright: string;
   footerIntro: string;
   homeLanguageHint: string;
   navLinks: Record<NavLinkKey, { href: string; label: string }>;
+  megaMenuColumns: {
+    explore: string;
+    pages: string;
+    portfolio: string;
+  };
+  megaMenuPortfolioItems: {
+    caseStudy: { label: string; description: string; href: string };
+    interviewGuide: { label: string; description: string };
+    readme: { label: string; description: string };
+  };
   categoryLabels: Record<CategorySlug, string>;
   categoryDescriptions: Record<CategorySlug, string>;
 };
@@ -37,6 +48,7 @@ export const uiStrings: Record<Language, UiStrings> = {
     languageMenuLabel: "语言",
     footerCategoriesTitle: "内容分类",
     footerQuickLinksTitle: "快速链接",
+    footerPortfolioTitle: "作品集说明",
     footerCopyright: "出国咨询 · 个人作品集项目 · 内容仅供参考",
     footerIntro:
       "个人开发的出国信息整理平台，围绕内容、路线规划、本地 AI 问答 MVP 与项目案例展示，呈现前端工程与产品拆解能力。",
@@ -49,6 +61,26 @@ export const uiStrings: Record<Language, UiStrings> = {
       ai: { href: "/ai", label: "AI 问答" },
       caseStudy: { href: "/case-study", label: "项目案例" },
       about: { href: "/about", label: "关于" },
+    },
+    megaMenuColumns: {
+      explore: "Explore",
+      pages: "Pages",
+      portfolio: "Portfolio",
+    },
+    megaMenuPortfolioItems: {
+      caseStudy: {
+        label: "Case Study",
+        description: "作品集展示入口",
+        href: "/case-study",
+      },
+      interviewGuide: {
+        label: "Interview Guide",
+        description: "面试讲解文档",
+      },
+      readme: {
+        label: "README",
+        description: "项目说明与技术概览",
+      },
     },
     categoryLabels: {
       "japan-study": "日本留学",
@@ -70,6 +102,7 @@ export const uiStrings: Record<Language, UiStrings> = {
     languageMenuLabel: "言語",
     footerCategoriesTitle: "カテゴリ",
     footerQuickLinksTitle: "クイックリンク",
+    footerPortfolioTitle: "ポートフォリオ",
     footerCopyright:
       "留学相談 · 個人ポートフォリオ · 内容は参考情報です",
     footerIntro:
@@ -83,6 +116,26 @@ export const uiStrings: Record<Language, UiStrings> = {
       ai: { href: "/ai", label: "AI 問答" },
       caseStudy: { href: "/case-study", label: "事例紹介" },
       about: { href: "/about", label: "概要" },
+    },
+    megaMenuColumns: {
+      explore: "Explore",
+      pages: "Pages",
+      portfolio: "Portfolio",
+    },
+    megaMenuPortfolioItems: {
+      caseStudy: {
+        label: "Case Study",
+        description: "ポートフォリオ展示入口",
+        href: "/case-study",
+      },
+      interviewGuide: {
+        label: "Interview Guide",
+        description: "面接説明ドキュメント",
+      },
+      readme: {
+        label: "README",
+        description: "プロジェクト概要と技術説明",
+      },
     },
     categoryLabels: {
       "japan-study": "日本留学",
@@ -107,6 +160,7 @@ export const uiStrings: Record<Language, UiStrings> = {
     languageMenuLabel: "Language",
     footerCategoriesTitle: "Categories",
     footerQuickLinksTitle: "Quick Links",
+    footerPortfolioTitle: "Portfolio",
     footerCopyright:
       "Study Abroad · Personal portfolio · For reference only",
     footerIntro:
@@ -120,6 +174,26 @@ export const uiStrings: Record<Language, UiStrings> = {
       ai: { href: "/ai", label: "AI Q&A" },
       caseStudy: { href: "/case-study", label: "Case Study" },
       about: { href: "/about", label: "About" },
+    },
+    megaMenuColumns: {
+      explore: "Explore",
+      pages: "Pages",
+      portfolio: "Portfolio",
+    },
+    megaMenuPortfolioItems: {
+      caseStudy: {
+        label: "Case Study",
+        description: "Portfolio presentation entry",
+        href: "/case-study",
+      },
+      interviewGuide: {
+        label: "Interview Guide",
+        description: "Interview walkthrough document",
+      },
+      readme: {
+        label: "README",
+        description: "Project overview and tech summary",
+      },
     },
     categoryLabels: {
       "japan-study": "Japan Study",
@@ -150,6 +224,7 @@ export const navLinkOrder: NavLinkKey[] = [
 ];
 
 export const footerQuickLinkOrder: NavLinkKey[] = [
+  "home",
   "articles",
   "plan",
   "ai",

@@ -457,6 +457,104 @@ docs/                   # 文档
 
 ---
 
+---
+
+## v0.16.0 面试讲解重点
+
+> 本章节对应 v0.16.0：Case Study 已从「功能展示」升级为「面试讲解型项目展示」。建议面试前配合 [/case-study](https://study-abroad-consulting.vercel.app/case-study) 和本文档一起复习。
+
+### 面试官最可能问的 5 个问题
+
+| # | 问题 |
+|---|------|
+| Q1 | 这个项目解决什么问题？ |
+| Q2 | 你为什么不接真实 AI API？ |
+| Q3 | `/plan` 的规则逻辑怎么设计？ |
+| Q4 | 这个项目体现了你的哪些工程能力？ |
+| Q5 | 如果继续迭代，你会优先做什么？ |
+
+---
+
+### Q1：这个项目解决什么问题？
+
+**推荐回答（中文）：**
+
+准备出国的人面对分散的信息——国家、预算、语言、签证、风险——容易只看结论，不理解它们之间的关系。我做这个个人作品集，不是替代中介或做商业产品，而是把信息整理成结构化流程：文章入口、`/plan` 可解释的路线规则、`/ai` 本地问答 MVP，以及 `/case-study` 项目说明。目标是向日本 IT 面试官展示：我能从真实问题出发，拆解需求、设计边界、组织代码并持续迭代。
+
+**日本語（简版）：**
+
+留学を考える人は情報が分散し、予算・語学・ビザ・リスクの関係を理解しにくいです。商用サービスではなく個人ポートフォリオとして、記事、`/plan` の説明可能なルール、`/ai` の mock 問答、`/case-study` で整理しました。日本 IT 就職向けに、要件分解と実装力を示すことが目的です。
+
+**English (brief):**
+
+People preparing to go abroad face scattered info and often miss how budget, language, visa, and risk connect. This is a personal portfolio—not a commercial product. I organize content into articles, explainable `/plan` rules, a local `/ai` MVP, and `/case-study` for project storytelling aimed at Japan IT interviews.
+
+---
+
+### Q2：你为什么不接真实 AI API？
+
+**推荐回答（中文）：**
+
+当前阶段目标是验证 AI 产品的交互形态和信息拆解方式，而不是追求「有 AI」本身。真实 API 会带来密钥管理、调用成本、合规责任和回答不可控。我先用 mock 固定回答结构——目标、预算、语言、风险、下一步——并明确边界：不保存历史、不做签证/就业承诺。等 UX 和边界设计清楚后，再考虑接入，并会先设计安全边界和免责声明。
+
+**日本語（简版）：**
+
+今は UX と情報分解を mock で検証する段階です。本番 API は鍵、コスト、コンプライアンス、回答の不確実性があります。履歴保存やビザ保証はしません。接続前に安全境界を設計します。
+
+**English (brief):**
+
+The MVP validates Q&A flow and answer structure, not API integration. Real APIs add keys, cost, compliance, and unpredictable output. Mock keeps goals, budget, language, risk, and next steps structured—with clear limits: no history, no visa/job promises. I'd design safety boundaries before connecting.
+
+---
+
+### Q3：`/plan` 的规则逻辑怎么设计？
+
+**推荐回答（中文）：**
+
+`/plan` 用的是本地 TypeScript 规则引擎，不是机器学习预测。用户输入年龄、学历、预算、语言、目标、风险偏好等，引擎在 `lib/plan` 里做路线匹配和评分：route-engine 负责候选路线，scoring-engine 负责打分，insight-engine 负责生成可读的匹配理由。我选择本地规则而不是先搭数据库，是因为核心需求是「可解释」——面试时我能讲清输入→规则→输出，也方便在代码评审里 walk through。
+
+**日本語（简版）：**
+
+`/plan` は TypeScript のローカルルールです。入力に対し `lib/plan` でマッチングとスコアリング。route-engine、scoring-engine、insight-engine に分離。ML ではなく説明可能性を優先し、DB より先にフローを検証しました。
+
+**English (brief):**
+
+`/plan` uses local TypeScript rules, not ML. Inputs go through `lib/plan`: route-engine for candidates, scoring-engine for scores, insight-engine for readable match reasons. Local rules prioritize explainability—I can walk through input → rules → output in an interview.
+
+---
+
+### Q4：这个项目体现了你的哪些工程能力？
+
+**推荐回答（中文）：**
+
+主要有四块：第一，前端工程——Next.js App Router、组件拆分、表单状态、响应式和多语言 UI；第二，产品拆解——把出国焦虑拆成可核对模块，并设计清晰边界；第三，规则与逻辑组织——`lib/plan`、`lib/ai` 从 page 抽离，page 只做组合；第四，作品集表达——README、project-status、interview-guide、三语言 case-study，以及 GitHub + Vercel 的完整交付链路。这些都是个人独立完成的。
+
+**日本語（简版）：**
+
+フロントエンド（Next.js、コンポーネント、レスポンシブ、i18n）、プロダクト分解と境界設計、lib/plan・lib/ai へのロジック分離、README・ドキュメント・Case Study・GitHub/Vercel まで個人で完遂しました。
+
+**English (brief):**
+
+Frontend (Next.js, components, responsive, i18n), product breakdown and boundaries, logic in `lib/plan` and `lib/ai` with thin pages, plus docs, trilingual case study, and GitHub/Vercel delivery—all solo.
+
+---
+
+### Q5：如果继续迭代，你会优先做什么？
+
+**推荐回答（中文）：**
+
+我会按风险和价值排序：第一，接入真实 AI 前先设计安全边界和测试；第二，给 `/plan` 和核心 lib 增加测试用例；第三，补充更多真实文章案例；第四，增加英文/日文 README，降低面试官阅读成本；第五，增强 `/plan` 与 `/ai` 的上下文联动。登录、数据库和权限只有在明确产品化方向时才会考虑，当前不会为了「看起来完整」而提前引入。
+
+**日本語（简版）：**
+
+優先順位：① AI 接続前の安全設計とテスト ② lib のテスト追加 ③ 記事コンテンツ拡充 ④ 英日 README ⑤ /plan と /ai の連携。ログイン・DB はプロダクト化が決まってから。
+
+**English (brief):**
+
+Priority: (1) safety design and tests before a real AI API, (2) tests for `/plan` and core lib, (3) more real articles, (4) EN/JA README, (5) stronger `/plan`–`/ai` linkage. Login and DB only if the product direction is clear—not for optics.
+
+---
+
 ## 11. 面试演示路线
 
 | 顺序 | 去哪里 | 讲什么 |
@@ -484,4 +582,4 @@ docs/                   # 文档
 
 ---
 
-*文档版本：v0.13.1 · 与 project-status.md 同步维护*
+*文档版本：v0.16.0 · 与 project-status.md 同步维护*

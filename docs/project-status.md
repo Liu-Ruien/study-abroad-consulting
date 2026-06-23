@@ -8,7 +8,7 @@
 
 - 项目名称：出国咨询信息整理平台 / overseas-consulting / study-abroad-consulting
 - 项目定位：面向日本 IT 求职的个人作品集项目（出国规划 / AI 应用场景演示）
-- 当前版本：v0.15.10
+- 当前版本：v0.16.3
 - 当前阶段：第四阶段收尾，已完成作品集面试展示增强
 - 在线地址：https://study-abroad-consulting.vercel.app/
 - 技术栈：Next.js 16、React、TypeScript、Tailwind CSS、Git / GitHub、Vercel
@@ -115,7 +115,7 @@ lib/plan-routes.ts
 - v0.8.5 已为 `/ai` 新增复制回答功能。
 - v0.8.6 已优化 `/ai` 移动端布局与首屏体验。
 - v0.8.7 已为 `/ai` 新增重新开始功能。
-- v0.15.10 已修复 /case-study 导航与卡片质感：mega menu hover 区域、玻璃卡片体系、Architecture 内部一致性与多语言标签。
+- v0.16.3 已修复 mega menu hover 保持与页面轻微 blur overlay。
 - v0.15.9 已完成 /case-study Apple 风格收口：Navbar mega menu、亮玻璃卡片与无 Footer 单屏流。
 - v0.15.8 已收口 /case-study Presentation 导航与控制器：Footer 隐藏、Navbar hover 面板、Highlights 静态一屏化。
 - v0.15.7 已收口 /case-study Presentation：首屏位置、滚动拦截、重复内容清理与系统字体栈。
@@ -150,6 +150,40 @@ lib/plan-routes.ts
 ---
 
 ## 6. 版本记录
+
+### v0.16.3
+
+- 修复 mega menu 从导航移动到面板时提前消失
+- 使用 120ms 延迟关闭提升 hover 容错
+- 恢复 mega menu 打开时页面主体轻微 blur overlay（`z-40`，独立于 header）
+- 保持语言按钮独立，不触发 mega menu
+- 保持业务逻辑不变
+
+### v0.16.2
+
+- 重构 Navbar mega menu 为 Apple 风格无缝毛玻璃下拉
+- 修复菜单内容被 page blur overlay 覆盖的问题
+- 页面主体 blur 改为 `backdrop-blur-sm`，仅轻微失焦
+- mega menu panel 使用 `z-[60]`，overlay 使用 `z-40`，LanguageDropdown 使用 `z-[70]` / `z-[80]`
+- hover 区域仅包裹主导航链接与 mega menu panel，语言按钮独立
+- 移动端不启用 hover mega menu
+- 保持业务逻辑不变
+
+### v0.16.1
+
+- 修复 Navbar mega menu 内容不可见问题（blur overlay 遮挡 mega menu 内容）
+- 调整 mega menu（z-[60]）与 blur overlay（z-40）层级
+- 语言切换按钮独立于 mega menu hover 区域，LanguageDropdown 使用 z-[70]
+- 移动端保持自然纵向阅读，不强制桌面端滚轮切页；presentation 类名仅在 md 及以上启用
+- 保持业务逻辑不变
+
+### v0.16.0
+
+- /case-study 文案升级为面试官视角
+- 强化项目背景、技术决策、个人职责、边界和后续计划
+- docs/interview-guide.md 增加 v0.16.0 面试讲解重点（五问五答，中 / 日 / 英）
+- README 增加「面试官快速理解」说明
+- 不修改业务逻辑和视觉系统
 
 ### v0.15.10
 
