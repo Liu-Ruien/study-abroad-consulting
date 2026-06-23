@@ -98,6 +98,36 @@ export const caseStudyModuleIndigo =
 export const caseStudyModuleRose =
   "rounded-2xl border border-rose-100/70 bg-gradient-to-br from-white via-rose-50/25 to-orange-50/15 shadow-[0_10px_30px_rgba(244,63,94,0.06)]";
 
+/** /case-study Hero — 弱边界、浮于背景 */
+export const caseStudyHeroGlow =
+  "pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(186,230,253,0.45),transparent_55%),radial-gradient(circle_at_80%_20%,rgba(196,181,253,0.22),transparent_45%),radial-gradient(circle_at_20%_80%,rgba(125,211,252,0.15),transparent_50%)]";
+
+export const caseStudyHeroContent =
+  "relative mx-auto w-full max-w-5xl text-center";
+
+/** /case-study 深色产品区块 */
+export const caseStudyDarkSection =
+  "bg-[#050505] [background-image:radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.08),transparent_50%),radial-gradient(circle_at_100%_100%,rgba(99,102,241,0.06),transparent_40%)] text-white";
+
+export const caseStudyDarkCard =
+  "rounded-3xl border border-white/[0.08] bg-gradient-to-b from-[#111827]/95 to-[#050505] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] sm:p-10";
+
+export const caseStudyDarkCardHover =
+  "transition duration-300 hover:border-white/[0.14] hover:bg-gradient-to-b hover:from-[#151b28] hover:to-[#0a0a0a]";
+
+/** /case-study 架构分层卡 */
+export const caseStudyArchLayer =
+  "rounded-3xl border border-sky-200/40 bg-gradient-to-br from-sky-50/90 via-white/95 to-indigo-50/30 shadow-[0_12px_40px_rgba(14,165,233,0.08)]";
+
+export const caseStudyArchFlowNode =
+  "rounded-3xl border border-sky-200/50 bg-gradient-to-b from-white via-sky-50/40 to-white/90 px-8 py-4 text-center font-medium text-gray-800 shadow-[0_8px_30px_rgba(14,165,233,0.06)] sm:min-w-[16rem]";
+
+export const caseStudySectionLabel =
+  "text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-sky-600";
+
+export const caseStudySectionDarkLabel =
+  "text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-sky-400/90";
+
 export const tagApple =
   "rounded-full border border-black/10 bg-neutral-100 px-3 py-1 text-sm text-gray-700";
 

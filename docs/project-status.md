@@ -8,7 +8,7 @@
 
 - 项目名称：出国咨询信息整理平台 / overseas-consulting / study-abroad-consulting
 - 项目定位：面向日本 IT 求职的个人作品集项目（出国规划 / AI 应用场景演示）
-- 当前版本：v0.14.0
+- 当前版本：v0.15.0
 - 当前阶段：第四阶段收尾，已完成作品集面试展示增强
 - 在线地址：https://study-abroad-consulting.vercel.app/
 - 技术栈：Next.js 16、React、TypeScript、Tailwind CSS、Git / GitHub、Vercel
@@ -115,6 +115,7 @@ lib/plan-routes.ts
 - v0.8.5 已为 `/ai` 新增复制回答功能。
 - v0.8.6 已优化 `/ai` 移动端布局与首屏体验。
 - v0.8.7 已为 `/ai` 新增重新开始功能。
+- v0.15.0 已完成 /case-study Apple 产品级视觉叙事升级（Hero、深色 Feature、Architecture 精修、留白）。
 - v0.14.0 已新增 /case-study 项目架构展示（Architecture 四层卡片 + 流程图）；README 增加 Architecture 章节。
 - v0.13.1 已新增 docs/interview-guide.md 面试讲解稿（中日英介绍、Q&A、演示路线）；README 增加文档入口。
 - v0.13.0 已完成 /case-study 面试官快速查看、技术决策、开发者职责说明；README 增加面试官路径。
@@ -139,6 +140,16 @@ lib/plan-routes.ts
 ---
 
 ## 6. 版本记录
+
+### v0.15.0
+
+- /case-study 升级为 Apple 产品级视觉叙事
+- Hero 视觉增强：更大首屏、更短副标题、高级径向渐变、弱边界浮层感
+- 新增深色 Feature 区块（规则规划 / AI MVP / 多语言作品集）
+- Architecture 区块精修：分层卡片、更宽流程节点、更轻连接线
+- 优化 section 节奏与留白（间距增大、文案 line-clamp 减密度）
+- 新增 case-study 专用视觉 token（`lib/ui/card-system.ts`）
+- 不改变 /plan、/ai、/articles 业务逻辑
 
 ### v0.14.0
 

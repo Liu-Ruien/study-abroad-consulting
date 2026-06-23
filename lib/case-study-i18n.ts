@@ -11,6 +11,11 @@ export type CaseStudyContent = {
     ctaPlan: string;
     ctaAi: string;
   };
+  darkFeature: {
+    eyebrow: string;
+    title: string;
+    cards: { title: string; description: string }[];
+  };
   interviewerFocus: {
     eyebrow: string;
     title: string;
@@ -87,13 +92,34 @@ export type CaseStudyContent = {
 export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
   zh: {
     hero: {
-      badge: "v0.13.0 · 作品集案例页",
-      tags: ["Next.js / React / TypeScript", "本地规则引擎", "AI 问答 MVP"],
+      badge: "v0.15.0 · 作品集案例页",
+      tags: ["Next.js · TypeScript", "规则引擎 · AI MVP"],
       title: "出国咨询信息整理平台",
       subtitle:
-        "面向中文用户的出国规划信息整理项目。使用 Next.js、React、TypeScript 与本地规则逻辑，展示路线规划、AI 问答 MVP、内容组织与作品集级 UI 设计能力。",
+        "路线规划、本地 AI 问答与多语言展示——个人作品集，呈现前端工程与产品拆解。",
       ctaPlan: "查看路线规划",
       ctaAi: "体验 AI 问答 MVP",
+    },
+    darkFeature: {
+      eyebrow: "PRODUCT",
+      title: "不是一个普通资讯站，而是一个完整的项目展示。",
+      cards: [
+        {
+          title: "规则规划",
+          description:
+            "本地规则引擎，将预算、语言与目标转化为可解释的路线建议。",
+        },
+        {
+          title: "AI MVP",
+          description:
+            "mock 问答原型，展示信息拆解与 AI 产品边界设计。",
+        },
+        {
+          title: "多语言作品集",
+          description:
+            "中文 / 日本語 / English，为日本 IT 求职场景而设计。",
+        },
+      ],
     },
     interviewerFocus: {
       eyebrow: "For Interviewers",
@@ -133,7 +159,7 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
     features: {
       eyebrow: "Features",
       title: "核心功能",
-      description: "四个模块覆盖内容、规划、问答与作品集展示，逻辑彼此独立、可分别演示。",
+      description: "内容、规划、问答与案例展示——四个模块，各自可独立演示。",
       cards: [
         {
           title: "内容文章系统",
@@ -382,23 +408,40 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
     },
     status: {
       eyebrow: "Status",
-      title: "v0.13.0 — 作品集面试展示增强",
-      body: "Case Study 页新增面试官快速查看、技术决策与开发者职责说明。全站支持中文 / 日本語 / English，用于日本 IT 求职场景。在线地址：study-abroad-consulting.vercel.app",
+      title: "v0.15.0 — Apple 产品级视觉叙事",
+      body: "Case Study 页升级为产品级展示：更大 Hero、深色 Feature 区块、Architecture 精修与更充裕留白。在线地址：study-abroad-consulting.vercel.app",
     },
   },
   ja: {
     hero: {
-      badge: "v0.13.0 · ポートフォリオ Case Study",
-      tags: [
-        "Next.js / React / TypeScript",
-        "ルールベースエンジン",
-        "AI 問答 MVP",
-      ],
+      badge: "v0.15.0 · Portfolio Case Study",
+      tags: ["Next.js · TypeScript", "ルールエンジン · AI MVP"],
       title: "留学・海外生活 情報整理プラットフォーム",
       subtitle:
-        "留学・海外生活に関する情報整理を目的とした個人ポートフォリオです。Next.js、React、TypeScript とローカルルールロジックで、進路プランニング、AI 問答 MVP、コンテンツ構成、UI 設計力を示します。",
+        "ルート計画、ローカル AI 問答、多言語展示——個人ポートフォリオとして、フロントエンドとプロダクト分解力を示します。",
       ctaPlan: "進路プランニングを見る",
       ctaAi: "AI 問答 MVP を試す",
+    },
+    darkFeature: {
+      eyebrow: "PRODUCT",
+      title: "単なる情報サイトではなく、完成度の高いプロジェクト展示。",
+      cards: [
+        {
+          title: "ルールプランニング",
+          description:
+            "ローカルルールエンジンで、予算・語学・目標を説明可能なルート提案に変換。",
+        },
+        {
+          title: "AI MVP",
+          description:
+            "mock 問答プロトタイプ。情報分解と AI プロダクトの境界設計を示す。",
+        },
+        {
+          title: "多言語ポートフォリオ",
+          description:
+            "中文 / 日本語 / English。日本 IT 就職向けの説明を想定。",
+        },
+      ],
     },
     interviewerFocus: {
       eyebrow: "For Interviewers",
@@ -697,23 +740,40 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
     },
     status: {
       eyebrow: "Status",
-      title: "v0.13.0 — ポートフォリオ面接向け強化",
-      body: "Case Study に面接官向けクイックビュー、技術判断、担当範囲を追加。全站は中文 / 日本語 / English 対応。日本 IT 就職向けデモに利用できます。公開 URL：study-abroad-consulting.vercel.app",
+      title: "v0.15.0 — Apple 級ビジュアル叙事",
+      body: "Case Study をプロダクト級展示に刷新。大型 Hero、ダーク Feature、Architecture 精修、余白の最適化。公開 URL：study-abroad-consulting.vercel.app",
     },
   },
   en: {
     hero: {
-      badge: "v0.13.0 · Portfolio Case Study",
-      tags: [
-        "Next.js / React / TypeScript",
-        "Rule-based engine",
-        "AI Q&A MVP",
-      ],
+      badge: "v0.15.0 · Portfolio Case Study",
+      tags: ["Next.js · TypeScript", "Rules · AI MVP"],
       title: "Study Abroad Information Platform",
       subtitle:
-        "A personal portfolio project for organizing study-abroad planning information. Built with Next.js, React, TypeScript, and local rule-based logic to demonstrate route planning, a local AI Q&A MVP, content organization, and portfolio-grade UI design.",
+        "Route planning, local AI Q&A, and multilingual showcase—a personal portfolio for frontend and product thinking.",
       ctaPlan: "View route planning",
       ctaAi: "Try AI Q&A MVP",
+    },
+    darkFeature: {
+      eyebrow: "PRODUCT",
+      title: "Not a plain info site—a complete portfolio showcase.",
+      cards: [
+        {
+          title: "Rule-based planning",
+          description:
+            "Local rule engine turns budget, language, and goals into explainable route suggestions.",
+        },
+        {
+          title: "AI MVP",
+          description:
+            "Mock Q&A prototype showing information breakdown and AI product boundaries.",
+        },
+        {
+          title: "Multilingual portfolio",
+          description:
+            "中文 / 日本語 / English—designed for Japan IT job interviews.",
+        },
+      ],
     },
     interviewerFocus: {
       eyebrow: "For Interviewers",
@@ -1012,8 +1072,8 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
     },
     status: {
       eyebrow: "Status",
-      title: "v0.13.0 — Portfolio interview enhancements",
-      body: "Case study adds interviewer quick view, technical decisions, and developer role sections. Site supports 中文 / 日本語 / English for Japan IT job demos. Live at study-abroad-consulting.vercel.app",
+      title: "v0.15.0 — Product-level visual storytelling",
+      body: "Case study upgraded to product-grade presentation: larger hero, dark feature band, refined architecture, and generous spacing. Live at study-abroad-consulting.vercel.app",
     },
   },
 };

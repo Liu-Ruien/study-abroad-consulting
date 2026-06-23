@@ -2,7 +2,7 @@
 
 这是一个个人开发的出国信息整理与路线规划项目，用于展示内容组织、路线规划、本地 AI 问答 MVP、组件化前端工程和作品集级 UI 设计能力。
 
-**当前版本：** v0.13.0  
+**当前版本：** v0.15.0  
 **当前定位：** 个人作品集项目 / 日本 IT 求职展示项目
 
 ---
@@ -21,7 +21,7 @@ This is a personal portfolio project for organizing study-abroad information, ro
 
 ## 多语言展示
 
-v0.13.0 增强 `/case-study` 面试展示：面试官快速查看、技术决策、开发者职责说明；README 增加面试官阅读路径。v0.12.4 完成文章数据三语言化（标题、摘要、正文、分类、阅读时间），修复 `/`、`/articles`、`/about`、`/articles/[slug]` 背景非全屏问题，统一文章列表、分类页与详情页视觉。当前多语言覆盖导航、页面 UI、文章卡片与详情页；语言选择通过 localStorage 记住，不改变 URL。
+v0.15.0 focused on product-level visual storytelling for the case study page（更大 Hero、深色 Feature 区块、Architecture 精修与留白优化）。v0.14.0 新增 /case-study 四层架构展示与流程图。v0.12.4 完成文章数据三语言化（标题、摘要、正文、分类、阅读时间），修复 `/`、`/articles`、`/about`、`/articles/[slug]` 背景非全屏问题，统一文章列表、分类页与详情页视觉。当前多语言覆盖导航、页面 UI、文章卡片与详情页；语言选择通过 localStorage 记住，不改变 URL。
 
 ---
 
