@@ -5,7 +5,7 @@ Built with Next.js, React, TypeScript and local rule-based logic.
 
 - **Online Demo:** [https://study-abroad-consulting.vercel.app](https://study-abroad-consulting.vercel.app)
 - **Recommended Entry:** [`/case-study`](https://study-abroad-consulting.vercel.app/case-study)
-- **Current Version:** v0.18.0
+- **Current Version:** v0.19.0
 
 面向日本 IT 求职展示的个人作品集项目，使用 Next.js、React、TypeScript 与本地规则逻辑，实现内容整理、路线规划、本地 AI 问答 MVP、多语言展示和项目案例页。
 
@@ -22,6 +22,9 @@ Built with Next.js, React, TypeScript and local rule-based logic.
 | Articles | [https://study-abroad-consulting.vercel.app/articles](https://study-abroad-consulting.vercel.app/articles) |
 | Interview Guide | [docs/interview-guide.md](./docs/interview-guide.md) |
 | Project Status | [docs/project-status.md](./docs/project-status.md) |
+| Resume Descriptions | [docs/resume-project-description.md](./docs/resume-project-description.md) |
+| Japanese Interview Script | [docs/japanese-interview-script.md](./docs/japanese-interview-script.md) |
+| v1.0.0 Release Notes (draft) | [docs/release-notes-v1.0.0.md](./docs/release-notes-v1.0.0.md) |
 
 ---
 
@@ -205,6 +208,9 @@ The live site at [study-abroad-consulting.vercel.app](https://study-abroad-consu
 |---|---|
 | [docs/project-status.md](./docs/project-status.md) | Version history, scope, and development boundaries |
 | [docs/interview-guide.md](./docs/interview-guide.md) | Interview scripts and Q&A (中文 / 日本語 / English) |
+| [docs/resume-project-description.md](./docs/resume-project-description.md) | Resume copy: 中文 / 日本語 / English (150–300字) |
+| [docs/japanese-interview-script.md](./docs/japanese-interview-script.md) | 30s / 1min / 3min Japanese oral scripts |
+| [docs/release-notes-v1.0.0.md](./docs/release-notes-v1.0.0.md) | GitHub Release v1.0.0 draft |
 | [docs/product-blueprint-v0.2.md](./docs/product-blueprint-v0.2.md) | Product direction and feature blueprint |
 
 ---
@@ -232,8 +238,8 @@ Open [http://localhost:3000](http://localhost:3000) after `npm run dev`. If port
 - [x] Multilingual case study supported
 - [x] Local build passed
 - [x] Lint passed
-- [ ] Resume project description prepared
-- [ ] Japanese interview script prepared
+- [x] Resume project description prepared
+- [x] Japanese interview script prepared
 - [ ] v1.0.0 release tag prepared
 
 ---
@@ -253,6 +259,7 @@ Open [http://localhost:3000](http://localhost:3000) after `npm run dev`. If port
 
 ## Version History (Recent)
 
+- **v0.19.0** — Resume descriptions, Japanese interview scripts, v1.0.0 release notes draft
 - **v0.18.0** — GitHub / README / Vercel final portfolio packaging
 - **v0.17.0** — README portfolio homepage, interview follow-up prep, case-study boundary copy
 - **v0.16.x** — Navbar mega menu, case-study interviewer narrative
