@@ -140,6 +140,28 @@ export default function CaseStudyContent() {
       <div className="mx-auto max-w-6xl space-y-16 px-4 pb-20 sm:px-6 sm:pb-24 lg:space-y-20">
         <section>
           <SectionHeading
+            eyebrow={content.interviewerFocus.eyebrow}
+            title={content.interviewerFocus.title}
+          />
+          <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">
+            {content.interviewerFocus.cards.map((card, index) => (
+              <div
+                key={card.title}
+                className={`min-w-0 p-6 sm:p-7 ${featureToneClasses[index]} ${cardHover}`}
+              >
+                <h3 className="text-lg font-semibold leading-snug tracking-tight text-gray-950 sm:text-xl">
+                  {card.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-gray-700">
+                  {card.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <SectionHeading
             eyebrow={content.background.eyebrow}
             title={content.background.title}
           />
@@ -169,6 +191,46 @@ export default function CaseStudyContent() {
                 </p>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section>
+          <SectionHeading
+            eyebrow={content.technicalDecisions.eyebrow}
+            title={content.technicalDecisions.title}
+            description={content.technicalDecisions.description}
+          />
+          <div className="grid gap-4 md:grid-cols-2 md:gap-5">
+            {content.technicalDecisions.items.map((item) => (
+              <div
+                key={item.title}
+                className={`p-5 sm:p-6 ${cardTintSky} ${cardHover}`}
+              >
+                <h3 className="text-base font-semibold leading-snug text-gray-950 sm:text-lg">
+                  {item.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-gray-700">
+                  {item.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <SectionHeading
+            eyebrow={content.myRole.eyebrow}
+            title={content.myRole.title}
+          />
+          <div className={`mx-auto max-w-4xl p-6 sm:p-8 ${caseStudyModuleIndigo}`}>
+            <ul className="space-y-2.5 text-sm leading-relaxed text-gray-700 sm:text-base">
+              {content.myRole.items.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400/70" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 

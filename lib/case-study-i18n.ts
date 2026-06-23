@@ -11,6 +11,11 @@ export type CaseStudyContent = {
     ctaPlan: string;
     ctaAi: string;
   };
+  interviewerFocus: {
+    eyebrow: string;
+    title: string;
+    cards: { title: string; description: string }[];
+  };
   background: {
     eyebrow: string;
     title: string;
@@ -22,6 +27,17 @@ export type CaseStudyContent = {
     title: string;
     description: string;
     cards: { title: string; description: string }[];
+  };
+  technicalDecisions: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    items: { title: string; body: string }[];
+  };
+  myRole: {
+    eyebrow: string;
+    title: string;
+    items: string[];
   };
   stack: {
     eyebrow: string;
@@ -63,13 +79,39 @@ export type CaseStudyContent = {
 export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
   zh: {
     hero: {
-      badge: "v0.12.1 · 作品集案例页",
+      badge: "v0.13.0 · 作品集案例页",
       tags: ["Next.js / React / TypeScript", "本地规则引擎", "AI 问答 MVP"],
       title: "出国咨询信息整理平台",
       subtitle:
         "面向中文用户的出国规划信息整理项目。使用 Next.js、React、TypeScript 与本地规则逻辑，展示路线规划、AI 问答 MVP、内容组织与作品集级 UI 设计能力。",
       ctaPlan: "查看路线规划",
       ctaAi: "体验 AI 问答 MVP",
+    },
+    interviewerFocus: {
+      eyebrow: "For Interviewers",
+      title: "面试官可以重点看什么",
+      cards: [
+        {
+          title: "路线规划规则引擎",
+          description:
+            "/plan 将预算、语言、目标和风险拆成本地规则推荐流程，展示产品拆解与业务逻辑组织能力。",
+        },
+        {
+          title: "本地 AI 问答 MVP",
+          description:
+            "/ai 当前不接真实 AI API，而是用本地 mock 展示 AI 产品原型、信息拆解和边界意识。",
+        },
+        {
+          title: "多语言作品集展示",
+          description:
+            "/case-study 和核心页面支持中文 / 日本語 / English，方便日本求职场景下展示项目。",
+        },
+        {
+          title: "设计系统与组件化",
+          description:
+            "统一 card-system、Navbar、Footer、ArticleCard、Plan、AI 等组件，展示前端工程组织能力。",
+        },
+      ],
     },
     background: {
       eyebrow: "Background",
@@ -105,6 +147,51 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
           description:
             "说明项目背景、技术栈、架构取舍与工程亮点，用于面试与求职场景展示。",
         },
+      ],
+    },
+    technicalDecisions: {
+      eyebrow: "Decisions",
+      title: "关键技术决策",
+      description: "以下取舍基于个人作品集的范围与迭代成本，便于面试时说明「为什么这样做」。",
+      items: [
+        {
+          title: "为什么先做本地规则引擎，而不是后端数据库",
+          body: "出国路线推荐的核心是「可解释的规则与流程」，先用 TypeScript 本地引擎验证匹配逻辑和页面交互，比先搭数据库更快迭代，也更容易在代码评审中讲清楚。",
+        },
+        {
+          title: "为什么 /ai 当前保持 mock，而不是直接接真实 AI API",
+          body: "真实 API 会引入密钥管理、成本、合规与回答不可控等问题。先用 mock 固定回答结构，验证问题拆解与 UX，再决定是否接入以及边界如何设计。",
+        },
+        {
+          title: "为什么不做登录和付费功能",
+          body: "项目目标是求职作品集，不是商业化 SaaS。登录和付费会分散精力，且与当前「本地演示、无后端」的架构不一致。",
+        },
+        {
+          title: "为什么抽离 lib/plan、lib/ai、lib/i18n",
+          body: "页面只负责组合与展示，业务逻辑按功能域放在 lib 下，便于单独阅读、测试，也避免 page.tsx 膨胀。",
+        },
+        {
+          title: "为什么先做作品集展示，而不是商业化",
+          body: "需要向面试官说明需求来源、架构取舍和工程边界。case-study 页和多语言展示优先于运营功能，更符合当前目标。",
+        },
+        {
+          title: "为什么采用 GitHub + Vercel 迭代部署",
+          body: "个人项目需要低成本、可回溯的发布方式。Git 管版本，Vercel 自动部署，改动能快速在线上验证，适合作品集持续打磨。",
+        },
+      ],
+    },
+    myRole: {
+      eyebrow: "My Role",
+      title: "我在项目中完成了什么",
+      items: [
+        "从需求拆解到页面结构设计",
+        "使用 Next.js / React / TypeScript 搭建页面",
+        "拆分 components、lib、docs 等目录",
+        "实现 /plan 本地规则推荐流程",
+        "实现 /ai 本地问答 MVP",
+        "统一 Apple 风格视觉系统",
+        "完成 GitHub 版本管理与 Vercel 部署",
+        "补充 README、项目状态文档和多语言展示",
       ],
     },
     stack: {
@@ -210,31 +297,34 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
       items: [
         "当前不接真实 AI API",
         "当前不接数据库",
-        "当前没有用户系统",
+        "当前没有登录系统",
+        "当前没有付费功能",
         "当前不保存历史记录",
-        "当前内容仅作信息整理与作品集展示",
+        "不提供真实签证、录取或就业承诺",
+        "内容仅作信息整理与作品集展示",
         "重要信息仍应以学校、使领馆、入管局和官方政策为准",
       ],
     },
     future: {
-      title: "后续计划",
+      title: "后续可以做什么",
       items: [
-        "接入真实 AI API 前先设计安全边界与免责声明",
-        "补充更完整的测试与错误状态处理",
+        "接入真实 AI 前先设计安全边界与免责声明",
+        "增加测试与更完整的错误状态处理",
         "增加更多真实案例与文章内容",
+        "补充日文 README 或独立面试说明文档",
+        "将项目讲解整理成面试材料（架构图、演示脚本）",
         "增强 /plan 与 /ai 的上下文联动",
-        "视需要将多语言展示扩展到更多页面",
       ],
     },
     status: {
       eyebrow: "Status",
-      title: "v0.12.1 — 全站导航级多语言",
-      body: "语言切换已移至 Navbar，Case Study 页面支持中文 / 日本語 / English。用于日本 IT 求职场景下的项目演示。在线地址：study-abroad-consulting.vercel.app",
+      title: "v0.13.0 — 作品集面试展示增强",
+      body: "Case Study 页新增面试官快速查看、技术决策与开发者职责说明。全站支持中文 / 日本語 / English，用于日本 IT 求职场景。在线地址：study-abroad-consulting.vercel.app",
     },
   },
   ja: {
     hero: {
-      badge: "v0.12.1 · ポートフォリオ Case Study",
+      badge: "v0.13.0 · ポートフォリオ Case Study",
       tags: [
         "Next.js / React / TypeScript",
         "ルールベースエンジン",
@@ -245,6 +335,32 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
         "留学・海外生活に関する情報整理を目的とした個人ポートフォリオです。Next.js、React、TypeScript とローカルルールロジックで、進路プランニング、AI 問答 MVP、コンテンツ構成、UI 設計力を示します。",
       ctaPlan: "進路プランニングを見る",
       ctaAi: "AI 問答 MVP を試す",
+    },
+    interviewerFocus: {
+      eyebrow: "For Interviewers",
+      title: "面接官に見てほしいポイント",
+      cards: [
+        {
+          title: "進路プランニングのルールエンジン",
+          description:
+            "/plan は予算、語学、目標、リスクをローカルルールに分解し、プロダクト分解とビジネスロジック設計力を示します。",
+        },
+        {
+          title: "ローカル AI 問答 MVP",
+          description:
+            "/ai は本番 AI API を使わず、mock で AI プロトタイプ、情報分解、境界意識を示します。",
+        },
+        {
+          title: "多言語ポートフォリオ展示",
+          description:
+            "/case-study と主要ページは中文 / 日本語 / English に対応。日本就職向けの説明に使えます。",
+        },
+        {
+          title: "デザインシステムとコンポーネント化",
+          description:
+            "card-system、Navbar、Footer、ArticleCard、Plan、AI などを統一し、フロントエンド構成力を示します。",
+        },
+      ],
     },
     background: {
       eyebrow: "Background",
@@ -281,6 +397,52 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
           description:
             "背景、技術スタック、アーキテクチャ判断、エンジニアリングの要点を面接・選考向けに説明します。",
         },
+      ],
+    },
+    technicalDecisions: {
+      eyebrow: "Decisions",
+      title: "主な技術判断",
+      description:
+        "個人ポートフォリオのスコープとコストに基づく判断です。面接で「なぜそうしたか」を説明しやすく整理しています。",
+      items: [
+        {
+          title: "なぜ最初に DB ではなくローカルルールエンジンか",
+          body: "進路推薦の核心は説明可能なルールとフローです。TypeScript のローカルエンジンでマッチングと UI を先に検証する方が、DB より速く、コードレビューでも説明しやすいです。",
+        },
+        {
+          title: "なぜ /ai は mock のままか",
+          body: "本番 API は鍵管理、コスト、コンプライアンス、回答の不確実性を伴います。mock で構造と UX を固定してから、接続の是非と境界を決めます。",
+        },
+        {
+          title: "なぜログイン・課金を作らないか",
+          body: "目的は就職ポートフォリオであり、商用 SaaS ではありません。認証・課金は「ローカルデモ・無バックエンド」と方向がずれ、工数も分散します。",
+        },
+        {
+          title: "なぜ lib/plan、lib/ai、lib/i18n を分離するか",
+          body: "ページは組み立てのみ。ロジックを lib に置くことで、単体で読みやすく、page.tsx の肥大化も防げます。",
+        },
+        {
+          title: "なぜ商用化よりポートフォリオ展示を優先するか",
+          body: "面接官に要件の背景、アーキテクチャ判断、制約を説明する必要があります。case-study と多言語が運用機能より優先されます。",
+        },
+        {
+          title: "なぜ GitHub + Vercel で反復デプロイするか",
+          body: "個人開発には低コストで履歴が残る公開手段が必要です。Git で版管理、Vercel で自動デプロイし、変更をすぐ検証できます。",
+        },
+      ],
+    },
+    myRole: {
+      eyebrow: "My Role",
+      title: "このプロジェクトで担当したこと",
+      items: [
+        "要件分解からページ構造設計まで",
+        "Next.js / React / TypeScript でページ実装",
+        "components、lib、docs などのディレクトリ分割",
+        "/plan のローカルルール推薦フロー実装",
+        "/ai のローカル問答 MVP 実装",
+        "Apple 風ビジュアルシステムの統一",
+        "GitHub 版管理と Vercel デプロイ",
+        "README、プロジェクト状態ドキュメント、多言語展示の整備",
       ],
     },
     stack: {
@@ -388,31 +550,34 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
       items: [
         "本番 AI API は未接続",
         "データベースは未使用",
-        "ユーザー認証・管理機能なし",
+        "ログインシステムなし",
+        "有料機能なし",
         "履歴保存なし",
+        "ビザ・合格・就業の保証は提供しない",
         "コンテンツは情報整理とポートフォリオ展示のみ",
         "重要情報は学校、大使館、入管、公式政策を優先してください",
       ],
     },
     future: {
-      title: "今後の予定",
+      title: "今後できること",
       items: [
-        "本番 AI API 接続前に安全境界と免責事項を設計",
+        "本番 AI 接続前に安全境界と免責事項を設計",
         "テストとエラー状態処理の充実",
         "より多くの実例コンテンツと記事の追加",
+        "日本語 README や面接用説明資料の追加",
+        "プロジェクト説明を面接資料（構成図、デモ手順）に整理",
         "/plan と /ai のコンテキスト連携の強化",
-        "必要に応じて多言語展示を他ページへ拡張",
       ],
     },
     status: {
       eyebrow: "Status",
-      title: "v0.12.1 — 全站ナビ多言語対応",
-      body: "言語切替は Navbar に移動。Case Study ページは中文 / 日本語 / English に対応。日本 IT 就職向けのプロジェクト説明に利用できます。公開 URL：study-abroad-consulting.vercel.app",
+      title: "v0.13.0 — ポートフォリオ面接向け強化",
+      body: "Case Study に面接官向けクイックビュー、技術判断、担当範囲を追加。全站は中文 / 日本語 / English 対応。日本 IT 就職向けデモに利用できます。公開 URL：study-abroad-consulting.vercel.app",
     },
   },
   en: {
     hero: {
-      badge: "v0.12.1 · Portfolio Case Study",
+      badge: "v0.13.0 · Portfolio Case Study",
       tags: [
         "Next.js / React / TypeScript",
         "Rule-based engine",
@@ -423,6 +588,32 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
         "A personal portfolio project for organizing study-abroad planning information. Built with Next.js, React, TypeScript, and local rule-based logic to demonstrate route planning, a local AI Q&A MVP, content organization, and portfolio-grade UI design.",
       ctaPlan: "View route planning",
       ctaAi: "Try AI Q&A MVP",
+    },
+    interviewerFocus: {
+      eyebrow: "For Interviewers",
+      title: "What Interviewers Can Focus On",
+      cards: [
+        {
+          title: "Route planning rule engine",
+          description:
+            "/plan breaks budget, language, goals, and risk into a local rule-based flow—showing product decomposition and business logic organization.",
+        },
+        {
+          title: "Local AI Q&A MVP",
+          description:
+            "/ai does not call a real AI API. Local mock demonstrates an AI product prototype, information breakdown, and boundary awareness.",
+        },
+        {
+          title: "Multilingual portfolio presentation",
+          description:
+            "/case-study and core pages support 中文 / 日本語 / English for Japan job-application demos.",
+        },
+        {
+          title: "Design system & componentization",
+          description:
+            "Unified card-system, Navbar, Footer, ArticleCard, Plan, and AI components show frontend engineering organization.",
+        },
+      ],
     },
     background: {
       eyebrow: "Background",
@@ -459,6 +650,52 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
           description:
             "Explains background, stack, architecture choices, and engineering highlights for interviews and job applications.",
         },
+      ],
+    },
+    technicalDecisions: {
+      eyebrow: "Decisions",
+      title: "Key Technical Decisions",
+      description:
+        "Trade-offs shaped by portfolio scope and iteration cost—written so I can explain the “why” in interviews.",
+      items: [
+        {
+          title: "Why a local rule engine first, not a backend database",
+          body: "Route recommendations depend on explainable rules and flows. A TypeScript local engine validates matching and UI faster than standing up a database, and is easier to walk through in code review.",
+        },
+        {
+          title: "Why /ai stays mock instead of a real AI API",
+          body: "A real API adds keys, cost, compliance, and unpredictable answers. Mock fixes the answer structure and UX first; connection and boundaries come later.",
+        },
+        {
+          title: "Why no login or paid features",
+          body: "The goal is a job portfolio, not commercial SaaS. Auth and billing would distract from the current local-demo, no-backend architecture.",
+        },
+        {
+          title: "Why lib/plan, lib/ai, and lib/i18n are split out",
+          body: "Pages compose only; logic lives in lib by domain for easier reading, testing, and to keep page.tsx from growing too large.",
+        },
+        {
+          title: "Why portfolio presentation before commercialization",
+          body: "Interviewers need requirements, architecture trade-offs, and boundaries explained. Case study and multilingual pages beat ops features for that goal.",
+        },
+        {
+          title: "Why GitHub + Vercel iterative deploy",
+          body: "A solo project needs low-cost, traceable releases. Git for history, Vercel for auto deploy—changes are verified online quickly while polishing the portfolio.",
+        },
+      ],
+    },
+    myRole: {
+      eyebrow: "My Role",
+      title: "My Role in This Project",
+      items: [
+        "Requirements breakdown through page structure design",
+        "Built pages with Next.js / React / TypeScript",
+        "Split components, lib, and docs directories",
+        "Implemented /plan local rule-based recommendation flow",
+        "Implemented /ai local Q&A MVP",
+        "Unified Apple-style visual system",
+        "GitHub versioning and Vercel deployment",
+        "README, project status docs, and multilingual presentation",
       ],
     },
     stack: {
@@ -566,26 +803,29 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
       items: [
         "No real AI API connected",
         "No database",
-        "No user system",
+        "No login system",
+        "No paid features",
         "No history storage",
+        "No real visa, admission, or employment guarantees",
         "Content is for information organization and portfolio display only",
         "Important details should still follow schools, embassies, immigration offices, and official policy",
       ],
     },
     future: {
-      title: "Next steps",
+      title: "What can come next",
       items: [
         "Design safety boundaries and disclaimers before connecting a real AI API",
-        "Add more complete tests and error-state handling",
+        "Add tests and more complete error-state handling",
         "Expand real case content and articles",
+        "Add a Japanese README or dedicated interview brief",
+        "Turn project walkthrough into interview materials (diagrams, demo script)",
         "Strengthen context linking between /plan and /ai",
-        "Extend multilingual presentation to more pages if needed",
       ],
     },
     status: {
       eyebrow: "Status",
-      title: "v0.12.1 — Site-wide navbar language",
-      body: "Language switching lives in the Navbar. The case study page supports 中文 / 日本語 / English for Japan IT job interviews. Live at study-abroad-consulting.vercel.app",
+      title: "v0.13.0 — Portfolio interview enhancements",
+      body: "Case study adds interviewer quick view, technical decisions, and developer role sections. Site supports 中文 / 日本語 / English for Japan IT job demos. Live at study-abroad-consulting.vercel.app",
     },
   },
 };

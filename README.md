@@ -2,7 +2,7 @@
 
 这是一个个人开发的出国信息整理与路线规划项目，用于展示内容组织、路线规划、本地 AI 问答 MVP、组件化前端工程和作品集级 UI 设计能力。
 
-**当前版本：** v0.12.4  
+**当前版本：** v0.13.0  
 **当前定位：** 个人作品集项目 / 日本 IT 求职展示项目
 
 ---
@@ -21,7 +21,28 @@ This is a personal portfolio project for organizing study-abroad information, ro
 
 ## 多语言展示
 
-v0.12.4 完成文章数据三语言化（标题、摘要、正文、分类、阅读时间），修复 `/`、`/articles`、`/about`、`/articles/[slug]` 背景非全屏问题，统一文章列表、分类页与详情页视觉。v0.12.3 完成全站页面文案语言同步（`lib/i18n/content.ts`），修复 `/plan` 表单 tint 视觉，统一内容页背景。v0.12.2 将语言切换重构为 Apple 风格下拉菜单（`LanguageDropdown`：🌐 当前语言 ▼，勾选当前项、毛玻璃面板）。v0.12.1 将语言切换从 `/case-study` Hero 区移动到顶部 Navbar，作为全站导航级入口。当前多语言覆盖导航、页面 UI、文章卡片与详情页；语言选择通过 localStorage 记住，不改变 URL。
+v0.13.0 增强 `/case-study` 面试展示：面试官快速查看、技术决策、开发者职责说明；README 增加面试官阅读路径。v0.12.4 完成文章数据三语言化（标题、摘要、正文、分类、阅读时间），修复 `/`、`/articles`、`/about`、`/articles/[slug]` 背景非全屏问题，统一文章列表、分类页与详情页视觉。当前多语言覆盖导航、页面 UI、文章卡片与详情页；语言选择通过 localStorage 记住，不改变 URL。
+
+---
+
+## 面试官快速查看
+
+面向日本 IT 求职场景，建议按以下路径浏览项目：
+
+- **在线项目**：访问 [首页](https://study-abroad-consulting.vercel.app/) 与 [/case-study](https://study-abroad-consulting.vercel.app/case-study)
+- **核心功能**：[/plan](https://study-abroad-consulting.vercel.app/plan) 路线规划、[/ai](https://study-abroad-consulting.vercel.app/ai) 本地问答 MVP、[/articles](https://study-abroad-consulting.vercel.app/articles) 内容文章
+- **工程亮点**：`lib/plan` 规则引擎、`lib/ai` mock 逻辑、`lib/i18n` 多语言、`lib/ui/card-system.ts` 设计系统
+- **项目说明**：[docs/project-status.md](./docs/project-status.md)
+- **当前边界**：不接真实 AI、不接数据库、不做登录和付费
+
+---
+
+## 技术决策摘要
+
+- **先用本地规则引擎验证流程**：/plan 用 TypeScript 本地逻辑验证匹配与交互，比先搭数据库更快迭代、更易讲解
+- **AI 页面先做 mock MVP，明确边界**：不接真实 API，固定回答结构，展示产品原型与边界意识
+- **多语言优先服务作品集展示**：中文 / 日本語 / English 便于日本求职面试演示
+- **UI 系统围绕 Apple 风格做统一 token**：`card-system` 统一卡片、按钮、渐变与页面背景
 
 ---
 
