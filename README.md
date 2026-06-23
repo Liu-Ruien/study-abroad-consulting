@@ -1,19 +1,54 @@
 # 出国咨询信息整理平台
 
-这是一个面向日本 IT 求职展示的个人作品集项目，使用 Next.js、React、TypeScript 与本地规则逻辑，实现内容整理、路线规划、本地 AI 问答 MVP、多语言展示和项目案例页。
+Personal portfolio project for IT job interviews in Japan.  
+Built with Next.js, React, TypeScript and local rule-based logic.
 
-**Version:** v0.17.0  
-**定位：** 个人作品集 / 日本 IT 求职展示
+- **Online Demo:** [https://study-abroad-consulting.vercel.app](https://study-abroad-consulting.vercel.app)
+- **Recommended Entry:** [`/case-study`](https://study-abroad-consulting.vercel.app/case-study)
+- **Current Version:** v0.18.0
+
+面向日本 IT 求职展示的个人作品集项目，使用 Next.js、React、TypeScript 与本地规则逻辑，实现内容整理、路线规划、本地 AI 问答 MVP、多语言展示和项目案例页。
 
 ---
 
-## Online Demo
+## Quick Links
 
-[https://study-abroad-consulting.vercel.app](https://study-abroad-consulting.vercel.app)
+| Item | Link |
+|---|---|
+| Online Demo | [study-abroad-consulting.vercel.app](https://study-abroad-consulting.vercel.app) |
+| Case Study | [https://study-abroad-consulting.vercel.app/case-study](https://study-abroad-consulting.vercel.app/case-study) |
+| Route Plan | [https://study-abroad-consulting.vercel.app/plan](https://study-abroad-consulting.vercel.app/plan) |
+| AI Q&A MVP | [https://study-abroad-consulting.vercel.app/ai](https://study-abroad-consulting.vercel.app/ai) |
+| Articles | [https://study-abroad-consulting.vercel.app/articles](https://study-abroad-consulting.vercel.app/articles) |
+| Interview Guide | [docs/interview-guide.md](./docs/interview-guide.md) |
+| Project Status | [docs/project-status.md](./docs/project-status.md) |
+
+---
+
+## Repository Purpose
+
+**English**
+
+This repository is intended for portfolio review, not commercial operation.
+
+It focuses on:
+
+- Product thinking
+- Frontend engineering
+- Rule-based logic
+- Local AI MVP design
+- Multilingual presentation
+- Documentation and iteration history
+
+**中文**
+
+本仓库主要用于求职作品集展示，不作为商业咨询服务运营。重点呈现产品拆解、前端工程、规则逻辑、本地 AI MVP 设计、多语言展示，以及文档与版本迭代过程。
 
 ---
 
 ## Project Screenshots
+
+Screenshots are included to help interviewers quickly understand the main pages.
 
 ### Home / 首页
 
@@ -151,6 +186,19 @@ It is not a commercial product. Important decisions about study abroad, visas, o
 
 ---
 
+## Deployment
+
+| Item | Detail |
+|---|---|
+| Platform | [Vercel](https://vercel.com) |
+| Main branch | `main` |
+| Build command | `npm run build` |
+| Framework | Next.js |
+
+The live site at [study-abroad-consulting.vercel.app](https://study-abroad-consulting.vercel.app) deploys from the `main` branch.
+
+---
+
 ## Documentation
 
 | Document | Description |
@@ -174,6 +222,22 @@ Open [http://localhost:3000](http://localhost:3000) after `npm run dev`. If port
 
 ---
 
+## Final Review Checklist
+
+- [x] Online demo deployed
+- [x] Case Study page prepared
+- [x] README rewritten for portfolio review
+- [x] Interview guide prepared
+- [x] Project status documented
+- [x] Multilingual case study supported
+- [x] Local build passed
+- [x] Lint passed
+- [ ] Resume project description prepared
+- [ ] Japanese interview script prepared
+- [ ] v1.0.0 release tag prepared
+
+---
+
 ## Page Routes
 
 | Page | Path |
@@ -189,6 +253,7 @@ Open [http://localhost:3000](http://localhost:3000) after `npm run dev`. If port
 
 ## Version History (Recent)
 
+- **v0.18.0** — GitHub / README / Vercel final portfolio packaging
 - **v0.17.0** — README portfolio homepage, interview follow-up prep, case-study boundary copy
 - **v0.16.x** — Navbar mega menu, case-study interviewer narrative
 - See [docs/project-status.md](./docs/project-status.md) for full changelog

@@ -6,6 +6,46 @@
 
 ---
 
+## Recommended Demo Flow
+
+**中文**
+
+建议面试演示顺序：
+
+1. GitHub README
+2. Online Demo
+3. `/case-study`
+4. `/plan`
+5. `/ai`
+6. `/articles`
+7. 说明当前边界与后续计划
+
+**日本語**
+
+面接デモの推奨順序：
+
+1. GitHub README
+2. オンラインデモ
+3. `/case-study`
+4. `/plan`
+5. `/ai`
+6. `/articles`
+7. 現在の制約と今後の計画を説明
+
+**English**
+
+Suggested demo order:
+
+1. GitHub README
+2. Online demo
+3. `/case-study`
+4. `/plan`
+5. `/ai`
+6. `/articles`
+7. Explain current boundaries and next steps
+
+---
+
 ## 1. 项目一句话介绍
 
 ### 中文
@@ -670,4 +710,4 @@ Priority: (1) safety design and tests before a real AI API, (2) tests for `/plan
 
 ---
 
-*文档版本：v0.17.0 · 与 project-status.md 同步维护*
+*文档版本：v0.18.0 · 与 project-status.md 同步维护*
