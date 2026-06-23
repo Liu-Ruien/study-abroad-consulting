@@ -495,7 +495,8 @@ export default function PlanPage() {
           </div>
 
           <div className="mx-auto mt-9 grid max-w-3xl gap-3 sm:grid-cols-3">
-            {copy.plan.steps.map((step, index) => (
+            {copy.plan.steps.map(
+              (step: { label: string; value: string }, index: number) => (
               <div
                 key={step.label}
                 className={`px-5 py-4 ${[cardTintSky, cardTintIndigo, cardPreviewConclusion][index]}`}
@@ -503,7 +504,8 @@ export default function PlanPage() {
                 <p className="text-sm text-slate-500">{step.label}</p>
                 <p className="mt-1 font-semibold text-slate-950">{step.value}</p>
               </div>
-            ))}
+              )
+            )}
           </div>
         </section>
 
@@ -581,7 +583,11 @@ export default function PlanPage() {
                 </p>
 
                 <div className="grid gap-4 sm:grid-cols-3">
-                  {copy.plan.empty.cards.map((card, index) => (
+                  {copy.plan.empty.cards.map(
+                    (
+                      card: { step: string; title: string; desc: string },
+                      index: number
+                    ) => (
                     <div
                       key={card.step}
                       className={`p-4 ${[cardPreviewConclusion, cardPreviewSuggestion, cardPreviewRisk][index]}`}
@@ -592,7 +598,8 @@ export default function PlanPage() {
                       <h3 className="mb-2 font-semibold text-slate-900">{card.title}</h3>
                       <p className="text-sm leading-6 text-slate-600">{card.desc}</p>
                     </div>
-                  ))}
+                    )
+                  )}
                 </div>
 
                 <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800">

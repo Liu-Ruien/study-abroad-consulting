@@ -8,7 +8,7 @@
 
 - 项目名称：出国咨询信息整理平台 / overseas-consulting / study-abroad-consulting
 - 项目定位：面向日本 IT 求职的个人作品集项目（出国规划 / AI 应用场景演示）
-- 当前版本：v0.15.0
+- 当前版本：v0.15.10
 - 当前阶段：第四阶段收尾，已完成作品集面试展示增强
 - 在线地址：https://study-abroad-consulting.vercel.app/
 - 技术栈：Next.js 16、React、TypeScript、Tailwind CSS、Git / GitHub、Vercel
@@ -115,6 +115,16 @@ lib/plan-routes.ts
 - v0.8.5 已为 `/ai` 新增复制回答功能。
 - v0.8.6 已优化 `/ai` 移动端布局与首屏体验。
 - v0.8.7 已为 `/ai` 新增重新开始功能。
+- v0.15.10 已修复 /case-study 导航与卡片质感：mega menu hover 区域、玻璃卡片体系、Architecture 内部一致性与多语言标签。
+- v0.15.9 已完成 /case-study Apple 风格收口：Navbar mega menu、亮玻璃卡片与无 Footer 单屏流。
+- v0.15.8 已收口 /case-study Presentation 导航与控制器：Footer 隐藏、Navbar hover 面板、Highlights 静态一屏化。
+- v0.15.7 已收口 /case-study Presentation：首屏位置、滚动拦截、重复内容清理与系统字体栈。
+- v0.15.6 已修复 /case-study 展示页核心交互：Hero 居中、按钮可读、圆角毛玻璃、完整切页与一屏架构。
+- v0.15.5 已修复 /case-study 深色高级感、Footer 割裂、Hero 按钮与产品级切页体验。
+- v0.15.4 已完成 /case-study 沉浸式深色产品叙事重构，并检查 /plan 编辑器 errors。
+- v0.15.3 已放弃 /case-study 全页竖向 snap，改为 Apple 风格横向 Highlights Carousel。
+- v0.15.2 已修复桌面端分屏滚动：前 6 屏受控 wheel 逐屏切换；移动端保持自然滚动。
+- v0.15.1 已完成 /case-study 分屏滚动叙事（CSS Scroll Snap）；修复深色区块未占满视口问题。
 - v0.15.0 已完成 /case-study Apple 产品级视觉叙事升级（Hero、深色 Feature、Architecture 精修、留白）。
 - v0.14.0 已新增 /case-study 项目架构展示（Architecture 四层卡片 + 流程图）；README 增加 Architecture 章节。
 - v0.13.1 已新增 docs/interview-guide.md 面试讲解稿（中日英介绍、Q&A、演示路线）；README 增加文档入口。
@@ -140,6 +150,98 @@ lib/plan-routes.ts
 ---
 
 ## 6. 版本记录
+
+### v0.15.10
+
+- 修复 Navbar mega menu hover 区域，鼠标进入下拉菜单时不再消失
+- 统一 case-study 深色玻璃卡片质感
+- 为卡片增加细微顶部色彩光感
+- 统一 Architecture Layer 与 Pipeline 节点样式
+- 将用户可见的 i18n 文案改为多语言 / 多言語 / Multilingual
+- 保持业务逻辑不变
+
+### v0.15.9
+
+- Navbar hover mega menu 改为 Apple 风格无缝下拉
+- 菜单打开时页面内容轻微模糊
+- /case-study 不再显示 Footer，减少页面滚动条干扰
+- 提升 case-study 各 panel 卡片亮度与毛玻璃层次
+- 删除 Highlights 内部重复分页控件
+- 保持业务逻辑不变
+
+### v0.15.8
+
+- 调整 Presentation 底部控制器位置，避免半截隐藏
+- /case-study 隐藏 Footer，减少页面额外滚动
+- Navbar 新增 Apple 风格 hover 下拉面板，承载 Footer 链接
+- 统一 Presentation panel 的深色渐变、网格与毛玻璃质感
+- 删除 Highlights 内部重复分页控件
+- Highlights 改为 Architecture 风格一屏卡片布局
+- 保持业务逻辑不变
+
+### v0.15.7
+
+- 修复 /case-study 第一屏 Hero 偏下问题
+- 修复 Presentation 底部控制器显示不完整
+- 修复 Presentation 切页时页面纵向滚动干扰
+- 清理 Presentation 后方重复旧内容
+- 优化全站中 / 日 / 英字体栈，接近 Apple 系统字体观感
+- 保持业务逻辑不变
+
+### v0.15.6
+
+- 修复 Hero 初始位置不居中
+- 修复 Hero 主按钮文字不可见
+- 恢复 Hero 圆角毛玻璃卡片
+- 重做 Case Study Presentation 切页逻辑
+- 将项目背景、核心功能、技术决策、架构等主要模块纳入切页
+- Architecture 改为一屏可读布局
+- 统一深色渐变与毛玻璃背景
+- 保持业务逻辑不变
+
+### v0.15.5
+
+- 修复 /case-study 深色页面纯黑质感问题
+- 增加蓝紫 radial gradient 与毛玻璃深色卡片层次
+- 修复 Hero 主按钮文字不可见问题
+- Footer 增加 dark variant，解决深色页底部割裂
+- 新增 Case Study Presentation Stage，实现桌面端受控切页体验
+- 保持 /plan、/ai、/articles 业务逻辑不变
+
+### v0.15.4
+
+- /case-study 升级为沉浸式深色产品叙事页
+- 统一 Hero、Highlights、Architecture 和后续 section 的深色视觉
+- 精修 Apple 风格横向 Highlights Carousel（scale / opacity / transform）
+- 清理旧 scroll snap 方案残留
+- 检查 app/plan/page.tsx 编辑器 errors，并用最小类型注解修复隐式 any
+- 不改变业务逻辑
+
+### v0.15.3
+
+- 放弃 /case-study 全页竖向 scroll snap
+- 新增 Apple 风格横向 Highlights Carousel
+- 支持滚轮横向切换和底部分页控制
+- 修复深色区块视觉割裂与上一页残留问题
+- 页面恢复正常纵向滚动，不影响后续长内容阅读
+- 保持业务逻辑不变
+
+### v0.15.2
+
+- 修复 v0.15.1 scroll snap 体验不明显的问题
+- /case-study 桌面端（≥768px）前 6 屏改为受控分屏滚动（wheel + 方向键）
+- 滚轮一次切换一屏，800ms 滚动锁，smooth scrollIntoView
+- 第 7 屏起恢复普通长页阅读；`prefers-reduced-motion` 不拦截 wheel
+- 移动端保留 CSS snap proximity + 自然滚动
+- 不改变业务逻辑
+
+### v0.15.1
+
+- /case-study 增加分屏滚动叙事体验（CSS Scroll Snap）
+- Hero、深色 Feature、面试官重点、背景+功能、技术决策、Architecture 六屏 snap
+- 修复深色区块未占满屏幕导致的视觉割裂（min-h calc(100svh - nav)）
+- `prefers-reduced-motion` 时关闭 smooth scroll
+- 第 7 屏起恢复普通长页阅读；业务逻辑不变
 
 ### v0.15.0
 

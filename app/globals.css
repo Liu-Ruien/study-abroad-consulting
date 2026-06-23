@@ -4,18 +4,32 @@
 :root {
   --background: #ffffff;
   --foreground: #0f172a;
+  --case-study-nav: 5.25rem;
+  --case-study-nav-height: 5.25rem;
+  --font-system-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    "Yu Gothic", "Noto Sans CJK JP", "PingFang SC", "Microsoft YaHei",
+    Arial, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-system-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-system-sans);
+}
+
+@media (min-width: 768px) {
+  html.case-study-presentation-page,
+  body.case-study-presentation-page {
+    height: 100%;
+    overflow: hidden;
+  }
 }
 
 /* 网页正常浏览时隐藏 PDF 报告区域和打印专用区域 */

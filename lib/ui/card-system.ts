@@ -100,33 +100,39 @@ export const caseStudyModuleRose =
 
 /** /case-study Hero — 弱边界、浮于背景 */
 export const caseStudyHeroGlow =
-  "pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(186,230,253,0.45),transparent_55%),radial-gradient(circle_at_80%_20%,rgba(196,181,253,0.22),transparent_45%),radial-gradient(circle_at_20%_80%,rgba(125,211,252,0.15),transparent_50%)]";
+  "pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_50%),radial-gradient(circle_at_82%_28%,rgba(129,140,248,0.16),transparent_42%),radial-gradient(circle_at_16%_76%,rgba(14,165,233,0.10),transparent_46%)]";
 
 export const caseStudyHeroContent =
   "relative mx-auto w-full max-w-5xl text-center";
 
 /** /case-study 深色产品区块 */
 export const caseStudyDarkSection =
-  "bg-[#050505] [background-image:radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.08),transparent_50%),radial-gradient(circle_at_100%_100%,rgba(99,102,241,0.06),transparent_40%)] text-white";
+  "bg-[#050505] [background-image:radial-gradient(circle_at_12%_0%,rgba(56,189,248,0.14),transparent_36%),radial-gradient(circle_at_88%_18%,rgba(129,140,248,0.10),transparent_42%),radial-gradient(circle_at_50%_100%,rgba(15,23,42,0.88),transparent_48%)] text-white";
 
 export const caseStudyDarkCard =
-  "rounded-3xl border border-white/[0.08] bg-gradient-to-b from-[#111827]/95 to-[#050505] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] sm:p-10";
+  "rounded-[2rem] border border-white/[0.10] bg-gradient-to-b from-white/[0.08] via-white/[0.045] to-white/[0.025] p-8 shadow-[0_24px_80px_rgba(0,0,0,0.48)] backdrop-blur-xl sm:p-10";
 
 export const caseStudyDarkCardHover =
   "transition duration-300 hover:border-white/[0.14] hover:bg-gradient-to-b hover:from-[#151b28] hover:to-[#0a0a0a]";
 
+export const caseStudyGlassCard =
+  "relative overflow-hidden rounded-[32px] border border-cyan-200/15 bg-[linear-gradient(135deg,rgba(15,23,42,0.92),rgba(17,24,39,0.72))] text-white shadow-[0_30px_100px_rgba(0,0,0,0.42)] backdrop-blur-2xl transition duration-300 before:pointer-events-none before:absolute before:left-6 before:right-6 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-cyan-300/45 before:to-transparent hover:border-cyan-300/30 hover:bg-white/[0.08]";
+
 /** /case-study 架构分层卡 */
 export const caseStudyArchLayer =
-  "rounded-3xl border border-sky-200/40 bg-gradient-to-br from-sky-50/90 via-white/95 to-indigo-50/30 shadow-[0_12px_40px_rgba(14,165,233,0.08)]";
+  caseStudyGlassCard;
 
 export const caseStudyArchFlowNode =
-  "rounded-3xl border border-sky-200/50 bg-gradient-to-b from-white via-sky-50/40 to-white/90 px-8 py-4 text-center font-medium text-gray-800 shadow-[0_8px_30px_rgba(14,165,233,0.06)] sm:min-w-[16rem]";
+  `${caseStudyGlassCard} px-8 py-4 text-center font-medium text-slate-100 sm:min-w-[16rem]`;
 
 export const caseStudySectionLabel =
   "text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-sky-600";
 
 export const caseStudySectionDarkLabel =
   "text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-sky-400/90";
+
+/** /case-study Navbar 约 3.5rem */
+export const caseStudyNavOffset = "3.5rem";
 
 export const tagApple =
   "rounded-full border border-black/10 bg-neutral-100 px-3 py-1 text-sm text-gray-700";

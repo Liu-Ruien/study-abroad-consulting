@@ -11,7 +11,7 @@ export type CaseStudyContent = {
     ctaPlan: string;
     ctaAi: string;
   };
-  darkFeature: {
+  highlights: {
     eyebrow: string;
     title: string;
     cards: { title: string; description: string }[];
@@ -92,7 +92,7 @@ export type CaseStudyContent = {
 export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
   zh: {
     hero: {
-      badge: "v0.15.0 · 作品集案例页",
+      badge: "v0.15.10 · 作品集案例页",
       tags: ["Next.js · TypeScript", "规则引擎 · AI MVP"],
       title: "出国咨询信息整理平台",
       subtitle:
@@ -100,24 +100,29 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
       ctaPlan: "查看路线规划",
       ctaAi: "体验 AI 问答 MVP",
     },
-    darkFeature: {
-      eyebrow: "PRODUCT",
+    highlights: {
+      eyebrow: "HIGHLIGHTS",
       title: "不是一个普通资讯站，而是一个完整的项目展示。",
       cards: [
         {
           title: "规则规划",
           description:
-            "本地规则引擎，将预算、语言与目标转化为可解释的路线建议。",
+            "/plan 将预算、语言、目标和风险拆成可解释规则，生成路线建议与匹配理由。",
         },
         {
           title: "AI MVP",
           description:
-            "mock 问答原型，展示信息拆解与 AI 产品边界设计。",
+            "/ai 使用本地 mock 展示 AI 产品原型、信息拆解方式和边界意识。",
         },
         {
           title: "多语言作品集",
           description:
             "中文 / 日本語 / English，为日本 IT 求职场景而设计。",
+        },
+        {
+          title: "工程结构",
+          description:
+            "components、lib、docs、card-system 与 Vercel 部署共同体现工程组织能力。",
         },
       ],
     },
@@ -408,13 +413,13 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
     },
     status: {
       eyebrow: "Status",
-      title: "v0.15.0 — Apple 产品级视觉叙事",
-      body: "Case Study 页升级为产品级展示：更大 Hero、深色 Feature 区块、Architecture 精修与更充裕留白。在线地址：study-abroad-consulting.vercel.app",
+      title: "v0.15.10 — 导航与卡片质感统一",
+      body: "Case Study 页修复 mega menu hover 区域，统一深色玻璃卡片与 Architecture 节点风格，并优化多语言可见标签。",
     },
   },
   ja: {
     hero: {
-      badge: "v0.15.0 · Portfolio Case Study",
+      badge: "v0.15.10 · Portfolio Case Study",
       tags: ["Next.js · TypeScript", "ルールエンジン · AI MVP"],
       title: "留学・海外生活 情報整理プラットフォーム",
       subtitle:
@@ -422,24 +427,29 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
       ctaPlan: "進路プランニングを見る",
       ctaAi: "AI 問答 MVP を試す",
     },
-    darkFeature: {
-      eyebrow: "PRODUCT",
+    highlights: {
+      eyebrow: "HIGHLIGHTS",
       title: "単なる情報サイトではなく、完成度の高いプロジェクト展示。",
       cards: [
         {
           title: "ルールプランニング",
           description:
-            "ローカルルールエンジンで、予算・語学・目標を説明可能なルート提案に変換。",
+            "/plan は予算・語学・目標・リスクを説明可能なルールに分解し、ルート提案を生成します。",
         },
         {
           title: "AI MVP",
           description:
-            "mock 問答プロトタイプ。情報分解と AI プロダクトの境界設計を示す。",
+            "/ai はローカル mock で、AI プロトタイプ、情報分解、境界意識を示します。",
         },
         {
           title: "多言語ポートフォリオ",
           description:
             "中文 / 日本語 / English。日本 IT 就職向けの説明を想定。",
+        },
+        {
+          title: "エンジニアリング構成",
+          description:
+            "components、lib、docs、card-system、Vercel デプロイで構成力を示します。",
         },
       ],
     },
@@ -740,13 +750,13 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
     },
     status: {
       eyebrow: "Status",
-      title: "v0.15.0 — Apple 級ビジュアル叙事",
-      body: "Case Study をプロダクト級展示に刷新。大型 Hero、ダーク Feature、Architecture 精修、余白の最適化。公開 URL：study-abroad-consulting.vercel.app",
+      title: "v0.15.10 — ナビゲーションとカード質感の統一",
+      body: "Mega menu の hover 領域、ダークガラスカード、Architecture 内部カード、多言語ラベルを調整しました。",
     },
   },
   en: {
     hero: {
-      badge: "v0.15.0 · Portfolio Case Study",
+      badge: "v0.15.10 · Portfolio Case Study",
       tags: ["Next.js · TypeScript", "Rules · AI MVP"],
       title: "Study Abroad Information Platform",
       subtitle:
@@ -754,24 +764,29 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
       ctaPlan: "View route planning",
       ctaAi: "Try AI Q&A MVP",
     },
-    darkFeature: {
-      eyebrow: "PRODUCT",
+    highlights: {
+      eyebrow: "HIGHLIGHTS",
       title: "Not a plain info site—a complete portfolio showcase.",
       cards: [
         {
           title: "Rule-based planning",
           description:
-            "Local rule engine turns budget, language, and goals into explainable route suggestions.",
+            "/plan breaks budget, language, goals, and risk into explainable rules and route suggestions.",
         },
         {
           title: "AI MVP",
           description:
-            "Mock Q&A prototype showing information breakdown and AI product boundaries.",
+            "/ai uses local mock responses to show an AI product prototype and boundary awareness.",
         },
         {
           title: "Multilingual portfolio",
           description:
             "中文 / 日本語 / English—designed for Japan IT job interviews.",
+        },
+        {
+          title: "Engineering structure",
+          description:
+            "components, lib, docs, card-system, and Vercel deployment show engineering organization.",
         },
       ],
     },
@@ -1072,8 +1087,8 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
     },
     status: {
       eyebrow: "Status",
-      title: "v0.15.0 — Product-level visual storytelling",
-      body: "Case study upgraded to product-grade presentation: larger hero, dark feature band, refined architecture, and generous spacing. Live at study-abroad-consulting.vercel.app",
+      title: "v0.15.10 — Navigation and card system polish",
+      body: "Case study now refines the mega menu hover area, dark glass card system, architecture card consistency, and multilingual labels.",
     },
   },
 };
