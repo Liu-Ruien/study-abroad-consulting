@@ -56,6 +56,14 @@ export type CaseStudyContent = {
     description: string;
     layers: { label: string; title: string; items: string[] }[];
   };
+  architectureShowcase: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    cards: { labelEn: string; label: string; items: string[] }[];
+    flowNodes: string[];
+    flowCaption: string;
+  };
   capabilities: {
     eyebrow: string;
     title: string;
@@ -265,6 +273,62 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
           items: ["mock-answer", "format-answer", "types"],
         },
       ],
+    },
+    architectureShowcase: {
+      eyebrow: "ARCHITECTURE",
+      title: "项目架构",
+      description:
+        "从页面层到业务逻辑层，展示项目整体结构与职责划分。",
+      cards: [
+        {
+          labelEn: "PAGE LAYER",
+          label: "页面层",
+          items: [
+            "/ 首页",
+            "/articles 文章系统",
+            "/plan 路线规划",
+            "/ai AI 问答",
+            "/case-study 作品集展示",
+          ],
+        },
+        {
+          labelEn: "COMPONENT LAYER",
+          label: "组件层",
+          items: [
+            "Navbar",
+            "Footer",
+            "ArticleCard",
+            "PlanForm",
+            "AiChatPanel",
+            "Modal",
+          ],
+        },
+        {
+          labelEn: "BUSINESS LAYER",
+          label: "业务层",
+          items: [
+            "规则路由生成",
+            "AI Mock Answer",
+            "文章搜索",
+            "语言切换",
+            "分类过滤",
+          ],
+        },
+        {
+          labelEn: "DATA LAYER",
+          label: "数据层",
+          items: [
+            "lib/articles.ts",
+            "lib/plan",
+            "lib/i18n",
+            "localStorage",
+            "静态数据源",
+          ],
+        },
+      ],
+      flowNodes: ["用户", "页面层", "组件层", "业务层", "数据层"],
+      flowCaption:
+        "项目采用页面层、组件层、业务层、数据层分离设计，提高可维护性与后续扩展能力。",
     },
     capabilities: {
       eyebrow: "Capabilities",
@@ -519,6 +583,68 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
         },
       ],
     },
+    architectureShowcase: {
+      eyebrow: "ARCHITECTURE",
+      title: "プロジェクトアーキテクチャ",
+      description:
+        "ページ層からビジネスロジック層まで、全体構成と役割分担を示します。",
+      cards: [
+        {
+          labelEn: "PAGE LAYER",
+          label: "ページ層",
+          items: [
+            "/ ホーム",
+            "/articles 記事システム",
+            "/plan ルート計画",
+            "/ai AI 問答",
+            "/case-study ポートフォリオ",
+          ],
+        },
+        {
+          labelEn: "COMPONENT LAYER",
+          label: "コンポーネント層",
+          items: [
+            "Navbar",
+            "Footer",
+            "ArticleCard",
+            "PlanForm",
+            "AiChatPanel",
+            "Modal",
+          ],
+        },
+        {
+          labelEn: "BUSINESS LAYER",
+          label: "ビジネス層",
+          items: [
+            "ルールベースルート生成",
+            "AI Mock Answer",
+            "記事検索",
+            "言語切替",
+            "カテゴリフィルタ",
+          ],
+        },
+        {
+          labelEn: "DATA LAYER",
+          label: "データ層",
+          items: [
+            "lib/articles.ts",
+            "lib/plan",
+            "lib/i18n",
+            "localStorage",
+            "静的データソース",
+          ],
+        },
+      ],
+      flowNodes: [
+        "ユーザー",
+        "ページ層",
+        "コンポーネント層",
+        "ビジネス層",
+        "データ層",
+      ],
+      flowCaption:
+        "ページ層・コンポーネント層・ビジネス層・データ層を分離し、保守性と拡張性を高めています。",
+    },
     capabilities: {
       eyebrow: "Capabilities",
       title: "このプロジェクトで示す能力",
@@ -771,6 +897,68 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
           items: ["mock-answer", "format-answer", "types"],
         },
       ],
+    },
+    architectureShowcase: {
+      eyebrow: "ARCHITECTURE",
+      title: "Project Architecture",
+      description:
+        "From the page layer to business logic—how the project is structured and responsibilities are divided.",
+      cards: [
+        {
+          labelEn: "PAGE LAYER",
+          label: "Page Layer",
+          items: [
+            "/ Home",
+            "/articles Content",
+            "/plan Route planning",
+            "/ai AI Q&A",
+            "/case-study Portfolio",
+          ],
+        },
+        {
+          labelEn: "COMPONENT LAYER",
+          label: "Component Layer",
+          items: [
+            "Navbar",
+            "Footer",
+            "ArticleCard",
+            "PlanForm",
+            "AiChatPanel",
+            "Modal",
+          ],
+        },
+        {
+          labelEn: "BUSINESS LAYER",
+          label: "Business Layer",
+          items: [
+            "Rule-based route generation",
+            "AI Mock Answer",
+            "Article search",
+            "Language switching",
+            "Category filtering",
+          ],
+        },
+        {
+          labelEn: "DATA LAYER",
+          label: "Data Layer",
+          items: [
+            "lib/articles.ts",
+            "lib/plan",
+            "lib/i18n",
+            "localStorage",
+            "Static data sources",
+          ],
+        },
+      ],
+      flowNodes: [
+        "User",
+        "Page Layer",
+        "Component Layer",
+        "Business Layer",
+        "Data Layer",
+      ],
+      flowCaption:
+        "The project separates page, component, business, and data layers to improve maintainability and future extension.",
     },
     capabilities: {
       eyebrow: "Capabilities",

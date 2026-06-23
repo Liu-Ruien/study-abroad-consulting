@@ -141,7 +141,23 @@ lib/
 
 docs/
   project-status.md
+  interview-guide.md
 ```
+
+---
+
+## Architecture
+
+项目采用四层分离结构，便于面试讲解与后续扩展：
+
+| 层级 | 职责 |
+|------|------|
+| **Page Layer（页面层）** | Next.js App Router 路由入口：`/`、`/articles`、`/plan`、`/ai`、`/case-study` 等，负责页面组合与布局 |
+| **Component Layer（组件层）** | UI 与交互：`Navbar`、`Footer`、`ArticleCard`、`PlanForm`、`AiChatPanel`、Modal 等可复用组件 |
+| **Business Layer（业务层）** | 规则路由生成、AI Mock Answer、文章搜索、语言切换、分类过滤等业务逻辑（主要在 `lib/plan`、`lib/ai`、`lib/i18n`） |
+| **Data Layer（数据层）** | `lib/articles.ts` 文章数据、`lib/plan` 规则数据、`lib/i18n` 文案、`localStorage` 语言偏好等静态/本地数据源 |
+
+在线可视化见 [/case-study](https://study-abroad-consulting.vercel.app/case-study) 的 **ARCHITECTURE · 项目架构** 区块（含四层卡片与流程图）。
 
 ---
 

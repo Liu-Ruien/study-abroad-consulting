@@ -22,6 +22,7 @@ import {
 import {
   caseStudyContent,
 } from "@/lib/case-study-i18n";
+import ArchitectureShowcase from "@/components/case-study/ArchitectureShowcase";
 
 const featureToneClasses = [
   cardTintSky,
@@ -302,6 +303,8 @@ export default function CaseStudyContent() {
             ))}
           </div>
         </section>
+
+        <ArchitectureShowcase content={content.architectureShowcase} />
 
         <section>
           <SectionHeading
