@@ -2,8 +2,26 @@
 
 这是一个个人开发的出国信息整理与路线规划项目，用于展示内容组织、路线规划、本地 AI 问答 MVP、组件化前端工程和作品集级 UI 设计能力。
 
-**当前版本：** v0.11.1  
+**当前版本：** v0.12.4  
 **当前定位：** 个人作品集项目 / 日本 IT 求职展示项目
+
+---
+
+## English Summary
+
+This is a personal portfolio project for organizing study-abroad information, route planning, and a local AI Q&A MVP. It demonstrates frontend engineering, product thinking, rule-based logic, UI design, and clear AI application boundaries.
+
+---
+
+## 日本語概要
+
+本プロジェクトは、留学・海外生活に関する情報整理、進路プランニング、ローカル AI 問答 MVP を含む個人ポートフォリオです。Next.js、React、TypeScript、Tailwind CSS を用いて、フロントエンド実装力、プロダクト設計、ルールベースのロジック、UI 設計、AI 活用の境界設計を示すことを目的としています。
+
+---
+
+## 多语言展示
+
+v0.12.4 完成文章数据三语言化（标题、摘要、正文、分类、阅读时间），修复 `/`、`/articles`、`/about`、`/articles/[slug]` 背景非全屏问题，统一文章列表、分类页与详情页视觉。v0.12.3 完成全站页面文案语言同步（`lib/i18n/content.ts`），修复 `/plan` 表单 tint 视觉，统一内容页背景。v0.12.2 将语言切换重构为 Apple 风格下拉菜单（`LanguageDropdown`：🌐 当前语言 ▼，勾选当前项、毛玻璃面板）。v0.12.1 将语言切换从 `/case-study` Hero 区移动到顶部 Navbar，作为全站导航级入口。当前多语言覆盖导航、页面 UI、文章卡片与详情页；语言选择通过 localStorage 记住，不改变 URL。
 
 ---
 

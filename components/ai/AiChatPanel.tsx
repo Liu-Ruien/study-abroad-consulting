@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createMockAiAnswer, type AiMockAnswer } from "@/lib/ai";
+import { usePageContent } from "@/lib/i18n/use-page-content";
 import {
   badgeSoft,
   cardAnswerPreview,
@@ -16,17 +17,10 @@ import AiAnswerCard from "./AiAnswerCard";
 import AiQuestionForm from "./AiQuestionForm";
 import AiSuggestionChips from "./AiSuggestionChips";
 
-const quickQuestions = [
-  "日本语言学校期间应该怎么准备 IT 求职？",
-  "预算 15 万人民币适合哪些出国路线？",
-  "英语不好还能出国吗？",
-  "留学、打工度假和工签路线有什么区别？",
-];
-
-const previewCards = [
-  { label: "结论", hint: "先看清楚，再继续核实。", toneClass: cardPreviewConclusion },
-  { label: "建议", hint: "先看清楚，再继续核实。", toneClass: cardPreviewSuggestion },
-  { label: "风险", hint: "先看清楚，再继续核实。", toneClass: cardPreviewRisk },
+const previewToneClasses = [
+  cardPreviewConclusion,
+  cardPreviewSuggestion,
+  cardPreviewRisk,
 ];
 
 type AiChatPanelProps = {
@@ -36,6 +30,7 @@ type AiChatPanelProps = {
 export default function AiChatPanel({
   initialQuestion = "",
 }: AiChatPanelProps) {
+  const copy = usePageContent();
   const router = useRouter();
   const normalizedInitialQuestion = initialQuestion.trim();
   const [question, setQuestion] = useState(normalizedInitialQuestion);
@@ -64,7 +59,7 @@ export default function AiChatPanel({
     const trimmedQuestion = nextQuestion.trim();
 
     if (!trimmedQuestion) {
-      setError("请先输入你想了解的问题。");
+      setError(copy.ai.emptyError);
       return;
     }
 
@@ -78,7 +73,6 @@ export default function AiChatPanel({
     setError("");
     setIsLoading(true);
 
-    // 用短暂延迟模拟整理回答的过程，当前阶段不调用任何 AI API。
     loadingTimerRef.current = window.setTimeout(() => {
       setAnswer(createMockAiAnswer(trimmedQuestion));
       setIsLoading(false);
@@ -140,7 +134,7 @@ export default function AiChatPanel({
 
         <div className="mt-4 border-t border-sky-100/80 pt-4 sm:mt-5 sm:pt-5">
           <AiSuggestionChips
-            suggestions={quickQuestions}
+            suggestions={copy.ai.quickQuestions}
             selectedQuestion={selectedQuickQuestion}
             isLoading={isLoading}
             onSelect={handleSuggestionSelect}
@@ -154,15 +148,15 @@ export default function AiChatPanel({
             className={`flex min-h-[min(320px,52vh)] flex-col justify-center p-5 text-center sm:min-h-[360px] sm:p-7 lg:min-h-[420px] lg:p-10 ${cardAnswerPreview}`}
           >
             <p className={`mx-auto mb-4 inline-flex sm:mb-5 sm:px-4 sm:text-sm ${badgeSoft} px-3.5 py-1.5 text-sky-700`}>
-              正在整理回答
+              {copy.ai.loadingBadge}
             </p>
 
             <h2 className="text-2xl font-semibold leading-snug tracking-tight text-gray-950 sm:text-3xl lg:text-4xl">
-              正在根据你的问题生成初步建议
+              {copy.ai.loadingTitle}
             </h2>
 
             <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gray-600 sm:mt-5 sm:text-base">
-              当前为本地模拟逻辑，用于演示 AI 问答场景下的信息拆解，不调用真实 API，也不会保存问题历史。
+              {copy.ai.loadingBody}
             </p>
           </div>
         ) : answer && submittedQuestion ? (
@@ -173,24 +167,23 @@ export default function AiChatPanel({
           >
             <div className="min-w-0">
               <p className={`mb-3 inline-flex sm:mb-4 sm:px-3.5 sm:text-sm ${badgeSoft} px-3 py-1.5 text-sky-700`}>
-                回答结构预览
+                {copy.ai.previewBadge}
               </p>
 
               <h2 className="mb-4 max-w-xl text-2xl font-semibold leading-snug tracking-tight text-gray-950 sm:mb-5 sm:text-3xl lg:text-5xl">
-                一个问题，会被拆成三个部分。
+                {copy.ai.previewStructureTitle}
               </h2>
 
               <p className="max-w-2xl text-sm leading-relaxed text-gray-700 sm:text-base">
-                你可以询问留学、语言学校、预算、路线选择、求职准备或签证风险。
-                本 MVP 用 Next.js + TypeScript 组件化实现，仅做本地规则整理，不接真实 AI。
+                {copy.ai.previewStructureBody}
               </p>
             </div>
 
             <div className="mt-6 grid gap-2.5 sm:mt-8 sm:grid-cols-3 sm:gap-3">
-              {previewCards.map((item) => (
+              {copy.ai.previewCards.map((item, index) => (
                 <div
                   key={item.label}
-                  className={`px-3.5 py-3.5 sm:px-4 sm:py-4 ${item.toneClass} ${cardHover}`}
+                  className={`px-3.5 py-3.5 sm:px-4 sm:py-4 ${previewToneClasses[index]} ${cardHover}`}
                 >
                   <p className="text-base font-semibold leading-snug text-gray-950 sm:text-lg">
                     {item.label}

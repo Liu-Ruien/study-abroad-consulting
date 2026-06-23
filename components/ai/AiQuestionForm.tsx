@@ -2,6 +2,7 @@
 
 import type { FormEvent } from "react";
 import { btnPrimary, btnSecondary, inputField } from "@/lib/ui/card-system";
+import { usePageContent } from "@/lib/i18n/use-page-content";
 
 type AiQuestionFormProps = {
   question: string;
@@ -22,17 +23,19 @@ export default function AiQuestionForm({
   onSubmit,
   onReset,
 }: AiQuestionFormProps) {
+  const copy = usePageContent();
+
   return (
     <form onSubmit={onSubmit} className="space-y-4 lg:space-y-5">
       <div>
         <label className="mb-3 block text-sm font-medium text-gray-500 lg:mb-4 lg:text-[15px]">
-          输入你的出国问题
+          {copy.ai.inputLabel}
         </label>
 
         <textarea
           value={question}
           onChange={(event) => onQuestionChange(event.target.value)}
-          placeholder="例如：预算 15 万人民币适合哪些出国路线？"
+          placeholder={copy.ai.inputPlaceholder}
           rows={5}
           className={`w-full min-w-0 resize-none rounded-xl px-4 py-4 text-sm leading-relaxed text-gray-900 placeholder:text-gray-400 sm:min-h-[9.5rem] sm:px-5 sm:py-4 sm:text-[15px] lg:min-h-[11.5rem] lg:px-5 lg:py-5 lg:text-base ${inputField}`}
         />
@@ -50,7 +53,7 @@ export default function AiQuestionForm({
           disabled={isLoading}
           className={`w-full rounded-full px-5 py-3.5 text-sm font-medium sm:flex-1 lg:py-4 lg:text-[15px] ${btnPrimary}`}
         >
-          {isLoading ? "正在整理回答..." : "生成模拟回答"}
+          {isLoading ? copy.ai.submitting : copy.ai.submit}
         </button>
 
         {showReset && (
@@ -60,7 +63,7 @@ export default function AiQuestionForm({
             onClick={onReset}
             className={`w-full rounded-full px-5 py-3.5 text-sm font-medium sm:w-auto sm:shrink-0 lg:py-4 lg:text-[15px] ${btnSecondary}`}
           >
-            重新开始
+            {copy.ai.reset}
           </button>
         )}
       </div>

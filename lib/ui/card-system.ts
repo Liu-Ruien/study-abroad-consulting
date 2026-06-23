@@ -182,7 +182,7 @@ export const modalFooter =
 
 /** /plan 表单外壳 */
 export const planFormShell =
-  "no-print rounded-[30px] border border-sky-100/90 bg-gradient-to-br from-white via-slate-50/70 to-sky-50/50 p-4 shadow-[0_10px_30px_rgba(14,116,144,0.07)] sm:p-5";
+  "no-print rounded-[30px] border border-sky-200/70 bg-gradient-to-br from-sky-50/80 via-white/95 to-sky-50/60 p-4 shadow-[0_10px_30px_rgba(14,116,144,0.09)] sm:p-5";
 
 export const progressTrack =
   "h-2 overflow-hidden rounded-full bg-slate-200/80";

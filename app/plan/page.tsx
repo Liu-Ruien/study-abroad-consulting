@@ -47,6 +47,7 @@ import {
   progressTrack,
   tagCategory,
 } from "@/lib/ui/card-system";
+import { usePageContent } from "@/lib/i18n/use-page-content";
 
 // 表单初始值
 const initialForm: PlanFormState = {
@@ -60,12 +61,6 @@ const initialForm: PlanFormState = {
   wantsPartTimeJob: "unknown",
   wantsLongTermStay: "unknown",
   acceptsLowBudgetRoute: "unknown",
-};
-
-const routeRiskDisplayLabels: Record<RiskLevel, string> = {
-  low: "路线难度较低",
-  medium: "路线难度中等",
-  high: "路线难度较高",
 };
 
 const routeRiskSoftStyles: Record<RiskLevel, string> = {
@@ -91,6 +86,13 @@ const targetCountryOptionsByPreference: Record<CountryPreference, TargetCountry[
 };
 
 export default function PlanPage() {
+  const copy = usePageContent();
+  const routeRiskDisplayLabels: Record<RiskLevel, string> = {
+    low: copy.plan.risk.low,
+    medium: copy.plan.risk.medium,
+    high: copy.plan.risk.high,
+  };
+
   // 当前正在填写的表单数据
   const [form, setForm] = useState<PlanFormState>(initialForm);
 
@@ -326,13 +328,13 @@ export default function PlanPage() {
     const ageNumber = Number(form.age);
 
     if (!form.age || Number.isNaN(ageNumber) || ageNumber < 16 || ageNumber > 65) {
-      setFormError("请填写有效年龄，建议范围为 16 - 65 岁。");
+      setFormError(copy.plan.errors.age);
       setSubmitted(false);
       return;
     }
 
     if (!form.education || !form.major) {
-      setFormError("请先填写当前学历和专业方向 / 工作方向。");
+      setFormError(copy.plan.errors.education);
       setSubmitted(false);
       return;
     }
@@ -407,9 +409,9 @@ export default function PlanPage() {
 
     try {
       await navigator.clipboard.writeText(planResultText);
-      showCopyToast("路线规划摘要已复制");
+      showCopyToast(copy.plan.copy.success);
     } catch {
-      showCopyToast("复制失败，请手动复制页面内容");
+      showCopyToast(copy.plan.copy.failed);
     }
   }
 
@@ -480,27 +482,26 @@ export default function PlanPage() {
         <section className={`mb-8 overflow-hidden px-6 py-11 sm:mb-10 sm:px-12 sm:py-16 ${cardHero}`}>
           <div className="mx-auto max-w-4xl text-center">
             <p className={`mb-5 inline-flex px-4 py-1.5 text-sm ${badgeSoft}`}>
-              v0.5.2 · 出国路线决策工作台
+              {copy.plan.badge}
             </p>
 
             <h1 className="text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-6xl">
-              先看清方向，再决定路线。
+              {copy.plan.title}
             </h1>
 
             <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-slate-500 sm:text-lg">
-              输入基础情况，获得本地规则生成的路线建议、风险提示和下一步行动清单。
+              {copy.plan.description}
             </p>
           </div>
 
           <div className="mx-auto mt-9 grid max-w-3xl gap-3 sm:grid-cols-3">
-            {[
-              ["输入", "基础条件", cardTintSky],
-              ["分析", "路线匹配", cardTintIndigo],
-              ["输出", "规划报告", cardPreviewConclusion],
-            ].map(([label, value, toneClass]) => (
-              <div key={label} className={`px-5 py-4 ${toneClass}`}>
-                <p className="text-sm text-slate-500">{label}</p>
-                <p className="mt-1 font-semibold text-slate-950">{value}</p>
+            {copy.plan.steps.map((step, index) => (
+              <div
+                key={step.label}
+                className={`px-5 py-4 ${[cardTintSky, cardTintIndigo, cardPreviewConclusion][index]}`}
+              >
+                <p className="text-sm text-slate-500">{step.label}</p>
+                <p className="mt-1 font-semibold text-slate-950">{step.value}</p>
               </div>
             ))}
           </div>
@@ -568,36 +569,34 @@ export default function PlanPage() {
             {!submitted ? (
               <div className="rounded-3xl border border-dashed border-sky-200 bg-gradient-to-br from-sky-50 to-white p-5 sm:p-8">
                 <p className="mb-3 text-sm font-medium text-sky-700">
-                  开始规划前
+                  {copy.plan.empty.kicker}
                 </p>
 
                 <h2 className="mb-4 text-xl font-bold text-slate-900 sm:text-2xl">
-                  你的路线建议会显示在这里
+                  {copy.plan.empty.title}
                 </h2>
 
                 <p className="mb-6 leading-8 text-slate-600">
-                  填写左侧信息后，系统会根据当前规则推荐 3 条出国路线。
-                  当前版本用于帮助你快速建立方向，不代表最终申请结论。
+                  {copy.plan.empty.description}
                 </p>
 
                 <div className="grid gap-4 sm:grid-cols-3">
-                  {[
-                    ["1", "填写基本情况", "年龄、学历、专业、预算和语言能力。", cardPreviewConclusion],
-                    ["2", "生成路线建议", "系统会给出路线、优势、风险和下一步建议。", cardPreviewSuggestion],
-                    ["3", "保存规划结果", "你可以复制摘要，也可以打印保存为 PDF。", cardPreviewRisk],
-                  ].map(([step, title, desc, toneClass]) => (
-                    <div key={step} className={`p-4 ${toneClass}`}>
+                  {copy.plan.empty.cards.map((card, index) => (
+                    <div
+                      key={card.step}
+                      className={`p-4 ${[cardPreviewConclusion, cardPreviewSuggestion, cardPreviewRisk][index]}`}
+                    >
                       <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold ${tagCategory}`}>
-                        {step}
+                        {card.step}
                       </div>
-                      <h3 className="mb-2 font-semibold text-slate-900">{title}</h3>
-                      <p className="text-sm leading-6 text-slate-600">{desc}</p>
+                      <h3 className="mb-2 font-semibold text-slate-900">{card.title}</h3>
+                      <p className="text-sm leading-6 text-slate-600">{card.desc}</p>
                     </div>
                   ))}
                 </div>
 
                 <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800">
-                  提醒：当前结果由本地规则生成，适合作为初步筛选工具。真实申请前仍需进一步核对政策和个人条件。
+                  {copy.plan.empty.reminder}
                 </div>
               </div>
             ) : (
@@ -629,26 +628,24 @@ export default function PlanPage() {
                 {recommendedRoutes.length === 0 && (
                   <div className={`p-5 sm:p-6 ${cardInfo}`}>
                     <p className="mb-2 text-sm font-medium text-amber-700">
-                      暂未匹配到明确路线
+                      {copy.plan.result.noRoutesKicker}
                     </p>
 
                     <h3 className="mb-3 text-2xl font-bold text-slate-900">
-                      当前不建议直接选择具体路线
+                      {copy.plan.result.noRoutesTitle}
                     </h3>
 
                     <p className="leading-8 text-slate-600">
-                      根据你填写的信息，当前条件存在较高不确定性。建议先提升语言能力、明确职业或学习方向，
-                      并重新评估预算和目标国家可行性，再生成具体路线建议。
+                      {copy.plan.result.noRoutesBody}
                     </p>
 
                     <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
                       <p className="mb-2 text-sm font-semibold text-amber-900">
-                        建议先做一对一可行性评估
+                        {copy.plan.result.noRoutesBoxTitle}
                       </p>
 
                       <p className="text-sm leading-7 text-amber-800">
-                        如果你仍然希望继续了解出国可能性，建议先由人工根据年龄、学历、预算、语言能力、
-                        目标国家和家庭情况进行单独判断，避免盲目申请、盲目缴费或选择不适合自己的路线。
+                        {copy.plan.result.noRoutesAdvice}
                       </p>
 
                       <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -656,7 +653,7 @@ export default function PlanPage() {
                           href="/about"
                           className="inline-flex items-center justify-center rounded-full bg-amber-600 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-amber-700"
                         >
-                          了解一对一评估
+                          {copy.plan.result.noRoutesCta}
                         </Link>
 
                         <button
@@ -664,7 +661,7 @@ export default function PlanPage() {
                           onClick={handleCopyResult}
                           className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium ${btnSecondary}`}
                         >
-                          先复制当前信息
+                          {copy.plan.result.copyInfo}
                         </button>
                       </div>
                     </div>
@@ -682,7 +679,7 @@ export default function PlanPage() {
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-2">
                           <p className="text-sm font-medium text-sky-700">
-                            路线结果工作台
+                            {copy.plan.result.workbench}
                           </p>
 
                           <span
@@ -691,12 +688,12 @@ export default function PlanPage() {
                               : "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
                               }`}
                           >
-                            {isResultOutdated ? "信息已修改，需重新生成" : "已根据最新信息生成"}
+                            {isResultOutdated ? copy.plan.result.outdated : copy.plan.result.generated}
                           </span>
                         </div>
 
                         <h3 className="text-xl font-semibold tracking-tight text-slate-950">
-                          先看最适合你的路线，再切换查看其他备选方案
+                          {copy.plan.result.heading}
                         </h3>
                       </div>
 
@@ -705,7 +702,7 @@ export default function PlanPage() {
                         onClick={() => setShowInsightModal(true)}
                         className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium ${chipSecondary}`}
                       >
-                        查看整体分析
+                        {copy.plan.result.viewInsight}
                       </button>
                     </div>
 
@@ -720,7 +717,7 @@ export default function PlanPage() {
                             : "bg-slate-100/80 text-slate-600 hover:bg-white hover:text-slate-950 hover:ring-1 hover:ring-slate-200"
                             }`}
                         >
-                          推荐 {index + 1} · {route.country}
+                          {copy.plan.result.recommendTab(index + 1, route.country)}
                         </button>
                       ))}
                     </div>
@@ -735,7 +732,7 @@ export default function PlanPage() {
                         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                           <div>
                             <p className="mb-2 text-sm font-medium text-sky-700">
-                              推荐 {activeRouteIndex + 1} · {activeRoute.country}
+                              {copy.plan.result.recommendTab(activeRouteIndex + 1, activeRoute.country)}
                             </p>
 
                             <h3 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
@@ -755,7 +752,7 @@ export default function PlanPage() {
                         <div className={`mb-5 p-4 ${cardInfo}`}>
                           <div className="mb-2 flex items-center justify-between">
                             <span className="text-sm font-semibold text-slate-950">
-                              适合指数
+                              {copy.plan.result.matchScore}
                             </span>
                             <span className="text-sm font-bold text-sky-700">
                               {activeRoute.matchScore}%
@@ -770,12 +767,12 @@ export default function PlanPage() {
                           </div>
 
                           <p className="mt-2 text-xs leading-5 text-slate-400">
-                            适合指数表示该路线与你当前目标、预算和基础条件的匹配程度，不代表录取、签证或就业成功率。
+                            {copy.plan.result.matchScoreHint}
                           </p>
 
                           <div className="mt-4">
                             <p className="mb-2 text-sm font-semibold text-slate-950">
-                              匹配原因
+                              {copy.plan.result.matchReasons}
                             </p>
 
                             <ul className="space-y-1 text-sm leading-6 text-slate-600">
@@ -803,7 +800,7 @@ export default function PlanPage() {
                               href={`/ai?q=${encodeURIComponent(createAiQuestionForRoute(activeRoute))}`}
                               className={`inline-flex shrink-0 items-center justify-center rounded-full px-4 py-2 text-sm font-medium ${btnPrimary}`}
                             >
-                              带着这条路线问 AI
+                              {copy.plan.result.askAi}
                             </Link>
 
                             <button
@@ -811,7 +808,7 @@ export default function PlanPage() {
                               onClick={() => setSelectedRouteId(activeRoute.id)}
                               className={`inline-flex shrink-0 items-center justify-center rounded-full px-4 py-2 text-sm font-medium ${btnSecondary}`}
                             >
-                              查看详细内容
+                              {copy.plan.result.viewDetail}
                             </button>
                           </div>
                         </div>
@@ -819,7 +816,7 @@ export default function PlanPage() {
 
                       <div className="border-t border-sky-100/60 bg-gradient-to-b from-white/95 to-slate-50/40 px-6 py-5 text-slate-950 sm:px-7">
                         <h4 className="mb-3 font-semibold">
-                          推荐阅读
+                          {copy.plan.result.relatedArticles}
                         </h4>
 
                         <div className="flex flex-wrap gap-3">
@@ -862,12 +859,12 @@ export default function PlanPage() {
                   <div className={`no-print p-5 ${cardInfo}`}>
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <p className="text-xs font-medium text-slate-500">结果操作</p>
+                        <p className="text-xs font-medium text-slate-500">{copy.plan.result.actionsKicker}</p>
                         <h3 className="mt-1 text-lg font-semibold text-slate-950">
-                          保存你的路线规划结果
+                          {copy.plan.result.actionsTitle}
                         </h3>
                         <p className="mt-2 text-sm leading-6 text-slate-500">
-                          生成时间：{submittedAt ? submittedAt.toLocaleString("zh-CN") : "暂无记录"}
+                          {copy.plan.result.generatedAt(submittedAt ? submittedAt.toLocaleString() : "—")}
                         </p>
                       </div>
 
@@ -877,7 +874,7 @@ export default function PlanPage() {
                           onClick={handleCopyResult}
                           className={`rounded-full px-4 py-2 text-sm font-medium ${btnPrimary}`}
                         >
-                          复制结果摘要
+                          {copy.plan.result.copySummary}
                         </button>
 
                         <button
@@ -885,7 +882,7 @@ export default function PlanPage() {
                           onClick={handlePrintResult}
                           className={`rounded-full px-4 py-2 text-sm font-medium ${btnSecondary}`}
                         >
-                          打印 / 保存 PDF
+                          {copy.plan.result.printPdf}
                         </button>
                       </div>
                     </div>
@@ -893,9 +890,8 @@ export default function PlanPage() {
                 )}
 
                 <div className="rounded-[28px] bg-amber-50/70 p-5 text-sm leading-7 text-amber-800 ring-1 ring-amber-200/70">
-                  <strong>重要提示：</strong>
-                  当前结果是基于本地规则生成的初步建议，不构成签证、移民、法律或就业承诺。
-                  涉及政策、签证、学校和费用的信息，请以官方机构和最新资料为准。
+                  <strong>{copy.plan.result.disclaimerLabel}</strong>
+                  {copy.plan.result.disclaimer}
                 </div>
               </>
             )}

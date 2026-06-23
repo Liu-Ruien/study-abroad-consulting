@@ -8,8 +8,8 @@
 
 - 项目名称：出国咨询信息整理平台 / overseas-consulting / study-abroad-consulting
 - 项目定位：面向日本 IT 求职的个人作品集项目（出国规划 / AI 应用场景演示）
-- 当前版本：v0.11.1
-- 当前阶段：第四阶段收尾，已完成 README 截图展示增强
+- 当前版本：v0.12.4
+- 当前阶段：第四阶段收尾，已完成文章三语言与全屏背景修复
 - 在线地址：https://study-abroad-consulting.vercel.app/
 - 技术栈：Next.js 16、React、TypeScript、Tailwind CSS、Git / GitHub、Vercel
 
@@ -115,6 +115,11 @@ lib/plan-routes.ts
 - v0.8.5 已为 `/ai` 新增复制回答功能。
 - v0.8.6 已优化 `/ai` 移动端布局与首屏体验。
 - v0.8.7 已为 `/ai` 新增重新开始功能。
+- v0.12.4 已完成文章三语言化、全屏背景修复、文章详情页与分类页 i18n。
+- v0.12.3 已完成全站页面文案语言同步、Plan 表单 tint 修复、首页/文章/关于背景统一。
+- v0.12.2 已将语言切换重构为 Apple 风格下拉菜单（LanguageDropdown）。
+- v0.12.1 已将语言切换升级为 Navbar 全站入口，localStorage 记住选择，Navbar / Footer 轻量同步。
+- v0.12.0 已在 /case-study 增加中文 / 日本語 / English 本地语言切换，README 增加英文与日文概要。
 - v0.11.1 已在 README 增加项目截图展示区域，强化 GitHub 仓库首页作品集效果。
 - v0.11.0 已完成 README 作品集化升级，修正 GitHub 首页版本号。
 - v0.10.3 已强化 ArticleCard tinted gradient，并修复 Navbar 滚动透底问题。
@@ -131,6 +136,46 @@ lib/plan-routes.ts
 ---
 
 ## 6. 版本记录
+
+### v0.12.4
+
+- 修复 `/`、`/articles`、`/about`、`/articles/[slug]` 背景非全屏问题（layout body/main 统一 `pageBackground`）
+- 文章数据三语言化：`lib/articles.ts` 标题、摘要、正文 zh / ja / en
+- 新增 `lib/article-localization.ts`（`getLocalizedArticle`、`formatReadTime`）
+- 文章卡片、首页推荐、分类页、详情页支持语言切换
+- 统一文章列表、分类页、详情页 Apple 风格 tint 卡片视觉
+- 不改变推荐算法、AI 问答逻辑与 case-study 业务内容
+
+### v0.12.3
+
+- 全站页面文案语言同步（首页、文章、关于、AI、Plan）
+- 新增 `lib/i18n/content.ts` 统一维护 zh / ja / en 页面文案
+- 修复 `/plan` 左侧表单 tint 视觉回退（FormSection、planFormShell）
+- 统一 `/`、`/articles`、`/about` 使用 `pageBackground`
+- 不改变推荐算法、AI 问答逻辑与 case-study 业务内容
+
+### v0.12.2
+
+- 语言切换重构为 Apple 风格下拉菜单（LanguageDropdown）
+- Navbar 桌面端：🌐 当前语言 ▼；移动端菜单内：语言 ▼ 展开
+- 当前语言勾选、毛玻璃面板、点击外部关闭
+- 删除旧三按钮 LanguageSwitcher，不改变业务逻辑
+
+### v0.12.1
+
+- 语言切换升级为顶部导航级入口
+- /case-study 改为读取全站语言状态
+- localStorage 记住语言选择
+- Navbar / Footer 轻量多语言同步
+- 不引入 i18n 框架，不改变业务逻辑
+
+### v0.12.0
+
+- /case-study 新增中文 / 日本語 / English 本地语言切换
+- README 增加 English Summary 和 日本語概要
+- 首页增加多语言展示提示
+- 不引入 i18n 框架，不改变业务逻辑
+- 继续保持作品集和日本 IT 求职展示定位
 
 ### v0.11.1
 

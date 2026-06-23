@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { cardInfo } from "@/lib/ui/card-system";
+import { cardTintSky } from "@/lib/ui/card-system";
 
 type FormSectionProps = {
   title: string;
@@ -20,7 +20,7 @@ export default function FormSection({
 }: FormSectionProps) {
   return (
     <section
-      className={`relative rounded-[22px] transition-all duration-200 ${cardInfo} ${
+      className={`relative rounded-[22px] transition-all duration-200 ${cardTintSky} ${
         isOpen ? "z-10 overflow-visible shadow-sm" : "z-0 overflow-hidden"
       }`}
     >
