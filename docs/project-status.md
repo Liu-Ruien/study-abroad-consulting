@@ -8,7 +8,7 @@
 
 - 项目名称：出国咨询信息整理平台 / overseas-consulting / study-abroad-consulting
 - 项目定位：面向日本 IT 求职的个人作品集项目（出国规划 / AI 应用场景演示）
-- 当前版本：v0.13.0
+- 当前版本：v0.13.1
 - 当前阶段：第四阶段收尾，已完成作品集面试展示增强
 - 在线地址：https://study-abroad-consulting.vercel.app/
 - 技术栈：Next.js 16、React、TypeScript、Tailwind CSS、Git / GitHub、Vercel
@@ -115,6 +115,7 @@ lib/plan-routes.ts
 - v0.8.5 已为 `/ai` 新增复制回答功能。
 - v0.8.6 已优化 `/ai` 移动端布局与首屏体验。
 - v0.8.7 已为 `/ai` 新增重新开始功能。
+- v0.13.1 已新增 docs/interview-guide.md 面试讲解稿（中日英介绍、Q&A、演示路线）；README 增加文档入口。
 - v0.13.0 已完成 /case-study 面试官快速查看、技术决策、开发者职责说明；README 增加面试官路径。
 - v0.12.4 已完成文章三语言化、全屏背景修复、文章详情页与分类页 i18n。
 - v0.12.3 已完成全站页面文案语言同步、Plan 表单 tint 修复、首页/文章/关于背景统一。
@@ -137,6 +138,15 @@ lib/plan-routes.ts
 ---
 
 ## 6. 版本记录
+
+### v0.13.1
+
+- 新增 `docs/interview-guide.md` 面试讲解文档
+- 补充中文 / 日本語 / English 项目介绍（1 分钟、3 分钟版）
+- 补充技术栈说明、技术决策、架构讲解和面试 Q&A（中 / 日 / 英）
+- 补充面试演示路线与自我提醒
+- README 增加面试讲解文档入口
+- 不改变网站业务逻辑
 
 ### v0.13.0
 
