@@ -8,7 +8,7 @@
 
 - 项目名称：出国咨询信息整理平台 / overseas-consulting / study-abroad-consulting
 - 项目定位：面向日本 IT 求职的个人作品集项目（出国规划 / AI 应用场景演示）
-- 当前版本：v0.16.3
+- 当前版本：v0.17.0
 - 当前阶段：第四阶段收尾，已完成作品集面试展示增强
 - 在线地址：https://study-abroad-consulting.vercel.app/
 - 技术栈：Next.js 16、React、TypeScript、Tailwind CSS、Git / GitHub、Vercel
@@ -115,7 +115,7 @@ lib/plan-routes.ts
 - v0.8.5 已为 `/ai` 新增复制回答功能。
 - v0.8.6 已优化 `/ai` 移动端布局与首屏体验。
 - v0.8.7 已为 `/ai` 新增重新开始功能。
-- v0.16.3 已修复 mega menu hover 保持与页面轻微 blur overlay。
+- v0.17.0 已重构 README 为求职作品集首页，并增强 interview-guide 与 case-study 边界文案。
 - v0.15.9 已完成 /case-study Apple 风格收口：Navbar mega menu、亮玻璃卡片与无 Footer 单屏流。
 - v0.15.8 已收口 /case-study Presentation 导航与控制器：Footer 隐藏、Navbar hover 面板、Highlights 静态一屏化。
 - v0.15.7 已收口 /case-study Presentation：首屏位置、滚动拦截、重复内容清理与系统字体栈。
@@ -150,6 +150,17 @@ lib/plan-routes.ts
 ---
 
 ## 6. 版本记录
+
+### v0.17.0
+
+- README 重构为求职作品集展示首页
+- 新增日本語概要与 English Summary
+- 增加 For Interviewers / 面试官快速理解
+- 增加 Recommended Review Flow、Core Features / Tech Stack 表格
+- 强化 Current Boundaries 中英说明
+- docs/interview-guide.md 新增 v0.17.0 面试追问准备（8 问，中 / 日 / 英）
+- /case-study 边界与后续计划文案三语小幅增强
+- 不修改业务逻辑和视觉系统
 
 ### v0.16.3
 

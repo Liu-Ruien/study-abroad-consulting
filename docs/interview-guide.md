@@ -555,6 +555,94 @@ Priority: (1) safety design and tests before a real AI API, (2) tests for `/plan
 
 ---
 
+---
+
+## v0.17.0 面试官追问准备
+
+> 本章节对应 v0.17.0：在 v0.16.0 五问五答基础上，补充 8 个常见追问。回答宜短，适合口头表达。
+
+---
+
+### Q1：为什么这个项目适合放进作品集？
+
+**中文：** 它有完整页面、可演示的规则逻辑、AI MVP 边界设计和多语言展示，能说明需求拆解、工程组织和持续迭代，不是静态博客。
+
+**日本語：** ページ、ルールロジック、AI MVP の境界、多言語展示が揃っており、要件分解と実装力を面接で説明しやすいからです。静的ブログではありません。
+
+**English:** It has real pages, demonstrable rule logic, clear AI MVP boundaries, and multilingual presentation—not just a static blog. I can walk through requirements, engineering choices, and iteration.
+
+---
+
+### Q2：这个项目和普通信息网站有什么区别？
+
+**中文：** 普通资讯站主要是阅读。这里有 `/plan` 表单 + 本地规则输出、`/ai` 结构化问答流程，业务逻辑在 `lib/` 里，页面只做组合。
+
+**日本語：** 通常の情報サイトは閲覧中心です。本プロジェクトは `/plan` のルール出力、`/ai` の構造化問答があり、ロジックは `lib/` に分離しています。
+
+**English:** A typical info site is read-only. This project adds `/plan` rule-based output and `/ai` structured Q&A, with logic in `lib/` and thin pages.
+
+---
+
+### Q3：`/plan` 的规则引擎是否可以扩展？
+
+**中文：** 可以。当前是 TypeScript 本地规则，后续可以把路线数据和规则配置外置，或接 API。核心是可解释的匹配流程，引擎结构已经按 route / scoring / insight 拆分。
+
+**日本語：** 可能です。今は TypeScript のローカルルールですが、データや設定を外だししたり API 化もできます。route / scoring / insight に分離済みです。
+
+**English:** Yes. It is local TypeScript rules today, but route data and rules could move to config or an API. The flow is already split into route, scoring, and insight engines.
+
+---
+
+### Q4：为什么现在不用数据库？
+
+**中文：** 当前没有用户系统和历史持久化需求，目标是作品集 MVP。文章和规则放在 TS 文件里，部署简单，面试时也更容易讲清数据流。
+
+**日本語：** ユーザー管理や履歴保存の要件がなく、ポートフォリオ MVP が目的だからです。記事とルールは TS ファイルで、デプロイと説明が簡単です。
+
+**English:** No users or history persistence yet—it is a portfolio MVP. Articles and rules live in TS files for simple deploy and easier explanation in interviews.
+
+---
+
+### Q5：mock AI 和真实 AI 接入之间差什么？
+
+**中文：** 差在 API 密钥、成本、合规、回答不可控和错误处理。mock 固定了回答结构；接真实 API 前要先设计免责声明、输入过滤、失败降级和日志策略。
+
+**日本語：** API キー、コスト、コンプライアンス、回答の不確実性、エラー処理が必要になります。mock は構造検証用で、接続前に免責と安全設計が先です。
+
+**English:** Real APIs need keys, cost, compliance, unpredictable output, and error handling. Mock validates structure first; I would add disclaimers, input filters, fallbacks, and logging before connecting.
+
+---
+
+### Q6：多语言是如何组织的？
+
+**中文：** UI 文案在 `lib/i18n`，Case Study 在 `lib/case-study-i18n.ts`，文章用 `getLocalizedArticle()`。语言偏好存在 localStorage，URL 不变，方便演示切换。
+
+**日本語：** UI は `lib/i18n`、Case Study は専用 i18n、記事は `getLocalizedArticle()` です。言語は localStorage に保存し、URL は変えません。
+
+**English:** UI copy in `lib/i18n`, case study in `lib/case-study-i18n.ts`, articles via `getLocalizedArticle()`. Language preference uses localStorage without changing URLs.
+
+---
+
+### Q7：如果要上线给真实用户，最先补什么？
+
+**中文：** 先补测试、错误状态、免责声明和内容审核流程；AI 接真实 API 前补安全边界。登录和数据库只有在明确产品方向后再考虑，不会为了「看起来完整」先堆后端。
+
+**日本語：** テスト、エラー表示、免責事項、コンテンツ確認を先に。AI 接続前は安全設計。ログインや DB はプロダクト方針が決まってからです。
+
+**English:** Tests, error states, disclaimers, and content review first; AI safety design before a real API. Login and database only after a clear product direction—not for optics.
+
+---
+
+### Q8：你在这个项目中学到了什么？
+
+**中文：** 学会了在有限范围内做产品拆解、用本地规则验证可解释流程、为 AI 功能先设计边界，以及用文档和版本记录让项目可讲解、可迭代。
+
+**日本語：** 限られたスコープでのプロダクト分解、説明可能なルール設計、AI 機能の境界設計、ドキュメントと版管理による説明しやすさを学びました。
+
+**English:** I learned product scoping, explainable rule-based flows, boundary-first AI design, and keeping the project interview-ready through docs and versioned iteration.
+
+---
+
 ## 11. 面试演示路线
 
 | 顺序 | 去哪里 | 讲什么 |
@@ -582,4 +670,4 @@ Priority: (1) safety design and tests before a real AI API, (2) tests for `/plan
 
 ---
 
-*文档版本：v0.16.0 · 与 project-status.md 同步维护*
+*文档版本：v0.17.0 · 与 project-status.md 同步维护*

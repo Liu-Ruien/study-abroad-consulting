@@ -382,22 +382,20 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
     boundaries: {
       title: "当前边界",
       items: [
-        "不接真实 AI API",
-        "不保存用户历史",
-        "不提供签证 / 求职 / 移民承诺",
-        "内容仅用于信息整理与作品集展示",
-        "重要信息仍应以学校、使领馆、入管局和官方政策为准",
+        "本地规则与 mock AI 仅用于作品集展示",
+        "不保存用户个人信息",
+        "不提供签证、移民、求职成功承诺",
+        "重要决策仍应以学校、使领馆、入管局和官方政策为准",
       ],
     },
     future: {
       title: "后续计划",
       items: [
-        "接入真实 AI 前先设计安全边界",
+        "如果接入真实 AI API，会先补充安全边界和免责声明",
         "增加测试用例",
-        "补充更多真实文章案例",
-        "增加英文 / 日文 README",
-        "增强 /plan 与 /ai 联动",
-        "如果产品化，再考虑登录、数据库和权限",
+        "补充更多真实内容案例",
+        "完善日文 / 英文 README",
+        "增强 /plan 与 /ai 的联动",
       ],
     },
     status: {
@@ -708,22 +706,20 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
     boundaries: {
       title: "現在の制約",
       items: [
-        "本番 AI API は未接続",
-        "ユーザー履歴は保存しない",
-        "ビザ・就職・移民の保証は提供しない",
-        "コンテンツは情報整理とポートフォリオ展示のみ",
-        "重要情報は学校、大使館、入管、公式政策を優先してください",
+        "ローカルルールと mock AI はポートフォリオ展示のみ",
+        "ユーザー個人情報は保存しない",
+        "ビザ・移民・就職成功の保証は提供しない",
+        "重要な判断は学校、大使館、入管、公式政策を優先",
       ],
     },
     future: {
       title: "今後の計画",
       items: [
-        "本番 AI 接続前に安全境界を設計",
+        "本番 AI API 接続前に安全境界と免責事項を追加",
         "テストケースを追加",
-        "より多くの実例記事を追加",
-        "英語 / 日本語 README を追加",
+        "より多くの実例コンテンツを追加",
+        "日本語 / 英語 README を整備",
         "/plan と /ai の連携を強化",
-        "プロダクト化する場合のみ、ログイン・DB・権限を検討",
       ],
     },
     status: {
@@ -1034,22 +1030,20 @@ export const caseStudyContent: Record<CaseStudyLocale, CaseStudyContent> = {
     boundaries: {
       title: "Current boundaries",
       items: [
-        "No real AI API connected",
-        "No user history stored",
-        "No visa, job, or immigration guarantees",
-        "Content for information organization and portfolio display only",
-        "Important details should still follow schools, embassies, immigration offices, and official policy",
+        "Local rules and mock AI are for portfolio demonstration only",
+        "No personal user data is stored",
+        "No visa, immigration, or job-success guarantees",
+        "Important decisions should follow schools, embassies, immigration offices, and official policy",
       ],
     },
     future: {
       title: "What comes next",
       items: [
-        "Design safety boundaries before connecting a real AI API",
+        "If connecting a real AI API, add safety boundaries and disclaimers first",
         "Add test cases",
-        "Expand real article examples",
-        "Add English and Japanese README files",
+        "Expand real content examples",
+        "Improve Japanese and English README files",
         "Strengthen /plan and /ai linkage",
-        "If productized later: login, database, and permissions",
       ],
     },
     status: {
